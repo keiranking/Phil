@@ -85,6 +85,7 @@ class Wordlist(object):
                 print("\n" + str(i))
                 for word in self.words[i]:
                     print(word)
+        print("\n")
 
     def matches(self, query):
         match_list = []
@@ -99,9 +100,9 @@ class Wordlist(object):
         for word in list:
             r = requests.get("http://crosswordtracker.com/answer/" + word.lower() + "/")
             lookup_data = BeautifulSoup(r.content, "html.parser")
-            # Search for the right sentence, search within for all the numbers, grab the first number
+            # Search for the right data snippet, search within snippet for a number, grab the first one
             frequency = re.search(r'\d+', str(lookup_data.find_all(string=re.compile("we have spotted"))))[0]
-            print(frequency)
+            print(word + " " + frequency)
 
 
 class Entry(object):
@@ -407,17 +408,17 @@ class Crossword(object):
 # ____________________________________________________
 # M A I N
 
-cw = Crossword("8")
+cw = Crossword("example.xml")
 current_row = 0
 current_col = 2
 
-cw.set_square(0, 5, BLACK)
-cw.set_square(0, 2, "i")
-cw.set_square(1, 4, BLACK)
-cw.set_square(2, 4, BLACK)
-cw.set_square(2, 3, "k")
-cw.set_square(3, 4, "r")
-cw.set_square(2, 4, BLANK)
+# cw.set_square(0, 5, BLACK)
+# cw.set_square(0, 2, "i")
+# cw.set_square(1, 4, BLACK)
+# cw.set_square(2, 4, BLACK)
+# cw.set_square(2, 3, "k")
+# cw.set_square(3, 4, "r")
+# cw.set_square(2, 4, BLANK)
 
 cw.set_across_clue_at(current_row, current_col, "boogie")
 cw.set_down_clue_at(current_row, current_col, "woogie")
@@ -432,7 +433,8 @@ wordlist.add("interest")
 wordlist.delete("mannerism")
 wordlist.printify()
 
-wordlist.rank(["etui", "bank", "ebay", "ymca", "pugs", "convoluted", "inseparable", "estimable"])
+# wordlist.rank(["coffee", "swanee", "McAfee", "entree", "Yankee"])
+wordlist.rank(wordlist.matches(cw.get_down_entry_spanning(current_row, current_col).answer))
 
 # wordlist.save_to("wordlist.txt")
 
