@@ -1,0 +1,19 @@
+
+.DS_Store
+*.swift
+*.xcplayground
+*.xcworkspacedata
+*.xcuserstate
+Crossword.playground/Resources/example.xml
+Crossword.playground/Sources/example.xml
+Crossword.playground/timeline.xctimeline
+example.puz
+example.xml
+example2.xml
+invalid.xml
+noclues.xml
+nogrid.xml
+PUZ Format.pdf
+wordlist-write.txt
+words 2.txt
+XPF Format.pdf
