@@ -96,14 +96,12 @@ class Wordlist(object):
         return match_list
 
     def rank(self, list):
-        ranked_matches = list
-        word = "ETUI"
         for word in list:
             r = requests.get("http://crosswordtracker.com/answer/" + word.lower() + "/")
             lookup_data = BeautifulSoup(r.content, "html.parser")
             # Search for the right sentence, search within for all the numbers, grab the first number
             frequency = re.search(r'\d+', str(lookup_data.find_all(string=re.compile("we have spotted"))))[0]
-        print(frequency)
+            print(frequency)
 
 
 class Entry(object):
@@ -420,15 +418,12 @@ cw.set_square(2, 4, BLACK)
 cw.set_square(2, 3, "k")
 cw.set_square(3, 4, "r")
 cw.set_square(2, 4, BLANK)
-cw.printify()
 
-cw.set_across_clue_at(2, 4, "boogie")
-cw.set_down_clue_at(2, 4, "woogie")
-cw.set_across_clue_at(2, 4, None)
+cw.set_across_clue_at(current_row, current_col, "boogie")
+cw.set_down_clue_at(current_row, current_col, "woogie")
 cw.printify()
 
 wordlist = Wordlist("wordlist.txt")
-wordlist.printify()
 
 print(wordlist.matches(cw.get_across_entry_spanning(current_row, current_col).answer))
 print(wordlist.matches(cw.get_down_entry_spanning(current_row, current_col).answer))
@@ -437,7 +432,7 @@ wordlist.add("interest")
 wordlist.delete("mannerism")
 wordlist.printify()
 
-wordlist.rank([])
+wordlist.rank(["etui", "bank", "ebay", "ymca", "pugs", "convoluted", "inseparable", "estimable"])
 
 # wordlist.save_to("wordlist.txt")
 
