@@ -261,7 +261,7 @@ class Crossword(object):
             if len(new_fill) != 1:
                 raise ValueError("Fill must be single character.")
 
-            cw.grid[row] = cw.grid[row][:col] + new_fill.upper() + cw.grid[row][col + 1:]
+            self.grid[row] = self.grid[row][:col] + new_fill.upper() + self.grid[row][col + 1:]
 
             # If this is a new black square...
             if old_fill is not BLACK and new_fill is BLACK:
@@ -282,10 +282,10 @@ class Crossword(object):
 
                 # Update entries above and to the left.
                 if col != 0:
-                    if cw.grid[row][col - 1] is not BLACK:
+                    if self.grid[row][col - 1] is not BLACK:
                         self.update_across_entry_spanning(row, col - 1)
                 if row != 0:
-                    if cw.grid[row - 1][col] is not BLACK:
+                    if self.grid[row - 1][col] is not BLACK:
                         self.update_down_entry_spanning(row - 1, col)
 
                 self.entries.sort(key=attrgetter('row', 'col'))
@@ -340,24 +340,14 @@ class Crossword(object):
 
     def read_across_from(self, row, col):
         try:
-            if self.grid[row][col] is BLACK:
-                return ""
-            elif col + 1 == self.cols:
-                return self.grid[row][col]
-            else:
-                return self.grid[row][col] + self.read_across_from(row, col + 1)
+            return self.grid[row][col:].split('.')[0]
         except IndexError as error:
             print(error)
             return None
 
     def read_down_from(self, row, col):
         try:
-            if self.grid[row][col] is BLACK:
-                return ""
-            elif row + 1 == self.rows:
-                return self.grid[row][col]
-            else:
-                return self.grid[row][col] + self.read_down_from(row + 1, col)
+            return transpose(self.grid)[col][row:].split('.')[0]
         except IndexError as error:
             print(error)
             return None
@@ -405,6 +395,10 @@ class Crossword(object):
                     entry.clue = str(clue)
                     break
 
+
+def transpose(grid):
+    return ["".join(list(i)) for i in zip(*grid)]
+
 # ____________________________________________________
 # M A I N
 
@@ -435,6 +429,12 @@ wordlist.printify()
 
 # wordlist.rank(["coffee", "swanee", "McAfee", "entree", "Yankee"])
 wordlist.rank(wordlist.matches(cw.get_down_entry_spanning(current_row, current_col).answer))
+
+print(cw.read_across_from(current_row, current_col))
+print(cw.read_down_from(current_row, current_col))
+
+# cw.grid[0][11:11 + len("dogs")] = list("dogs")
+print(cw.grid)
 
 # wordlist.save_to("wordlist.txt")
 
