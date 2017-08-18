@@ -1,4 +1,4 @@
-# Crossbow 0.0 (June 2017)
+# Crossbow 0.0 (Aug 2017)
 # Keiran King (keiranking.com)
 
 # ____________________________________________________
@@ -273,20 +273,20 @@ class Crossword(object):
                 # Make a new across entry to the right, if needed.
                 if col + 1 < self.cols:
                     if self.grid[row][col + 1] is not BLACK:
-                        self.entries.append(Entry(row, col + 1, 0, ACROSS, "", self.read_across_from(row, col + 1)))
+                        self.entries.append(Entry(row, col + 1, 0, ACROSS, "", self.read_grid_at(row, col + 1, ACROSS)))
 
                 # Make a new down entry below, if needed.
                 if row + 1 < self.rows:
                     if self.grid[row + 1][col] is not BLACK:
-                        self.entries.append(Entry(row + 1, col, 0, DOWN, "", self.read_down_from(row + 1, col)))
+                        self.entries.append(Entry(row + 1, col, 0, DOWN, "", self.read_grid_at(row + 1, col, DOWN)))
 
                 # Update entries above and to the left.
                 if col != 0:
                     if self.grid[row][col - 1] is not BLACK:
-                        self.update_across_entry_spanning(row, col - 1)
+                        self.set_entry_at(row, col - 1, ACROSS)
                 if row != 0:
                     if self.grid[row - 1][col] is not BLACK:
-                        self.update_down_entry_spanning(row - 1, col)
+                        self.set_entry_at(row - 1, col, DOWN)
 
                 self.entries.sort(key=attrgetter('row', 'col'))
                 self.number_entries()
@@ -302,76 +302,64 @@ class Crossword(object):
 
                 # Make a new across entry, if needed.
                 if col == 0:
-                    self.entries.append(Entry(row, col, 0, ACROSS, "", self.read_across_from(row, col)))
+                    self.entries.append(Entry(row, col, 0, ACROSS, "", self.read_grid_at(row, col, ACROSS)))
                 elif self.grid[row][col - 1] is BLACK:
-                    self.entries.append(Entry(row, col, 0, ACROSS, "", self.read_across_from(row, col)))
+                    self.entries.append(Entry(row, col, 0, ACROSS, "", self.read_grid_at(row, col, ACROSS)))
                 else:
-                    self.update_across_entry_spanning(row, col)
+                    self.set_entry_at(row, col, ACROSS)
 
                 # Make a new down entry, if needed.
                 if row == 0:
-                    self.entries.append(Entry(row, col, 0, DOWN, "", self.read_down_from(row, col)))
+                    self.entries.append(Entry(row, col, 0, DOWN, "", self.read_grid_at(row, col, DOWN)))
                 elif self.grid[row - 1][col] is BLACK:
-                    self.entries.append(Entry(row, col, 0, DOWN, "", self.read_down_from(row, col)))
+                    self.entries.append(Entry(row, col, 0, DOWN, "", self.read_grid_at(row, col, DOWN)))
                 else:
-                    self.update_down_entry_spanning(row, col)
+                    self.set_entry_at(row, col, DOWN)
 
                 self.entries.sort(key=attrgetter('row', 'col'))
                 self.number_entries()
 
             else:
-                self.update_across_entry_spanning(row, col)
-                self.update_down_entry_spanning(row, col)
+                self.set_entry_at(row, col, ACROSS)
+                self.set_entry_at(row, col, DOWN)
 
         except ValueError as error:
             print(error)
 
-    def update_across_entry_spanning(self, row, col):
-        for entry in reversed(self.entries):
-            if entry.direction == ACROSS and entry.row == row and entry.col <= col:
-                entry.answer = self.read_across_from(entry.row, entry.col)
-                break
-
-    def update_down_entry_spanning(self, row, col):
-        for entry in reversed(self.entries):
-            if entry.direction == DOWN and entry.col == col and entry.row <= row:
-                entry.answer = self.read_down_from(entry.row, entry.col)
-                break
-
-    def read_across_from(self, row, col):
+    def read_grid_at(self, row, col, direction):
         try:
-            return self.grid[row][col:].split('.')[0]
+            if direction == ACROSS:
+                return self.grid[row][col:].split('.')[0]
+            elif direction == DOWN:
+                return transpose(self.grid)[col][row:].split('.')[0]
         except IndexError as error:
             print(error)
             return None
 
-    def read_down_from(self, row, col):
-        try:
-            return transpose(self.grid)[col][row:].split('.')[0]
-        except IndexError as error:
-            print(error)
-            return None
-
-    # Returns Across entry that spans given location. Controller may need this function.
-    def get_across_entry_spanning(self, row, col):
-        try:
-            if self.grid[row][col] is BLACK:
-                return None
-
+    def set_entry_at(self, row, col, direction):
+        if direction == ACROSS:
             for entry in reversed(self.entries):
                 if entry.direction == ACROSS and entry.row == row and entry.col <= col:
-                    return entry
-        except IndexError as error:
-            print(error)
+                    entry.answer = self.read_grid_at(entry.row, entry.col, ACROSS)
+                    break
+        elif direction == DOWN:
+            for entry in reversed(self.entries):
+                if entry.direction == DOWN and entry.col == col and entry.row <= row:
+                    entry.answer = self.read_grid_at(entry.row, entry.col, DOWN)
+                    break
 
-    # Returns Down entry that spans given location. Controller may need this function.
-    def get_down_entry_spanning(self, row, col):
+    def get_entry_at(self, row, col, direction):
         if self.grid[row][col] is BLACK:
             return None
 
-        for entry in reversed(self.entries):
-            if entry.direction == DOWN and entry.col == col and entry.row <= row:
-                return entry
+        if direction == ACROSS:
+            for entry in reversed(self.entries):
+                if entry.direction == ACROSS and entry.row == row and entry.col <= col:
+                    return entry
+        elif direction == DOWN:
+            for entry in reversed(self.entries):
+                if entry.direction == DOWN and entry.col == col and entry.row <= row:
+                    return entry
 
         return None
 
@@ -404,9 +392,9 @@ def transpose(grid):
 
 cw = Crossword("example.xml")
 current_row = 0
-current_col = 2
+current_col = 6
 
-# cw.set_square(0, 5, BLACK)
+cw.set_square(0, 5, BLACK)
 # cw.set_square(0, 2, "i")
 # cw.set_square(1, 4, BLACK)
 # cw.set_square(2, 4, BLACK)
@@ -420,21 +408,32 @@ cw.printify()
 
 wordlist = Wordlist("wordlist.txt")
 
-print(wordlist.matches(cw.get_across_entry_spanning(current_row, current_col).answer))
-print(wordlist.matches(cw.get_down_entry_spanning(current_row, current_col).answer))
+print(wordlist.matches(cw.get_entry_at(current_row, current_col, ACROSS).answer))
+print(wordlist.matches(cw.get_entry_at(current_row, current_col, DOWN).answer))
 
 wordlist.add("interest")
 wordlist.delete("mannerism")
 wordlist.printify()
 
 # wordlist.rank(["coffee", "swanee", "McAfee", "entree", "Yankee"])
-wordlist.rank(wordlist.matches(cw.get_down_entry_spanning(current_row, current_col).answer))
+wordlist.rank(wordlist.matches(cw.get_entry_at(current_row, current_col, DOWN).answer))
 
-print(cw.read_across_from(current_row, current_col))
-print(cw.read_down_from(current_row, current_col))
+print(cw.read_grid_at(current_row, current_col, ACROSS))
+print(cw.read_grid_at(current_row, current_col, DOWN))
 
-# cw.grid[0][11:11 + len("dogs")] = list("dogs")
-print(cw.grid)
+# Push new answer to grid - across
+cw.grid[0] = cw.grid[0][0:5] + str("newer") + cw.grid[0][5 + len("newer"):15]
+# Push new answer to grid - down
+tr = transpose(cw.grid)
+tr[5] = tr[5][0:0] + str("feud") + tr[5][0 + len("feud"):15]
+cw.grid = transpose(tr)
+
+cw.printify()
+
+# Reverse row
+print("GREW.ANAIS.LABS"[::-1])
+
+
 
 # wordlist.save_to("wordlist.txt")
 
