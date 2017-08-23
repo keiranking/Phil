@@ -432,8 +432,11 @@ cw.printify()
 
 # Reverse row
 print("GREW.ANAIS.LABS"[::-1])
-
-
+# Find last BLACK square
+last_black_square = cw.grid[current_row][:current_col].rfind(BLACK)
+next_black_square = cw.grid[current_row][current_col:].find(BLACK) + current_col
+print(last_black_square, next_black_square)
+print("GREW.ANAIS.LABS"[last_black_square + 1:next_black_square])
 
 # wordlist.save_to("wordlist.txt")
 
