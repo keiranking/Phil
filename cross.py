@@ -1,4 +1,4 @@
-# Crossbow 0.0 (Aug 2017)
+# Cross 0.1 (Aug 2017)
 # Keiran King (keiranking.com)
 
 # ____________________________________________________
@@ -320,15 +320,15 @@ class Crossword(object):
         except ValueError as error:
             print(error)
 
-    def read_grid_from(self, row, col, direction):
-        try:
-            if direction == ACROSS:
-                return self.grid[row][col:].split(BLACK)[0]
-            elif direction == DOWN:
-                return transpose(self.grid)[col][row:].split(BLACK)[0]
-        except IndexError as error:
-            print(error)
-            return None
+    # def read_grid_from(self, row, col, direction):
+    #     try:
+    #         if direction == ACROSS:
+    #             return self.grid[row][col:].split(BLACK)[0]
+    #         elif direction == DOWN:
+    #             return transpose(self.grid)[col][row:].split(BLACK)[0]
+    #     except IndexError as error:
+    #         print(error)
+    #         return None
 
     def get_word_at(self, row, col, direction):
         if self.grid[row][col] is not BLACK:
@@ -431,6 +431,7 @@ cw.set_word_at(2, 2, DOWN, "WORLD")
 
 cw.printify()
 cw.set_word_at(current_row, current_col, DOWN)
+# Get the DOWN word where the cursor is, find matches in our wordlist, and rank the matches.
 wl.rank(wl.matches(cw.get_word_at(current_row, current_col, DOWN)))
 # cw.set_word_at(current_row, current_col, ACROSS, "contraband")
 cw.printify()
