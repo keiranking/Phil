@@ -18,7 +18,7 @@ import random
 class App(QWidget):
     def __init__(self):
         super().__init__()
-        self.title = 'Crossword Maker'
+        self.title = 'Crossword'
         self.left = 0
         self.top = 0
         self.width = 800
@@ -29,7 +29,7 @@ class App(QWidget):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        self.createTable()
+        self.create_crossword_table()
 
         # Add box layout, add table to box layout and add box layout to widget
         self.layout = QVBoxLayout()
@@ -39,7 +39,7 @@ class App(QWidget):
         # Show widget
         self.show()
 
-    def createTable(self):
+    def create_crossword_table(self):
         # Create table
         rows = 15
         cols = 15

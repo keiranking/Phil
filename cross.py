@@ -273,12 +273,12 @@ class Crossword(object):
                 # Make a new across entry to the right, if needed.
                 if col + 1 < self.cols:
                     if self.grid[row][col + 1] is not BLACK:
-                        self.entries.append(Entry(row, col + 1, 0, ACROSS, "", self.read_grid_at(row, col + 1, ACROSS)))
+                        self.entries.append(Entry(row, col + 1, 0, ACROSS, "", self.read_grid_from(row, col + 1, ACROSS)))
 
                 # Make a new down entry below, if needed.
                 if row + 1 < self.rows:
                     if self.grid[row + 1][col] is not BLACK:
-                        self.entries.append(Entry(row + 1, col, 0, DOWN, "", self.read_grid_at(row + 1, col, DOWN)))
+                        self.entries.append(Entry(row + 1, col, 0, DOWN, "", self.read_grid_from(row + 1, col, DOWN)))
 
                 # Update entries above and to the left.
                 if col != 0:
@@ -302,17 +302,17 @@ class Crossword(object):
 
                 # Make a new across entry, if needed.
                 if col == 0:
-                    self.entries.append(Entry(row, col, 0, ACROSS, "", self.read_grid_at(row, col, ACROSS)))
+                    self.entries.append(Entry(row, col, 0, ACROSS, "", self.read_grid_from(row, col, ACROSS)))
                 elif self.grid[row][col - 1] is BLACK:
-                    self.entries.append(Entry(row, col, 0, ACROSS, "", self.read_grid_at(row, col, ACROSS)))
+                    self.entries.append(Entry(row, col, 0, ACROSS, "", self.read_grid_from(row, col, ACROSS)))
                 else:
                     self.set_entry_at(row, col, ACROSS)
 
                 # Make a new down entry, if needed.
                 if row == 0:
-                    self.entries.append(Entry(row, col, 0, DOWN, "", self.read_grid_at(row, col, DOWN)))
+                    self.entries.append(Entry(row, col, 0, DOWN, "", self.read_grid_from(row, col, DOWN)))
                 elif self.grid[row - 1][col] is BLACK:
-                    self.entries.append(Entry(row, col, 0, DOWN, "", self.read_grid_at(row, col, DOWN)))
+                    self.entries.append(Entry(row, col, 0, DOWN, "", self.read_grid_from(row, col, DOWN)))
                 else:
                     self.set_entry_at(row, col, DOWN)
 
@@ -326,7 +326,7 @@ class Crossword(object):
         except ValueError as error:
             print(error)
 
-    def read_grid_at(self, row, col, direction):
+    def read_grid_from(self, row, col, direction):
         try:
             if direction == ACROSS:
                 return self.grid[row][col:].split('.')[0]
@@ -336,16 +336,90 @@ class Crossword(object):
             print(error)
             return None
 
+    def get_word_at(self, row, col, direction):
+        if self.grid[row][col] is not BLACK:
+            if direction == ACROSS:
+                last_black_square = self.grid[row][:col].rfind(BLACK)
+                next_black_square = self.grid[row][col:].find(BLACK)
+
+                if next_black_square == -1:
+                    next_black_square = self.cols
+                else:
+                    next_black_square = next_black_square + col
+
+                return self.grid[row][last_black_square + 1:next_black_square]
+            elif direction == DOWN:
+                tr = transpose(self.grid)
+                last_black_square = tr[col][:row].rfind(BLACK)
+                next_black_square = tr[col][row:].find(BLACK)
+
+                if next_black_square == -1:
+                    next_black_square = self.rows
+                else:
+                    next_black_square = next_black_square + row
+
+                return tr[col][last_black_square + 1:next_black_square]
+        return None
+
+    def set_word_at(self, row, col, direction, new_answer=""):
+        if direction == ACROSS:
+            last_black_square = self.grid[row][:col].rfind(BLACK)
+            next_black_square = self.grid[row][col:].find(BLACK)
+
+            if next_black_square == -1:
+                next_black_square = self.cols
+            else:
+                next_black_square = next_black_square + col
+            if new_answer == "":
+                new_answer = BLANK * (next_black_square - last_black_square - 1)
+
+            self.grid[row] = self.grid[row][0:last_black_square + 1] + new_answer + self.grid[row][next_black_square:self.cols]
+        elif direction == DOWN:
+            tr = transpose(self.grid)
+            last_black_square = tr[col][:row].rfind(BLACK)
+            next_black_square = tr[col][row:].find(BLACK)
+
+            if next_black_square == -1:
+                next_black_square = self.rows
+            else:
+                next_black_square = next_black_square + row
+            if new_answer == "":
+                new_answer = BLANK * (next_black_square - last_black_square - 1)
+
+            tr[col] = tr[col][0:last_black_square + 1] + new_answer + tr[col][next_black_square:self.rows]
+            self.grid = transpose(tr)
+
+    def set_clue_at(self, row, col, direction, clue=""):
+        if direction == ACROSS:
+            if clue is None:
+                clue = ""
+
+            if self.grid[row][col] is not BLACK:
+                for entry in reversed(self.entries):
+                    if entry.direction == ACROSS and entry.row == row and entry.col <= col:
+                        entry.clue = str(clue)
+                        break
+        elif direction == DOWN:
+            if clue is None:
+                clue = ""
+
+            if self.grid[row][col] is not BLACK:
+                for entry in reversed(self.entries):
+                    if entry.direction == DOWN and entry.col == col and entry.row <= row:
+                        entry.clue = str(clue)
+                        break
+
     def set_entry_at(self, row, col, direction):
         if direction == ACROSS:
             for entry in reversed(self.entries):
                 if entry.direction == ACROSS and entry.row == row and entry.col <= col:
-                    entry.answer = self.read_grid_at(entry.row, entry.col, ACROSS)
+                    entry.answer = self.read_grid_from(entry.row, entry.col, ACROSS)
                     break
+
         elif direction == DOWN:
             for entry in reversed(self.entries):
                 if entry.direction == DOWN and entry.col == col and entry.row <= row:
-                    entry.answer = self.read_grid_at(entry.row, entry.col, DOWN)
+                    entry.answer = self.read_grid_from(entry.row, entry.col, DOWN)
                     break
 
     def get_entry_at(self, row, col, direction):
@@ -363,26 +437,6 @@ class Crossword(object):
 
         return None
 
-    def set_across_clue_at(self, row, col, clue=""):
-        if clue is None:
-            clue = ""
-
-        if self.grid[row][col] is not BLACK:
-            for entry in reversed(self.entries):
-                if entry.direction == ACROSS and entry.row == row and entry.col <= col:
-                    entry.clue = str(clue)
-                    break
-
-    def set_down_clue_at(self, row, col, clue=""):
-        if clue is None:
-            clue = ""
-
-        if self.grid[row][col] is not BLACK:
-            for entry in reversed(self.entries):
-                if entry.direction == DOWN and entry.col == col and entry.row <= row:
-                    entry.clue = str(clue)
-                    break
-
 
 def transpose(grid):
     return ["".join(list(i)) for i in zip(*grid)]
@@ -395,15 +449,9 @@ current_row = 0
 current_col = 6
 
 cw.set_square(0, 5, BLACK)
-# cw.set_square(0, 2, "i")
-# cw.set_square(1, 4, BLACK)
-# cw.set_square(2, 4, BLACK)
-# cw.set_square(2, 3, "k")
-# cw.set_square(3, 4, "r")
-# cw.set_square(2, 4, BLANK)
 
-cw.set_across_clue_at(current_row, current_col, "boogie")
-cw.set_down_clue_at(current_row, current_col, "woogie")
+cw.set_clue_at(current_row, current_col, ACROSS, "boogie")
+cw.set_clue_at(current_row, current_col, DOWN, "woogie")
 cw.printify()
 
 wordlist = Wordlist("wordlist.txt")
@@ -418,25 +466,13 @@ wordlist.printify()
 # wordlist.rank(["coffee", "swanee", "McAfee", "entree", "Yankee"])
 wordlist.rank(wordlist.matches(cw.get_entry_at(current_row, current_col, DOWN).answer))
 
-print(cw.read_grid_at(current_row, current_col, ACROSS))
-print(cw.read_grid_at(current_row, current_col, DOWN))
-
-# Push new answer to grid - across
-cw.grid[0] = cw.grid[0][0:5] + str("newer") + cw.grid[0][5 + len("newer"):15]
-# Push new answer to grid - down
-tr = transpose(cw.grid)
-tr[5] = tr[5][0:0] + str("feud") + tr[5][0 + len("feud"):15]
-cw.grid = transpose(tr)
-
+print(cw.get_word_at(2, 13, ACROSS))
+print(cw.get_word_at(2, 7, DOWN))
+cw.set_word_at(2, 2, ACROSS, "HELL")
+cw.set_word_at(2, 2, DOWN, "WORLD")
+cw.set_word_at(3, 9, ACROSS)
+cw.set_word_at(14, 2, DOWN)
 cw.printify()
-
-# Reverse row
-print("GREW.ANAIS.LABS"[::-1])
-# Find last BLACK square
-last_black_square = cw.grid[current_row][:current_col].rfind(BLACK)
-next_black_square = cw.grid[current_row][current_col:].find(BLACK) + current_col
-print(last_black_square, next_black_square)
-print("GREW.ANAIS.LABS"[last_black_square + 1:next_black_square])
 
 # wordlist.save_to("wordlist.txt")
 
