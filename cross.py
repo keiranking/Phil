@@ -35,18 +35,20 @@ class Wordlist(object):
 
         try:
             with open(file, "r") as raw:
+                print("Importing " + file + "...")
                 raw_list = raw.read().split("\n")
+                for new_word in raw_list:
+                    new_word = new_word.strip().upper()
+                    if MAX_DICT_WORD_LENGTH >= len(new_word) >= MIN_DICT_WORD_LENGTH:
+                        self.words[len(new_word)].append(new_word)
+
+                for i in range(MIN_DICT_WORD_LENGTH, MAX_DICT_WORD_LENGTH + 1):
+                    self.words[i].sort()
+                print("Wordlist imported.")
+
         except FileNotFoundError:
             print("Could not open '" + file + "'.")
             return
-
-        for new_word in raw_list:
-            new_word = new_word.strip().upper()
-            if MAX_DICT_WORD_LENGTH >= len(new_word) >= MIN_DICT_WORD_LENGTH:
-                self.words[len(new_word)].append(new_word)
-
-        for i in range(MIN_DICT_WORD_LENGTH, MAX_DICT_WORD_LENGTH + 1):
-            self.words[i].sort()
 
     def save_to(self, file):
         try:
@@ -83,7 +85,8 @@ class Wordlist(object):
                     self.words[len(unwanted_word)].pop(i)
                 i += 1
 
-    def printify(self):
+    def print(self):
+        print("\n\nWordlist\n--------")
         for i in range(MIN_DICT_WORD_LENGTH, MAX_DICT_WORD_LENGTH + 1):
             if len(self.words[i]) > 0:
                 print("\n" + str(i))
@@ -91,7 +94,7 @@ class Wordlist(object):
                     print(word)
         print("\n")
 
-    def matches(self, query):
+    def match(self, query):
         match_list = []
         for word in self.words[len(query)]:
             pattern = re.compile(query.replace(BLANK, "."))
@@ -108,6 +111,9 @@ class Wordlist(object):
             frequency = re.search(r'\d+', str(lookup_data.find_all(string=re.compile("we have spotted"))))[0]
             print(word + " " + frequency)
 
+    def best(self, list):
+        return list[0]
+
 
 class Entry(object):
     def __init__(self, row, col, direction, label, clue):
@@ -117,7 +123,7 @@ class Entry(object):
         self.label = label
         self.clue = clue
 
-    def printify(self):
+    def print(self):
         print("{0: >2d}".format(self.label) + self.direction[0] + ". " + self.clue)
 
 
@@ -168,7 +174,7 @@ class Crossword(object):
 
     def read_xpf(self, file):
         with open(file) as raw_data:
-            print("Opening " + file + "...\n")
+            print("Importing " + file + "...")
             puz = BeautifulSoup(raw_data, "lxml").puzzle
             if puz is None:
                 raise FileNotFoundError("Could not open '" + file + "'.")
@@ -199,6 +205,7 @@ class Crossword(object):
                                         entry["dir"].lower(), int(entry["num"]),
                                         entry.string))
             self.entries.sort(key=attrgetter('row', 'col'))
+            print("Crossword imported.")
 
     def write_xpf(self, file):
         pass
@@ -232,7 +239,7 @@ class Crossword(object):
             prev_col = entry.col
 
     # Print the crossword to the terminal.
-    def printify(self, flags=""):
+    def print(self, flags=""):
         print("\n" + self.info["title"] + " by " + self.info["author"])
         print("------------------------------------------------------")
         # print("Editor: " + self.info["editor"])
@@ -246,14 +253,14 @@ class Crossword(object):
         print("\n" + "Across: ")
         for entry in self.entries:
             if entry.direction == ACROSS:
-                entry.printify()
+                entry.print()
                 if "a" in flags:
                     print(self.get_word_at(entry.row, entry.col, ACROSS)
                           + " [" + str(entry.row) + "," + str(entry.col) + "] ")
         print("\n" + "Down: ")
         for entry in self.entries:
             if entry.direction == DOWN:
-                entry.printify()
+                entry.print()
                 if "a" in flags:
                     print(self.get_word_at(entry.row, entry.col, DOWN)
                           + " [" + str(entry.row) + "," + str(entry.col) + "] ")
@@ -412,6 +419,9 @@ def transpose(grid):
 cw = Crossword("example.xml")
 wl = Wordlist("wordlist.txt")
 
+cw.print()
+wl.print()
+
 current_row = 8
 current_col = 7
 
@@ -421,20 +431,20 @@ cw.set_clue_at(current_row, current_col, ACROSS, "boogie")
 cw.set_clue_at(current_row, current_col, DOWN, "woogie")
 
 wl.add_words(["contraband", "assumption"])
-# wl.delete_word("mannerism")
-# wl.printify()
 
 print(cw.get_word_at(current_row, current_col, ACROSS))
 print(cw.get_word_at(current_row, current_col, DOWN))
 cw.set_word_at(2, 2, ACROSS, "HELL")
 cw.set_word_at(2, 2, DOWN, "WORLD")
 
-cw.printify()
 cw.set_word_at(current_row, current_col, DOWN)
+cw.print()
+cw.set_word_at(current_row, current_col, DOWN, wl.best(wl.match(cw.get_word_at(current_row, current_col, DOWN))))
+cw.print()
+
 # Get the DOWN word where the cursor is, find matches in our wordlist, and rank the matches.
-wl.rank(wl.matches(cw.get_word_at(current_row, current_col, DOWN)))
+# wl.rank(wl.match(cw.get_word_at(current_row, current_col, DOWN)))
 # cw.set_word_at(current_row, current_col, ACROSS, "contraband")
-cw.printify()
 
 # wordlist.save_to("wordlist.txt")
 
