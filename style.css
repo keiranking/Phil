@@ -1,4 +1,17 @@
-table {
+#numbers {
+  /*float:left;*/
+  border: none;
+  text-align: left;
+  vertical-align: top;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Arial", sans-serif;
+  font-size: 8pt;
+  font-weight: 500;
+}
+
+#grid {
+  /*float:left;*/
+  /*position: relative;
+  top: 0px;*/
   border: 1px solid #000;
   border-collapse: collapse;
   text-align: center;
@@ -6,14 +19,14 @@ table {
   font-size: 15pt;
   font-weight: 300;
 }
-td {
+#grid td {
   border-left: 1px solid #000;
   border-top: 1px solid #000;
 }
-td.active {
+#grid td.active {
   border: 1px solid #55b8fe;
   color: #55b8fe;
 }
-td.black {
+#grid td.black {
   background-color: black;
 }

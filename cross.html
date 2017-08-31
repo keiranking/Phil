@@ -5,35 +5,43 @@
 
 <body>
 
-<table id="grid">
+  <table id="numbers">
+    <tr data-row="0">
+      <td data-col="0" width="32" height="32">1</td>
+      <td data-col="1" width="32" height="32">2</td>
+      <td data-col="2" width="32" height="32">3</td>
+    </tr>
+    <tr data-row="1">
+      <td data-col="0" width="32" height="32">4</td>
+      <td data-col="1" width="32" height="32"></td>
+      <td data-col="2" width="32" height="32"></td>
+    </tr>
+    <tr data-row="2">
+      <td data-col="0" width="32" height="32">5</td>
+      <td data-col="1" width="32" height="32"></td>
+      <td data-col="2" width="32" height="32"></td>
+    </tr>
+  </table>
+
+  <table id="grid">
   <tr data-row="0">
     <td class = "active" data-col="0" width="32" height="32">B</td>
     <td data-col="1" width="32" height="32">A</td>
     <td data-col="2" width="32" height="32">D</td>
   </tr>
   <tr data-row="1">
-    <td data-row="1" data-col="0" width="32" height="32">O</td>
-    <td data-row="1" data-col="1" width="32" height="32">W</td>
-    <td data-row="1" data-col="2" width="32" height="32">E</td>
+    <td data-col="0" width="32" height="32">O</td>
+    <td data-col="1" width="32" height="32">W</td>
+    <td data-col="2" width="32" height="32">E</td>
   </tr>
   <tr data-row="2">
-    <td data-row="2" data-col="0" width="32" height="32">Y</td>
-    <td data-row="2" data-col="1" width="32" height="32">E</td>
-    <td data-row="2" data-col="2" width="32" height="32">N</td>
+    <td data-col="0" width="32" height="32">Y</td>
+    <td data-col="1" width="32" height="32">E</td>
+    <td data-col="2" width="32" height="32">N</td>
   </tr>
 </table>
 
 <script src="cross.js"></script>
 
-<!--
-<img id="myImage" src="https://www.w3schools.com/html/pic_bulboff.gif" width="100" height="180">
-
-<p>
-<button type="button" onclick="light()">Flip Switch</button>
-<button type="button" onclick="shrink()">Less Light</button>
-</p>
-
-<p id="math"></p>
--->
 </body>
 </html>
