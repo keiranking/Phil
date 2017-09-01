@@ -17,7 +17,7 @@ window.addEventListener('keydown', function (e) {
         activeCell.innerHTML = ".";
         activeCell.className = (activeCell.className + " black").trim();
     } else if (e.which == 8) {
-        activeCell.innerHTML = undefined;
+        activeCell.innerHTML = null;
         activeCell.className = activeCell.className.replace("black", "").trim();
     }
     console.log(activeCell.innerHTML);

@@ -1,17 +1,32 @@
-#numbers {
-  /*float:left;*/
-  border: none;
+/*#numbers {
+  position: absolute;
+  border: 1px dotted red;
+  border-collapse: collapse;
   text-align: left;
-  vertical-align: top;
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Arial", sans-serif;
   font-size: 8pt;
   font-weight: 500;
+  padding: 0;
+  margin: 0;
+}
+#numbers td {
+  vertical-align: top;
+}*/
+
+.label {
+  /*float:left;*/
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Arial", sans-serif;
+  font-size: 8pt;
+  font-weight: 500;
+  position: absolute;
+  left: 2px;
+  top: 0px;
+  /*z-index: -1;*/
 }
 
 #grid {
-  /*float:left;*/
-  /*position: relative;
-  top: 0px;*/
+  /*position: relative;*/
+  /*display: block;*/
   border: 1px solid #000;
   border-collapse: collapse;
   text-align: center;
@@ -20,6 +35,7 @@
   font-weight: 300;
 }
 #grid td {
+  position: relative;
   border-left: 1px solid #000;
   border-top: 1px solid #000;
 }
@@ -29,4 +45,9 @@
 }
 #grid td.black {
   background-color: black;
+}
+
+td {
+  width: 32px;
+  height: 32px;
 }
