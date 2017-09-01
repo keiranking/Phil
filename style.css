@@ -1,36 +1,19 @@
-/*#numbers {
-  position: absolute;
-  border: 1px dotted red;
-  border-collapse: collapse;
-  text-align: left;
+body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Arial", sans-serif;
-  font-size: 8pt;
-  font-weight: 500;
-  padding: 0;
-  margin: 0;
 }
-#numbers td {
-  vertical-align: top;
-}*/
 
 .label {
-  /*float:left;*/
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Arial", sans-serif;
   font-size: 8pt;
   font-weight: 500;
   position: absolute;
   left: 2px;
   top: 0px;
-  /*z-index: -1;*/
 }
 
 #grid {
-  /*position: relative;*/
-  /*display: block;*/
   border: 1px solid #000;
   border-collapse: collapse;
   text-align: center;
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Arial", sans-serif;
   font-size: 15pt;
   font-weight: 300;
 }
