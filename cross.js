@@ -1,6 +1,7 @@
 const crosswordSize = 15;
 createGrid(crosswordSize);
 
+var isSymmetrical = true;
 var activeRow = 0;
 var activeCol = 0;
 
@@ -13,18 +14,39 @@ for (const square of squares) {
 const grid = document.getElementById("grid");
 window.addEventListener('keydown', function (e) {
   const activeCell = grid.querySelector('[data-row="' + activeRow + '"]').querySelector('[data-col="' + activeCol + '"]')
+  const symRow = crosswordSize - 1 - activeRow;
+  const symCol = crosswordSize - 1 - activeCol;
+  const symmetricalCell = grid.querySelector('[data-row="' + symRow + '"]').querySelector('[data-col="' + symCol + '"]')
+
   if (activeCell.lastChild.innerHTML != String.fromCharCode(e.which)) {
-    if (e.which >= 65 && e.which <= 90) {       // If user input is A-Z
+    if (e.which >= 65 && e.which <= 90) { // If user input is A-Z
         activeCell.lastChild.innerHTML = String.fromCharCode(e.which);
-        activeCell.className = activeCell.className.replace("black", "").trim();
-    } else if (e.which == 190) {
-        activeCell.lastChild.innerHTML = ".";   // If user wants a black square
+        if (activeCell.className.search("black") > -1) {
+          activeCell.className = activeCell.className.replace("black", "").trim();
+          if (isSymmetrical == true) {
+            symmetricalCell.lastChild.innerHTML = null;
+            symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
+          }
+        }
+    } else if (e.which == 190) {          // If user wants a black square
+        activeCell.lastChild.innerHTML = ".";
         activeCell.className = (activeCell.className + " black").trim();
-    } else if (e.which == 8) {
-        activeCell.lastChild.innerHTML = null;  // If user hits delete
-        activeCell.className = activeCell.className.replace("black", "").trim();
+        if (isSymmetrical == true) {
+          symmetricalCell.lastChild.innerHTML = ".";
+          symmetricalCell.className = (symmetricalCell.className + " black").trim();
+        }
+    } else if (e.which == 8) {            // If user hits delete
+        activeCell.lastChild.innerHTML = null;
+        if (activeCell.className.search("black") > -1) {
+          activeCell.className = activeCell.className.replace("black", "").trim();
+          if (isSymmetrical == true) {
+            symmetricalCell.lastChild.innerHTML = null;
+            symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
+          }
+        }
     }
     console.log(activeCell.lastChild.innerHTML);
+    updateLabels(crosswordSize);
   }
 });
 
@@ -39,7 +61,6 @@ function updateCursor() {
   activeCol = activeCell.dataset.col;
   console.log("[" + activeRow + "," + activeCol + "]");
   activeCell.className = (activeCell.className + " active").trim();
-  updateLabels(crosswordSize);
 }
 
 function createGrid(size) {
@@ -75,16 +96,6 @@ function createGrid(size) {
       }
   }
   updateLabels(size);
-}
-
-function randomNumber(min, max) {
-  return Math.floor(Math.random() * max) + min;
-}
-
-function randomLetter() {
-  var alphabet = "AABCDEEEFGHIIJLMNOOPRSTUWY";
-  var random = randomNumber(0, 25);
-  return alphabet.substring(random, random + 1);
 }
 
 function updateLabels(size) {
@@ -132,6 +143,16 @@ function updateLabels(size) {
       }
     }
   }
+}
+
+function randomNumber(min, max) {
+  return Math.floor(Math.random() * max) + min;
+}
+
+function randomLetter() {
+  var alphabet = "AAAAAAAAABBCCDDDDEEEEEEEEEEEEFFGGGHHIIIIIIIIIJKLLLLMMNNNNNNOOOOOOOOPPQRRRRRRSSSSTTTTTTUUUUVVWWXYYZ";
+  var random = randomNumber(0, 98);
+  return alphabet.substring(random, random + 1);
 }
 
 // window.alert("This is how you create an alert.")
