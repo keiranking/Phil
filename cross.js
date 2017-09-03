@@ -1,25 +1,37 @@
+const keyboard = {
+  "a":      65,
+  "z":      90,
+  "black":  190,
+  "delete": 8,
+  "left":   37,
+  "up":     38,
+  "right":  39,
+  "down":   40
+};
+
 const crosswordSize = 15;
 createGrid(crosswordSize);
 
 var isSymmetrical = true;
 var activeRow = 0;
 var activeCol = 0;
+const grid = document.getElementById("grid");
+const squares = grid.querySelectorAll('td');
 
-const squares = document.getElementById("grid").querySelectorAll('td');
 for (const square of squares) {
-  square.addEventListener('click', updateCursor);
+  square.addEventListener('click', mouseInput);
 }
 
 // Handle all keyboard input
-const grid = document.getElementById("grid");
 window.addEventListener('keydown', function (e) {
-  const activeCell = grid.querySelector('[data-row="' + activeRow + '"]').querySelector('[data-col="' + activeCol + '"]')
+  var activeCell = grid.querySelector('[data-row="' + activeRow + '"]').querySelector('[data-col="' + activeCol + '"]');
   const symRow = crosswordSize - 1 - activeRow;
   const symCol = crosswordSize - 1 - activeCol;
-  const symmetricalCell = grid.querySelector('[data-row="' + symRow + '"]').querySelector('[data-col="' + symCol + '"]')
+  const symmetricalCell = grid.querySelector('[data-row="' + symRow + '"]').querySelector('[data-col="' + symCol + '"]');
 
+  // If the input is different from what's already in the square...
   if (activeCell.lastChild.innerHTML != String.fromCharCode(e.which)) {
-    if (e.which >= 65 && e.which <= 90) { // If user input is A-Z
+    if (e.which >= keyboard["a"] && e.which <= keyboard["z"]) {
         activeCell.lastChild.innerHTML = String.fromCharCode(e.which);
         if (activeCell.className.search("black") > -1) {
           activeCell.className = activeCell.className.replace("black", "").trim();
@@ -28,14 +40,14 @@ window.addEventListener('keydown', function (e) {
             symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
           }
         }
-    } else if (e.which == 190) {          // If user wants a black square
+    } else if (e.which == keyboard["black"]) {
         activeCell.lastChild.innerHTML = ".";
         activeCell.className = (activeCell.className + " black").trim();
         if (isSymmetrical == true) {
           symmetricalCell.lastChild.innerHTML = ".";
           symmetricalCell.className = (symmetricalCell.className + " black").trim();
         }
-    } else if (e.which == 8) {            // If user hits delete
+    } else if (e.which == keyboard["delete"]) {
         activeCell.lastChild.innerHTML = null;
         if (activeCell.className.search("black") > -1) {
           activeCell.className = activeCell.className.replace("black", "").trim();
@@ -44,18 +56,36 @@ window.addEventListener('keydown', function (e) {
             symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
           }
         }
+    } else if (e.which >= keyboard["left"] && e.which <= keyboard["down"]) {
+        const previousCell = grid.querySelector('[data-row="' + activeRow + '"]').querySelector('[data-col="' + activeCol + '"]');
+        previousCell.className = previousCell.className.replace("active", "");
+        switch (e.which) {
+          case keyboard["left"]:
+            activeCol = (activeCol == 0) ? activeCol : activeCol - 1;
+            break;
+          case keyboard["up"]:
+            activeRow = (activeRow == 0) ? activeRow : activeRow - 1;
+            break;
+          case keyboard["right"]:
+            activeCol = (activeCol == crosswordSize - 1) ? activeCol : Number(activeCol) + 1;
+            break;
+          case keyboard["down"]:
+            activeRow = (activeRow == crosswordSize - 1) ? activeRow : Number(activeRow) + 1;
+            break;
+        }
+        console.log("[" + activeRow + "," + activeCol + "]");
+        activeCell = grid.querySelector('[data-row="' + activeRow + '"]').querySelector('[data-col="' + activeCol + '"]');
+        activeCell.className = (activeCell.className + " active").trim();
     }
     console.log(activeCell.lastChild.innerHTML);
     updateLabels(crosswordSize);
   }
 });
 
-function updateCursor() {
-  const previousCell = document.getElementById("grid").querySelector('[data-row="' + activeRow + '"]').querySelector('[data-col="' + activeCol + '"]');
+function mouseInput() {
+  const previousCell = grid.querySelector('[data-row="' + activeRow + '"]').querySelector('[data-col="' + activeCol + '"]');
   // console.log("Previous cursor: [" + previousCell.parentNode.dataset.row + "," + previousCell.dataset.col + "]");
   previousCell.className = previousCell.className.replace("active", "");
-  // previousCell.className = undefined;
-
   const activeCell = event.currentTarget;
   activeRow = activeCell.parentNode.dataset.row;
   activeCol = activeCell.dataset.col;
@@ -99,24 +129,22 @@ function createGrid(size) {
 }
 
 function updateLabels(size) {
-  // set a counter to 1
   var count = 1;
   var increment = false;
   const rows = size;
   const cols = size;
   const grid = document.getElementById("grid");
-  // for each row
+
   for (i = 0; i < rows; i++) {
-    // for each column
     for (j = 0; j < cols; j++) {
       increment = false;
       // if the cell isn't 'black'
       var currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       if (currentCell.className.search("black") == -1) {
-        // if the row is 0, increment
+        // if the row is 0, increment the clue number
         if (i == 0) {
           increment = true;
-        // else if the cell above me is black, increment
+        // else if the square above me is black, increment
         } else {
           upCell = grid.querySelector('[data-row="' + (i - 1) + '"]').querySelector('[data-col="' + j + '"]');
           if (upCell.className.search("black") > -1) {
@@ -126,7 +154,7 @@ function updateLabels(size) {
         // if the column is 0, increment
         if (j == 0) {
           increment = true;
-        // else if the cell to my left is black, increment
+        // else if the square to my left is black, increment
         } else {
           leftCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + (j - 1) + '"]');
           if (leftCell.className.search("black") > -1) {
@@ -150,8 +178,8 @@ function randomNumber(min, max) {
 }
 
 function randomLetter() {
-  var alphabet = "AAAAAAAAABBCCDDDDEEEEEEEEEEEEFFGGGHHIIIIIIIIIJKLLLLMMNNNNNNOOOOOOOOPPQRRRRRRSSSSTTTTTTUUUUVVWWXYYZ";
-  var random = randomNumber(0, 98);
+  var alphabet = "AAAAAAAAABBCCDDDDEEEEEEEEEEEEFFGGGHHIIIIIIIIIJKLLLLMMNNNNNNOOOOOOOOPPQRRRRRRSSSSSSTTTTTTUUUUVVWWXYYZ";
+  var random = randomNumber(0, 100);
   return alphabet.substring(random, random + 1);
 }
 

@@ -2,6 +2,11 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Arial", sans-serif;
 }
 
+h1 {
+  margin-bottom: 0;
+  font-size: 24pt;
+}
+
 .label {
   font-size: 8pt;
   font-weight: 500;
