@@ -9,12 +9,17 @@ const keyboard = {
   "down":   40
 };
 
+const dir = {
+  across: "across",
+  down: "down"
+};
 const crosswordSize = 15;
 createGrid(crosswordSize);
 
 var isSymmetrical = true;
 var activeRow = 0;
 var activeCol = 0;
+var lastDirection = DIR.ACROSS;
 const grid = document.getElementById("grid");
 const squares = grid.querySelectorAll('td');
 
@@ -31,7 +36,7 @@ window.addEventListener('keydown', function (e) {
 
   // If the input is different from what's already in the square...
   if (activeCell.lastChild.innerHTML != String.fromCharCode(e.which)) {
-    if (e.which >= keyboard["a"] && e.which <= keyboard["z"]) {
+    if (e.which >= keyboard.a && e.which <= keyboard.z) {
         activeCell.lastChild.innerHTML = String.fromCharCode(e.which);
         if (activeCell.className.search("black") > -1) {
           activeCell.className = activeCell.className.replace("black", "").trim();
@@ -40,14 +45,14 @@ window.addEventListener('keydown', function (e) {
             symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
           }
         }
-    } else if (e.which == keyboard["black"]) {
+    } else if (e.which == keyboard.black) {
         activeCell.lastChild.innerHTML = ".";
         activeCell.className = (activeCell.className + " black").trim();
         if (isSymmetrical == true) {
           symmetricalCell.lastChild.innerHTML = ".";
           symmetricalCell.className = (symmetricalCell.className + " black").trim();
         }
-    } else if (e.which == keyboard["delete"]) {
+    } else if (e.which == keyboard.delete) {
         activeCell.lastChild.innerHTML = null;
         if (activeCell.className.search("black") > -1) {
           activeCell.className = activeCell.className.replace("black", "").trim();
@@ -56,24 +61,29 @@ window.addEventListener('keydown', function (e) {
             symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
           }
         }
-    } else if (e.which >= keyboard["left"] && e.which <= keyboard["down"]) {
+    } else if (e.which >= keyboard.left && e.which <= keyboard.down) {
         const previousCell = grid.querySelector('[data-row="' + activeRow + '"]').querySelector('[data-col="' + activeCol + '"]');
         previousCell.className = previousCell.className.replace("active", "");
         switch (e.which) {
-          case keyboard["left"]:
+          case keyboard.left:
             activeCol = (activeCol == 0) ? activeCol : activeCol - 1;
+            lastDirection = dir.across;
             break;
-          case keyboard["up"]:
+          case keyboard.up:
             activeRow = (activeRow == 0) ? activeRow : activeRow - 1;
+            lastDirection = dir.down;
             break;
-          case keyboard["right"]:
+          case keyboard.right:
             activeCol = (activeCol == crosswordSize - 1) ? activeCol : Number(activeCol) + 1;
+            lastDirection = dir.across;
             break;
-          case keyboard["down"]:
+          case keyboard.down:
             activeRow = (activeRow == crosswordSize - 1) ? activeRow : Number(activeRow) + 1;
+            lastDirection = dir.down;
             break;
         }
         console.log("[" + activeRow + "," + activeCol + "]");
+        console.log(lastDirection);
         activeCell = grid.querySelector('[data-row="' + activeRow + '"]').querySelector('[data-col="' + activeCol + '"]');
         activeCell.className = (activeCell.className + " active").trim();
     }
