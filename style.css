@@ -1,5 +1,5 @@
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Arial", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Roboto", "Droid Sans", "Arial", sans-serif;
 }
 
 h1 {
@@ -11,8 +11,10 @@ h2 {
   margin-bottom: 0;
 }
 
-p {
+p.display-word {
   margin:0;
+  font-size: 24pt;
+  font-weight: 300;
 }
 
 .label {

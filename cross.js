@@ -180,6 +180,7 @@ function createUI() {
 
   var paragraph = document.createElement("P");
   paragraph.setAttribute("id", "across-word");
+  paragraph.setAttribute("class", "display-word");
   paragraph.innerHTML = "";
   document.body.appendChild(paragraph);
 
@@ -190,6 +191,7 @@ function createUI() {
 
   paragraph = document.createElement("P");
   paragraph.setAttribute("id", "down-word");
+  paragraph.setAttribute("class", "display-word");
   paragraph.innerHTML = "";
   document.body.appendChild(paragraph);
 }
