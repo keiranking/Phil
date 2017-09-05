@@ -7,6 +7,14 @@ h1 {
   font-size: 24pt;
 }
 
+h2 {
+  margin-bottom: 0;
+}
+
+p {
+  margin:0;
+}
+
 .label {
   font-size: 8pt;
   font-weight: 500;
@@ -33,6 +41,10 @@ h1 {
 }
 #grid td.black {
   background-color: black;
+}
+
+#grid td.highlight {
+  background-color: #def1ff;
 }
 
 td {

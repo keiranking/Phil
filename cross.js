@@ -8,19 +8,29 @@ const keyboard = {
   "right":  39,
   "down":   40
 };
-const dir = {
-  across: "across",
-  down: "down"
-};
-const crosswordSize = 15;
-createGrid(crosswordSize);
+
+const BLACK = ".";
+const BLANK = "-";
+const ACROSS = "across";
+const DOWN = "down";
+const SIZE = 15;
+
+createGrid(SIZE);
+createUI();
 
 var isSymmetrical = true;
-var activeRow = 0;
-var activeCol = 0;
-var lastDirection = dir.across;
+var current = {
+  row:        0,
+  col:        0,
+  acrossWord: '',
+  downWord:   '',
+  direction:  ACROSS
+};
+
 const grid = document.getElementById("grid");
 const squares = grid.querySelectorAll('td');
+
+updateActiveWords();
 
 for (const square of squares) {
   square.addEventListener('click', mouseHandler);
@@ -31,20 +41,23 @@ window.addEventListener('keydown', keyboardHandler);
 // F U N C T I O N S
 
 function mouseHandler() {
-  const previousCell = grid.querySelector('[data-row="' + activeRow + '"]').querySelector('[data-col="' + activeCol + '"]');
+  const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   // console.log("Previous cursor: [" + previousCell.parentNode.dataset.row + "," + previousCell.dataset.col + "]");
   previousCell.className = previousCell.className.replace("active", "");
   const activeCell = event.currentTarget;
-  activeRow = activeCell.parentNode.dataset.row;
-  activeCol = activeCell.dataset.col;
-  console.log("[" + activeRow + "," + activeCol + "]");
-  activeCell.className = (activeCell.className + " active").trim();
+  current.row = activeCell.parentNode.dataset.row;
+  current.col = activeCell.dataset.col;
+  console.log("[" + current.row + "," + current.col + "]");
+  activeCell.className += " active";
+  activeCell.className.trim();
+
+  updateActiveWords();
 }
 
 function keyboardHandler(e) {
-  var activeCell = grid.querySelector('[data-row="' + activeRow + '"]').querySelector('[data-col="' + activeCol + '"]');
-  const symRow = crosswordSize - 1 - activeRow;
-  const symCol = crosswordSize - 1 - activeCol;
+  var activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  const symRow = SIZE - 1 - current.row;
+  const symCol = SIZE - 1 - current.col;
   const symmetricalCell = grid.querySelector('[data-row="' + symRow + '"]').querySelector('[data-col="' + symCol + '"]');
 
   // If the input is different from what's already in the square...
@@ -54,68 +67,73 @@ function keyboardHandler(e) {
         if (activeCell.className.search("black") > -1) {
           activeCell.className = activeCell.className.replace("black", "").trim();
           if (isSymmetrical == true) {
-            symmetricalCell.lastChild.innerHTML = null;
+            symmetricalCell.lastChild.innerHTML = " ";
             symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
           }
         }
+        // move the cursor
         e = new Event('keydown');
-        if (lastDirection == dir.across) {
+        if (current.direction == ACROSS) {
           e.which = keyboard.right;
         } else {
           e.which = keyboard.down;
         }
         keyboardHandler(e);
     } else if (e.which == keyboard.black) {
-        activeCell.lastChild.innerHTML = ".";
-        activeCell.className = (activeCell.className + " black").trim();
+        activeCell.lastChild.innerHTML = BLACK;
+        activeCell.className += " black";
+        activeCell.className.trim();
         if (isSymmetrical == true) {
-          symmetricalCell.lastChild.innerHTML = ".";
-          symmetricalCell.className = (symmetricalCell.className + " black").trim();
+          symmetricalCell.lastChild.innerHTML = BLACK;
+          symmetricalCell.className += " black";
+          symmetricalCell.className.trim();
         }
     } else if (e.which == keyboard.delete) {
-        activeCell.lastChild.innerHTML = null;
+        activeCell.lastChild.innerHTML = " ";
         if (activeCell.className.search("black") > -1) {
           activeCell.className = activeCell.className.replace("black", "").trim();
           if (isSymmetrical == true) {
-            symmetricalCell.lastChild.innerHTML = null;
+            symmetricalCell.lastChild.innerHTML = " ";
             symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
           }
         }
+        // move the cursor
         e = new Event('keydown');
-        if (lastDirection == dir.across) {
+        if (current.direction == ACROSS) {
           e.which = keyboard.left;
         } else {
           e.which = keyboard.up;
         }
         keyboardHandler(e);
     } else if (e.which >= keyboard.left && e.which <= keyboard.down) {
-        const previousCell = grid.querySelector('[data-row="' + activeRow + '"]').querySelector('[data-col="' + activeCol + '"]');
+        const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
         previousCell.className = previousCell.className.replace("active", "");
         switch (e.which) {
           case keyboard.left:
-            activeCol = (activeCol == 0) ? activeCol : activeCol - 1;
-            lastDirection = dir.across;
+            current.col = (current.col == 0) ? current.col : current.col - 1;
+            current.direction = ACROSS;
             break;
           case keyboard.up:
-            activeRow = (activeRow == 0) ? activeRow : activeRow - 1;
-            lastDirection = dir.down;
+            current.row = (current.row == 0) ? current.row : current.row - 1;
+            current.direction = DOWN;
             break;
           case keyboard.right:
-            activeCol = (activeCol == crosswordSize - 1) ? activeCol : Number(activeCol) + 1;
-            lastDirection = dir.across;
+            current.col = (current.col == SIZE - 1) ? current.col : Number(current.col) + 1;
+            current.direction = ACROSS;
             break;
           case keyboard.down:
-            activeRow = (activeRow == crosswordSize - 1) ? activeRow : Number(activeRow) + 1;
-            lastDirection = dir.down;
+            current.row = (current.row == SIZE - 1) ? current.row : Number(current.row) + 1;
+            current.direction = DOWN;
             break;
         }
-        console.log("[" + activeRow + "," + activeCol + "]");
-        // console.log(lastDirection);
-        activeCell = grid.querySelector('[data-row="' + activeRow + '"]').querySelector('[data-col="' + activeCol + '"]');
+        console.log("[" + current.row + "," + current.col + "]");
+        // console.log(current.direction);
+        activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
         activeCell.className = (activeCell.className + " active").trim();
     }
     console.log(activeCell.lastChild.innerHTML);
-    updateLabels(crosswordSize);
+    updateLabels();
+    updateActiveWords();
   // }
 }
 
@@ -151,14 +169,36 @@ function createGrid(size) {
     		document.querySelector('[data-row="' + i + '"]').appendChild(col);
       }
   }
-  updateLabels(size);
+  updateLabels();
 }
 
-function updateLabels(size) {
+function createUI() {
+  var heading = document.createElement("H2");
+  heading.setAttribute("id", "across-word-heading");
+  heading.innerHTML = "Across";
+  document.body.appendChild(heading);
+
+  var paragraph = document.createElement("P");
+  paragraph.setAttribute("id", "across-word");
+  paragraph.innerHTML = "";
+  document.body.appendChild(paragraph);
+
+  heading = document.createElement("H2");
+  heading.setAttribute("id", "down-word-heading");
+  heading.innerHTML = "Down";
+  document.body.appendChild(heading);
+
+  paragraph = document.createElement("P");
+  paragraph.setAttribute("id", "down-word");
+  paragraph.innerHTML = "";
+  document.body.appendChild(paragraph);
+}
+
+function updateLabels() {
   var count = 1;
   var increment = false;
-  const rows = size;
-  const cols = size;
+  const rows = SIZE;
+  const cols = SIZE;
   const grid = document.getElementById("grid");
 
   for (var i = 0; i < rows; i++) {
@@ -199,11 +239,57 @@ function updateLabels(size) {
   }
 }
 
-function pressVirtualKey(key) {
-  var e = new Event('keydown');
-  e.keyCode = key;
-  document.dispatchEvent(e);
-  console.log("dispatched key event..." + e.keyCode);
+function updateActiveWords() {
+
+  const activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  if (activeCell.lastChild.innerHTML == BLACK) {
+    current.acrossWord = '';
+    current.downWord = '';
+  } else {
+    // Across
+    var rowText = '';
+    var startIndex, endIndex;
+    for (var i = 0; i < SIZE; i++) {
+      var nextAcrossLetter = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]').lastChild.innerHTML;
+      nextAcrossLetter = (nextAcrossLetter == " ") ? "-" : nextAcrossLetter;
+      rowText += nextAcrossLetter;
+    }
+    [startIndex, endIndex] = getWordIndices(rowText, current.col);
+    current.acrossWord = rowText.slice(startIndex, endIndex);
+
+    // Down
+    var colText = '';
+    for (var j = 0; j < SIZE; j++) {
+      var nextDownLetter = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]').lastChild.innerHTML;
+      nextDownLetter = (nextDownLetter == " ") ? "-" : nextDownLetter;
+      colText += nextDownLetter;
+    }
+    [startIndex, endIndex] = getWordIndices(colText, current.row);
+    current.downWord = colText.slice(startIndex, endIndex);
+
+    // for (const square in squares) {
+    //   if (square.className != undefined) {
+    //     square.className = square.className.replace("highlight", "");
+    //   }
+    // }
+    // for (var i = startIndex; i < endIndex; i++) {
+    //   var square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]');
+    //   square.className += " highlight";
+    //   square.className.trim();
+    // }
+
+  }
+  document.getElementById("across-word").innerHTML = current.acrossWord;
+  document.getElementById("down-word").innerHTML = current.downWord;
+  console.log(current.acrossWord, current.downWord);
+}
+
+function getWordIndices(text, position) {
+  var startIndex = text.slice(0, position).lastIndexOf(BLACK);
+  startIndex = (startIndex == -1) ? 0 : startIndex + 1;
+  var endIndex = text.slice(position, SIZE).indexOf(BLACK);
+  endIndex = (endIndex == -1) ? SIZE : Number(position) + Number(endIndex);
+  return [startIndex, endIndex];
 }
 
 function randomNumber(min, max) {
