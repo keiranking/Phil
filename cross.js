@@ -9,7 +9,6 @@ const keyboard = {
   "right":  39,
   "down":   40
 };
-
 const BLACK = ".";
 const BLANK = "-";
 const ACROSS = "across";
@@ -17,7 +16,6 @@ const DOWN = "down";
 const SIZE = 15;
 
 createGrid(SIZE);
-// createUI();
 
 var isSymmetrical = true;
 var current = {
@@ -26,9 +24,9 @@ var current = {
   acrossWord: '',
   downWord:   '',
   acrossStartIndex:0,
-  acrossEndIndex:  0,
+  acrossEndIndex:  SIZE,
   downStartIndex:  0,
-  downEndIndex:    0,
+  downEndIndex:    SIZE,
   direction:  ACROSS
 };
 
@@ -299,6 +297,9 @@ function updateActiveWordsUI() {
       square.className.trim();
     }
   }
+
+  document.getElementById("across-matches").innerHTML = match(current.acrossWord);
+  document.getElementById("down-matches").innerHTML = match(current.downWord);
 }
 
 function generateLayout() {

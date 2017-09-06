@@ -35,6 +35,11 @@ p.current-word {
   font-weight: 300;
 }
 
+p.matches {
+  margin: 0;
+  word-wrap: break-word;
+}
+
 .label {
   font-size: 8pt;
   font-weight: 500;
