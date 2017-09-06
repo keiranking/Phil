@@ -3,6 +3,7 @@ const keyboard = {
   "z":      90,
   "black":  190,
   "delete": 8,
+  "space":  32,
   "left":   37,
   "up":     38,
   "right":  39,
@@ -16,7 +17,7 @@ const DOWN = "down";
 const SIZE = 15;
 
 createGrid(SIZE);
-createUI();
+// createUI();
 
 var isSymmetrical = true;
 var current = {
@@ -24,6 +25,10 @@ var current = {
   col:        0,
   acrossWord: '',
   downWord:   '',
+  acrossStartIndex:0,
+  acrossEndIndex:  0,
+  downStartIndex:  0,
+  downEndIndex:    0,
   direction:  ACROSS
 };
 
@@ -52,6 +57,7 @@ function mouseHandler() {
   activeCell.className.trim();
 
   updateActiveWords();
+  updateActiveWordsUI();
 }
 
 function keyboardHandler(e) {
@@ -62,7 +68,7 @@ function keyboardHandler(e) {
 
   // If the input is different from what's already in the square...
   // if (activeCell.lastChild.innerHTML != String.fromCharCode(e.which)) {
-    if (e.which >= keyboard.a && e.which <= keyboard.z) {
+    if ((e.which >= keyboard.a && e.which <= keyboard.z) || e.which == keyboard.space) {
         activeCell.lastChild.innerHTML = String.fromCharCode(e.which);
         if (activeCell.className.search("black") > -1) {
           activeCell.className = activeCell.className.replace("black", "").trim();
@@ -134,6 +140,7 @@ function keyboardHandler(e) {
     console.log(activeCell.lastChild.innerHTML);
     updateLabels();
     updateActiveWords();
+    updateActiveWordsUI();
   // }
 }
 
@@ -142,7 +149,7 @@ function createGrid(size) {
   const cols = size;
   var table = document.createElement("TABLE");
   table.setAttribute("id", "grid");
-  document.body.appendChild(table);
+  document.getElementById("main").appendChild(table);
 
 	for (var i = 0; i < rows; i++) {
     	var row = document.createElement("TR");
@@ -170,30 +177,6 @@ function createGrid(size) {
       }
   }
   updateLabels();
-}
-
-function createUI() {
-  var heading = document.createElement("H2");
-  heading.setAttribute("id", "across-word-heading");
-  heading.innerHTML = "Across";
-  document.body.appendChild(heading);
-
-  var paragraph = document.createElement("P");
-  paragraph.setAttribute("id", "across-word");
-  paragraph.setAttribute("class", "display-word");
-  paragraph.innerHTML = "";
-  document.body.appendChild(paragraph);
-
-  heading = document.createElement("H2");
-  heading.setAttribute("id", "down-word-heading");
-  heading.innerHTML = "Down";
-  document.body.appendChild(heading);
-
-  paragraph = document.createElement("P");
-  paragraph.setAttribute("id", "down-word");
-  paragraph.setAttribute("class", "display-word");
-  paragraph.innerHTML = "";
-  document.body.appendChild(paragraph);
 }
 
 function updateLabels() {
@@ -247,17 +230,20 @@ function updateActiveWords() {
   if (activeCell.lastChild.innerHTML == BLACK) {
     current.acrossWord = '';
     current.downWord = '';
+    current.acrossStartIndex = null;
+    current.acrossEndIndex = null;
+    current.downStartIndex = null;
+    current.downEndIndex = null;
   } else {
     // Across
     var rowText = '';
-    var startIndex, endIndex;
     for (var i = 0; i < SIZE; i++) {
       var nextAcrossLetter = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]').lastChild.innerHTML;
       nextAcrossLetter = (nextAcrossLetter == " ") ? "-" : nextAcrossLetter;
       rowText += nextAcrossLetter;
     }
-    [startIndex, endIndex] = getWordIndices(rowText, current.col);
-    current.acrossWord = rowText.slice(startIndex, endIndex);
+    [current.acrossStartIndex, current.acrossEndIndex] = getWordIndices(rowText, current.col);
+    current.acrossWord = rowText.slice(current.acrossStartIndex, current.acrossEndIndex);
 
     // Down
     var colText = '';
@@ -266,24 +252,13 @@ function updateActiveWords() {
       nextDownLetter = (nextDownLetter == " ") ? "-" : nextDownLetter;
       colText += nextDownLetter;
     }
-    [startIndex, endIndex] = getWordIndices(colText, current.row);
-    current.downWord = colText.slice(startIndex, endIndex);
-
-    // for (const square in squares) {
-    //   if (square.className != undefined) {
-    //     square.className = square.className.replace("highlight", "");
-    //   }
-    // }
-    // for (var i = startIndex; i < endIndex; i++) {
-    //   var square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]');
-    //   square.className += " highlight";
-    //   square.className.trim();
-    // }
-
+    [current.downStartIndex, current.downEndIndex] = getWordIndices(colText, current.row);
+    current.downWord = colText.slice(current.downStartIndex, current.downEndIndex);
   }
   document.getElementById("across-word").innerHTML = current.acrossWord;
   document.getElementById("down-word").innerHTML = current.downWord;
-  console.log(current.acrossWord, current.downWord);
+  console.log("Across:", current.acrossWord, "Down:", current.downWord);
+  // console.log(current.acrossWord.split("-").join("*"));
 }
 
 function getWordIndices(text, position) {
@@ -292,6 +267,57 @@ function getWordIndices(text, position) {
   var endIndex = text.slice(position, SIZE).indexOf(BLACK);
   endIndex = (endIndex == -1) ? SIZE : Number(position) + Number(endIndex);
   return [startIndex, endIndex];
+}
+
+function updateActiveWordsUI() {
+  // Clear the grid of any highlights
+  for (var i = 0; i < SIZE; i++) {
+    for (var j = 0; j < SIZE; j++) {
+      const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      if (square.className.search("highlight") > -1) {
+        square.className = square.className.replace("highlight", "").trim();
+      }
+      if (square.className.search("lowlight") > -1) {
+        square.className = square.className.replace("lowlight", "").trim();
+      }
+    }
+  }
+
+  // Highlight across
+  for (var i = current.acrossStartIndex; i < current.acrossEndIndex; i++) {
+    const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]');
+    if (i != current.col) {
+      square.className += (current.direction == ACROSS) ? " highlight" : " lowlight";
+      square.className.trim();
+    }
+  }
+  // Highlight down
+  for (var j = current.downStartIndex; j < current.downEndIndex; j++) {
+    const square = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]');
+    if (j != current.row) {
+      square.className += (current.direction == DOWN) ? " highlight" : " lowlight";
+      square.className.trim();
+    }
+  }
+}
+
+function generateLayout() {
+  locations = [
+    [0,4], [1,4], [2,4], [12,4], [13,4], [14,4],
+    [4,0], [4,1], [4,2], [4,12], [4,13], [4,14],
+    [8,3], [7,4], [6,5], [5,6], [4,7], [3,8],
+  ];
+
+  isSymmetrical = true;
+  for (var i = 0; i < locations.length; i++) {
+    [current.row, current.col] = locations[i];
+    // var e = new Event('click');
+    // mouseHandler(e);
+    var e = new Event('keydown');
+    e.which = keyboard.black;
+    keyboardHandler(e);
+  }
+  console.log("Quick layout.")
 }
 
 function randomNumber(min, max) {

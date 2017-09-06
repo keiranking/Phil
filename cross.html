@@ -3,6 +3,18 @@
   <link rel="stylesheet" type="text/css" href="style.css" />
 </head>
 <body>
+  <div id="main"></div>
+  <div id="sidebar">
+    <div class="half-sidebar">
+      <h2 class="direction-heading">Across</h2>
+      <p id="across-word" class="current-word"></p>
+    </div>
+    <div class="half-sidebar">
+      <h2 class="direction-heading">Down</h2>
+      <p id="down-word" class="current-word"></p>
+    </div>
+  </div>
+  <input id="quick-layout" type="button" value="Quick Layout" onclick="generateLayout();" />
   <script src="cross.js"></script>
 </body>
 </html>

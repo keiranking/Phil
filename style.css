@@ -1,5 +1,22 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Roboto", "Droid Sans", "Arial", sans-serif;
+  width: 840px;
+}
+
+#main {
+  width: 580px;
+  height: 550px;
+  float: left;
+}
+
+#sidebar {
+  width: 260px;
+  height: 550px;
+  float: right;
+}
+
+.half-sidebar {
+  height: 50%;
 }
 
 h1 {
@@ -7,13 +24,14 @@ h1 {
   font-size: 24pt;
 }
 
-h2 {
-  margin-bottom: 0;
+h2.direction-heading {
+  font-size: 15pt;
+  margin: 0;
 }
 
-p.display-word {
+p.current-word {
   margin:0;
-  font-size: 24pt;
+  font-size: 21pt;
   font-weight: 300;
 }
 
@@ -33,6 +51,8 @@ p.display-word {
   font-weight: 300;
 }
 #grid td {
+  width: 35px;
+  height: 36px;
   position: relative;
   border-left: 1px solid #000;
   border-top: 1px solid #000;
@@ -40,6 +60,8 @@ p.display-word {
 #grid td.active {
   border: 1px solid #55b8fe;
   color: #55b8fe;
+  opacity: 0.8;
+  font-weight: 400;
 }
 #grid td.black {
   background-color: black;
@@ -47,9 +69,12 @@ p.display-word {
 
 #grid td.highlight {
   background-color: #def1ff;
+  font-weight: 400;
+}
+
+#grid td.lowlight {
+  background-color: #edeff0;
 }
 
 td {
-  width: 35px;
-  height: 36px;
 }
