@@ -4,17 +4,39 @@ var wordlist = [
   [], [], [], [], [], []
 ];
 
+importWordlist("https://raw.githubusercontent.com/keiranking/kCrossword/master/wordlist.txt");
 addToWordlist(["cat", "dog", "urn", "hot", "box", "goo", "air", "eve", "ear", "owe", "you"]);
 addToWordlist(["area", "barn", "door", "fool", "cord", "wood", "look", "joke", "lark", "auld", "lang"]);
 addToWordlist(["mark", "meal", "more", "most", "milk", "mess", "mush", "musk", "muss", "muse", "myth"]);
+
+sortWordlist();
 
 //____________________
 // F U N C T I O N S
 
 function addToWordlist(words) {
   for (i = 0; i < words.length; i++) {
-    wordlist[words[i].length].push(words[i].toUpperCase());
+    const word = words[i].trim();
+    wordlist[word.length].push(word.toUpperCase());
   }
+}
+
+function sortWordlist() {
+  for (i = 3; i < wordlist.length; i++) {
+    wordlist[i].sort();
+  }
+}
+
+function importWordlist(url) {
+  var textFile = new XMLHttpRequest();
+  textFile.open("GET", url, true);
+  textFile.onreadystatechange = function() {
+    if (textFile.readyState === 4 && textFile.status === 200) {  // Makes sure the document is ready to parse, and it's found the file.
+      const words = textFile.responseText.split("\n"); // Will separate each line into an array
+      addToWordlist(words);
+    }
+  }
+  textFile.send(null);
 }
 
 function match(word) {
