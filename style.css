@@ -35,9 +35,19 @@ p.current-word {
   font-weight: 300;
 }
 
-p.matches {
+ul.matches {
   margin: 0;
-  word-wrap: break-word;
+  height: 75%;
+  width: 160px;
+  list-style-type: none;
+  padding: 0;
+  color: #999;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+ul.matches li {
+  margin: 2px 0;
 }
 
 .label {
@@ -64,7 +74,7 @@ p.matches {
 }
 #grid td.active {
   border: 1px solid #55b8fe;
-  color: #55b8fe;
+  /*color: #55b8fe;*/
   opacity: 0.8;
   font-weight: 400;
 }
@@ -73,13 +83,18 @@ p.matches {
 }
 
 #grid td.highlight {
+  border: 1px solid #55b8fe;
   background-color: #def1ff;
   font-weight: 400;
 }
 
 #grid td.lowlight {
-  background-color: #edeff0;
+  /*background-color: #edeff0;*/
+  background-color: #f5f7f7;
 }
 
-td {
+ul.match-list {
+  height: 100px;
+  overflow: hidden;
+  overflow-y: scroll;
 }

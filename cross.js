@@ -56,6 +56,7 @@ function mouseHandler() {
 
   updateActiveWords();
   updateActiveWordsUI();
+  updateMatchesUI();
 }
 
 function keyboardHandler(e) {
@@ -139,6 +140,7 @@ function keyboardHandler(e) {
     updateLabels();
     updateActiveWords();
     updateActiveWordsUI();
+    updateMatchesUI();
   // }
 }
 
@@ -297,9 +299,8 @@ function updateActiveWordsUI() {
       square.className.trim();
     }
   }
-
-  document.getElementById("across-matches").innerHTML = match(current.acrossWord);
-  document.getElementById("down-matches").innerHTML = match(current.downWord);
+  // document.getElementById("across-matches").innerHTML = match(current.acrossWord);
+  // document.getElementById("down-matches").innerHTML = match(current.downWord);
 }
 
 function generateLayout() {
