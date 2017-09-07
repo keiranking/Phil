@@ -4,20 +4,19 @@ var wordlist = [
   [], [], [], [], [], []
 ];
 
-importWordlist("https://raw.githubusercontent.com/keiranking/kCrossword/master/wordlist.txt");
-addToWordlist(["cat", "dog", "urn", "hot", "box", "goo", "air", "eve", "ear", "owe", "you"]);
-addToWordlist(["area", "barn", "door", "fool", "cord", "wood", "look", "joke", "lark", "auld", "lang"]);
-addToWordlist(["mark", "meal", "more", "most", "milk", "mess", "mush", "musk", "muss", "muse", "myth"]);
-
+// importWordlist("https://raw.githubusercontent.com/keiranking/kCrossword/master/wordlist.txt");
+importWordlist("https://raw.githubusercontent.com/keiranking/kCrossword/master/WL-MirriamWebster9thCollegiate.txt");
 sortWordlist();
 
 //____________________
 // F U N C T I O N S
 
-function addToWordlist(words) {
-  for (i = 0; i < words.length; i++) {
-    const word = words[i].trim();
-    wordlist[word.length].push(word.toUpperCase());
+function addToWordlist(newWords) {
+  for (i = 0; i < newWords.length; i++) {
+    const word = newWords[i].trim();
+    if (word.length < wordlist.length) { // Make sure we don't access outside the wordlist array
+      wordlist[word.length].push(word.toUpperCase());
+    }
   }
 }
 
@@ -39,17 +38,22 @@ function importWordlist(url) {
   textFile.send(null);
 }
 
-function match(word) {
+function matchFromWordlist(word) {
   const l = word.length;
-  word = word.split("-").join("\\w");
-  const pattern = new RegExp(word);
-  var matches = [];
-  for (var i = 0; i < wordlist[l].length; i++) {
-    if (wordlist[l][i].search(pattern) > -1) {
-      matches.push(wordlist[l][i]);
+  const actualLettersInWord = word.replace(/-/g, "").length;
+  if (actualLettersInWord >= 1 && actualLettersInWord < l) { // Only search if word isn't completely blank or filled
+    word = word.split(DASH).join("\\w");
+    const pattern = new RegExp(word);
+    var matches = [];
+    for (var i = 0; i < wordlist[l].length; i++) {
+      if (wordlist[l][i].search(pattern) > -1) {
+        matches.push(wordlist[l][i]);
+      }
     }
+    return matches;
+  } else {
+    return [];
   }
-  return matches;
 }
 
 function updateMatchesUI() {
@@ -57,8 +61,8 @@ function updateMatchesUI() {
   var downMatchList = document.getElementById("down-matches");
   acrossMatchList.innerHTML = "";
   downMatchList.innerHTML = "";
-  const acrossMatches = match(current.acrossWord);
-  const downMatches = match(current.downWord);
+  const acrossMatches = matchFromWordlist(current.acrossWord);
+  const downMatches = matchFromWordlist(current.downWord);
   for (i = 0; i < acrossMatches.length; i++) {
     var li = document.createElement("LI");
     li.innerHTML = acrossMatches[i].toLowerCase();

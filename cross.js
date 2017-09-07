@@ -10,7 +10,8 @@ const keyboard = {
   "down":   40
 };
 const BLACK = ".";
-const BLANK = "-";
+const DASH = "-";
+const BLANK = " ";
 const ACROSS = "across";
 const DOWN = "down";
 const SIZE = 15;
@@ -72,7 +73,7 @@ function keyboardHandler(e) {
         if (activeCell.className.search("black") > -1) {
           activeCell.className = activeCell.className.replace("black", "").trim();
           if (isSymmetrical == true) {
-            symmetricalCell.lastChild.innerHTML = " ";
+            symmetricalCell.lastChild.innerHTML = BLANK;
             symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
           }
         }
@@ -94,11 +95,11 @@ function keyboardHandler(e) {
           symmetricalCell.className.trim();
         }
     } else if (e.which == keyboard.delete) {
-        activeCell.lastChild.innerHTML = " ";
+        activeCell.lastChild.innerHTML = BLANK;
         if (activeCell.className.search("black") > -1) {
           activeCell.className = activeCell.className.replace("black", "").trim();
           if (isSymmetrical == true) {
-            symmetricalCell.lastChild.innerHTML = " ";
+            symmetricalCell.lastChild.innerHTML = BLANK;
             symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
           }
         }
@@ -166,7 +167,7 @@ function createGrid(size) {
 
         var fill = document.createElement("DIV");
         fill.setAttribute("class", "fill");
-        var fillContent = document.createTextNode(randomLetter());
+        var fillContent = document.createTextNode(BLANK);
 
     		// var t = document.createTextNode("[" + i + "," + j + "]");
         label.appendChild(labelContent);
@@ -239,7 +240,7 @@ function updateActiveWords() {
     var rowText = '';
     for (var i = 0; i < SIZE; i++) {
       var nextAcrossLetter = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]').lastChild.innerHTML;
-      nextAcrossLetter = (nextAcrossLetter == " ") ? "-" : nextAcrossLetter;
+      nextAcrossLetter = (nextAcrossLetter == BLANK) ? DASH : nextAcrossLetter;
       rowText += nextAcrossLetter;
     }
     [current.acrossStartIndex, current.acrossEndIndex] = getWordIndices(rowText, current.col);
@@ -249,7 +250,7 @@ function updateActiveWords() {
     var colText = '';
     for (var j = 0; j < SIZE; j++) {
       var nextDownLetter = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]').lastChild.innerHTML;
-      nextDownLetter = (nextDownLetter == " ") ? "-" : nextDownLetter;
+      nextDownLetter = (nextDownLetter == BLANK) ? DASH : nextDownLetter;
       colText += nextDownLetter;
     }
     [current.downStartIndex, current.downEndIndex] = getWordIndices(colText, current.row);
@@ -258,7 +259,7 @@ function updateActiveWords() {
   document.getElementById("across-word").innerHTML = current.acrossWord;
   document.getElementById("down-word").innerHTML = current.downWord;
   console.log("Across:", current.acrossWord, "Down:", current.downWord);
-  // console.log(current.acrossWord.split("-").join("*"));
+  // console.log(current.acrossWord.split(DASH).join("*"));
 }
 
 function getWordIndices(text, position) {
