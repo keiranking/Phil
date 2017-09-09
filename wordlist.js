@@ -13,9 +13,9 @@ sortWordlist();
 
 function addToWordlist(newWords) {
   for (i = 0; i < newWords.length; i++) {
-    const word = newWords[i].trim();
+    const word = newWords[i].trim().toUpperCase();
     if (word.length < wordlist.length) { // Make sure we don't access outside the wordlist array
-      wordlist[word.length].push(word.toUpperCase());
+      wordlist[word.length].push(word);
     }
   }
 }
@@ -31,7 +31,7 @@ function importWordlist(url) {
   textFile.open("GET", url, true);
   textFile.onreadystatechange = function() {
     if (textFile.readyState === 4 && textFile.status === 200) {  // Makes sure the document is ready to parse, and it's found the file.
-      const words = textFile.responseText.split("\n"); // Will separate each line into an array
+      const words = textFile.responseText.split(/\s/g);
       addToWordlist(words);
     }
   }

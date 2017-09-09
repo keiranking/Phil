@@ -3,6 +3,7 @@ const keyboard = {
   "z":      90,
   "black":  190,
   "delete": 8,
+  "enter":  13,
   "space":  32,
   "left":   37,
   "up":     38,
@@ -49,6 +50,9 @@ function mouseHandler() {
   // console.log("Previous cursor: [" + previousCell.parentNode.dataset.row + "," + previousCell.dataset.col + "]");
   previousCell.className = previousCell.className.replace("active", "");
   const activeCell = event.currentTarget;
+  if (activeCell == previousCell) {
+    current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
+  }
   current.row = activeCell.parentNode.dataset.row;
   current.col = activeCell.dataset.col;
   console.log("[" + current.row + "," + current.col + "]");
@@ -94,6 +98,8 @@ function keyboardHandler(e) {
           symmetricalCell.className += " black";
           symmetricalCell.className.trim();
         }
+    } else if (e.which == keyboard.enter) {
+        current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
     } else if (e.which == keyboard.delete) {
         activeCell.lastChild.innerHTML = BLANK;
         if (activeCell.className.search("black") > -1) {
@@ -116,20 +122,32 @@ function keyboardHandler(e) {
         previousCell.className = previousCell.className.replace("active", "");
         switch (e.which) {
           case keyboard.left:
-            current.col = (current.col == 0) ? current.col : current.col - 1;
-            current.direction = ACROSS;
+            if (current.direction == ACROSS) {
+              current.col = (current.col == 0) ? current.col : current.col - 1;
+            } else {
+              current.direction = ACROSS;
+            }
             break;
           case keyboard.up:
-            current.row = (current.row == 0) ? current.row : current.row - 1;
-            current.direction = DOWN;
+            if (current.direction == DOWN) {
+              current.row = (current.row == 0) ? current.row : current.row - 1;
+            } else {
+              current.direction = DOWN;
+            }
             break;
           case keyboard.right:
-            current.col = (current.col == SIZE - 1) ? current.col : Number(current.col) + 1;
-            current.direction = ACROSS;
+            if (current.direction == ACROSS) {
+              current.col = (current.col == SIZE - 1) ? current.col : Number(current.col) + 1;
+            } else {
+              current.direction = ACROSS;
+            }
             break;
           case keyboard.down:
-            current.row = (current.row == SIZE - 1) ? current.row : Number(current.row) + 1;
-            current.direction = DOWN;
+            if (current.direction == DOWN) {
+              current.row = (current.row == SIZE - 1) ? current.row : Number(current.row) + 1;
+            } else {
+              current.direction = DOWN;
+            }
             break;
         }
         console.log("[" + current.row + "," + current.col + "]");
