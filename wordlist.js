@@ -66,22 +66,34 @@ function updateMatchesUI() {
   for (i = 0; i < acrossMatches.length; i++) {
     var li = document.createElement("LI");
     li.innerHTML = acrossMatches[i].toLowerCase();
-    li.addEventListener('click', liHandler);
+    li.className = "";
+    li.addEventListener('click', highlightSelection);
+    li.addEventListener('dblclick', fillGridWithMatch);
     acrossMatchList.appendChild(li);
   }
   for (i = 0; i < downMatches.length; i++) {
     var li = document.createElement("LI");
     li.innerHTML = downMatches[i].toLowerCase();
-    li.addEventListener('click', liHandler);
+    li.className = "";
+    li.addEventListener('click', highlightSelection);
+    li.addEventListener('dblclick', fillGridWithMatch);
     downMatchList.appendChild(li);
   }
 }
 
-function liHandler() {
+function highlightSelection() {
+  const currentSelection = event.currentTarget;
+  if (currentSelection.className.search("highlight") > -1) {
+    currentSelection.className = currentSelection.className.replace("highlight", "").trim();
+  } else {
+    currentSelection.className += " highlight";
+  }
+}
+
+function fillGridWithMatch() {
   const li = event.currentTarget;
   const fill = li.innerHTML.toUpperCase();
   const dir = (li.parentNode.id == "across-matches") ? ACROSS : DOWN;
-  console.log("Fill '" + li.innerHTML + "' going " + dir);
 
   if (dir == ACROSS) {
     for (var i = current.acrossStartIndex; i < current.acrossEndIndex; i++) {
@@ -94,6 +106,7 @@ function liHandler() {
       square.lastChild.innerHTML = fill[j - current.downStartIndex];
     }
   }
+  console.log("Filled '" + li.innerHTML + "' going " + dir);
 }
 // class Rectangle {
 //   constructor(height, width) {

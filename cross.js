@@ -338,6 +338,23 @@ function generateLayout() {
   console.log("Quick layout.")
 }
 
+function toggleSymmetry() {
+  isSymmetrical = (isSymmetrical) ? false : true;
+}
+
+function clearFill() {
+  const rows = SIZE;
+  const cols = SIZE;
+  for (var i = 0; i < rows; i++) {
+    for (var j = 0; j < cols; j++) {
+      const currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      if (currentCell.className.search("black") == -1) {
+        currentCell.lastChild.innerHTML = BLANK;
+      }
+    }
+  }
+}
+
 function randomNumber(min, max) {
   return Math.floor(Math.random() * max) + min;
 }
