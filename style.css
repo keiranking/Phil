@@ -29,13 +29,13 @@ h2.direction-heading {
   margin: 0;
 }
 
-p.current-word {
+#sidebar p.current-word {
   margin:0;
   font-size: 21pt;
   font-weight: 300;
 }
 
-ul.matches {
+#sidebar ul.matches {
   margin: 0;
   height: 75%;
   width: 160px;
@@ -46,8 +46,12 @@ ul.matches {
   overflow-y: scroll;
 }
 
-ul.matches li {
+#sidebar ul.matches li {
   margin: 2px 0;
+}
+
+#sidebar ul.matches li.highlight {
+  background-color: yellow;
 }
 
 .label {
@@ -91,10 +95,4 @@ ul.matches li {
 #grid td.lowlight {
   /*background-color: #edeff0;*/
   background-color: #f5f7f7;
-}
-
-ul.match-list {
-  height: 100px;
-  overflow: hidden;
-  overflow-y: scroll;
 }

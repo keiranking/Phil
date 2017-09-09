@@ -47,7 +47,6 @@ window.addEventListener('keydown', keyboardHandler);
 
 function mouseHandler() {
   const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
-  // console.log("Previous cursor: [" + previousCell.parentNode.dataset.row + "," + previousCell.dataset.col + "]");
   previousCell.className = previousCell.className.replace("active", "");
   const activeCell = event.currentTarget;
   if (activeCell == previousCell) {
@@ -318,8 +317,6 @@ function updateActiveWordsUI() {
       square.className.trim();
     }
   }
-  // document.getElementById("across-matches").innerHTML = match(current.acrossWord);
-  // document.getElementById("down-matches").innerHTML = match(current.downWord);
 }
 
 function generateLayout() {

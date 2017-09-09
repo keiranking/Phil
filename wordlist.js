@@ -66,12 +66,33 @@ function updateMatchesUI() {
   for (i = 0; i < acrossMatches.length; i++) {
     var li = document.createElement("LI");
     li.innerHTML = acrossMatches[i].toLowerCase();
+    li.addEventListener('click', liHandler);
     acrossMatchList.appendChild(li);
   }
   for (i = 0; i < downMatches.length; i++) {
     var li = document.createElement("LI");
     li.innerHTML = downMatches[i].toLowerCase();
+    li.addEventListener('click', liHandler);
     downMatchList.appendChild(li);
+  }
+}
+
+function liHandler() {
+  const li = event.currentTarget;
+  const fill = li.innerHTML.toUpperCase();
+  const dir = (li.parentNode.id == "across-matches") ? ACROSS : DOWN;
+  console.log("Fill '" + li.innerHTML + "' going " + dir);
+
+  if (dir == ACROSS) {
+    for (var i = current.acrossStartIndex; i < current.acrossEndIndex; i++) {
+      const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]');
+      square.lastChild.innerHTML = fill[i - current.acrossStartIndex];
+    }
+  } else {
+    for (var j = current.downStartIndex; j < current.downEndIndex; j++) {
+      const square = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]');
+      square.lastChild.innerHTML = fill[j - current.downStartIndex];
+    }
   }
 }
 // class Rectangle {
