@@ -67,7 +67,7 @@ function updateMatchesUI() {
     var li = document.createElement("LI");
     li.innerHTML = acrossMatches[i].toLowerCase();
     li.className = "";
-    li.addEventListener('click', highlightSelection);
+    // li.addEventListener('click', highlightSelection);
     li.addEventListener('dblclick', fillGridWithMatch);
     acrossMatchList.appendChild(li);
   }
@@ -75,7 +75,7 @@ function updateMatchesUI() {
     var li = document.createElement("LI");
     li.innerHTML = downMatches[i].toLowerCase();
     li.className = "";
-    li.addEventListener('click', highlightSelection);
+    // li.addEventListener('click', highlightSelection);
     li.addEventListener('dblclick', fillGridWithMatch);
     downMatchList.appendChild(li);
   }
@@ -107,6 +107,8 @@ function fillGridWithMatch() {
     }
   }
   console.log("Filled '" + li.innerHTML + "' going " + dir);
+  updateActiveWords();
+  updateMatchesUI();
 }
 // class Rectangle {
 //   constructor(height, width) {

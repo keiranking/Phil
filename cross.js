@@ -1,5 +1,7 @@
 const keyboard = {
-  "a":      65,
+  "a":      65, "b": 66, "c": 67, "d": 68, "e": 69, "f": 70, "g": 71, "h": 72,
+  "i":      73, "j": 74, "k": 75, "l": 76, "m": 77, "n": 78, "o": 79, "p": 80,
+  "q":      81, "r": 82, "s": 83, "t": 84, "u": 85, "v": 86, "w": 87, "x": 88, "y": 89,
   "z":      90,
   "black":  190,
   "delete": 8,
@@ -288,9 +290,11 @@ function getWordIndices(text, position) {
 }
 
 function updateActiveWordsUI() {
+  const rows = SIZE;
+  const cols = SIZE;
   // Clear the grid of any highlights
-  for (var i = 0; i < SIZE; i++) {
-    for (var j = 0; j < SIZE; j++) {
+  for (var i = 0; i < rows; i++) {
+    for (var j = 0; j < cols; j++) {
       const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       if (square.className.search("highlight") > -1) {
         square.className = square.className.replace("highlight", "").trim();
@@ -320,15 +324,19 @@ function updateActiveWordsUI() {
 }
 
 function generateLayout() {
-  locations = [
+  gridPatterns = [
     [0,4], [1,4], [2,4], [12,4], [13,4], [14,4],
     [4,0], [4,1], [4,2], [4,12], [4,13], [4,14],
     [8,3], [7,4], [6,5], [5,6], [4,7], [3,8],
   ];
 
+  // "Delete" active square before applying pattern to prevent 2 active squares
+  const activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  activeCell.className = activeCell.className.replace("active", "").trim();
+
   isSymmetrical = true;
-  for (var i = 0; i < locations.length; i++) {
-    [current.row, current.col] = locations[i];
+  for (var i = 0; i < gridPatterns.length; i++) {
+    [current.row, current.col] = gridPatterns[i];
     // var e = new Event('click');
     // mouseHandler(e);
     var e = new Event('keydown');
