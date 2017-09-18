@@ -1,4 +1,4 @@
-var wordlist = [
+let wordlist = [
   [], [], [], [], [],
   [], [], [], [], [],
   [], [], [], [], [], []
@@ -27,7 +27,7 @@ function sortWordlist() {
 }
 
 function importWordlist(url) {
-  var textFile = new XMLHttpRequest();
+  let textFile = new XMLHttpRequest();
   textFile.open("GET", url, true);
   textFile.onreadystatechange = function() {
     if (textFile.readyState === 4 && textFile.status === 200) {  // Makes sure the document is ready to parse, and it's found the file.
@@ -44,8 +44,8 @@ function matchFromWordlist(word) {
   if (actualLettersInWord >= 1 && actualLettersInWord < l) { // Only search if word isn't completely blank or filled
     word = word.split(DASH).join("\\w");
     const pattern = new RegExp(word);
-    var matches = [];
-    for (var i = 0; i < wordlist[l].length; i++) {
+    let matches = [];
+    for (let i = 0; i < wordlist[l].length; i++) {
       if (wordlist[l][i].search(pattern) > -1) {
         matches.push(wordlist[l][i]);
       }
@@ -57,37 +57,41 @@ function matchFromWordlist(word) {
 }
 
 function updateMatchesUI() {
-  var acrossMatchList = document.getElementById("across-matches");
-  var downMatchList = document.getElementById("down-matches");
+  let acrossMatchList = document.getElementById("across-matches");
+  let downMatchList = document.getElementById("down-matches");
   acrossMatchList.innerHTML = "";
   downMatchList.innerHTML = "";
   const acrossMatches = matchFromWordlist(current.acrossWord);
   const downMatches = matchFromWordlist(current.downWord);
   for (i = 0; i < acrossMatches.length; i++) {
-    var li = document.createElement("LI");
+    let li = document.createElement("LI");
     li.innerHTML = acrossMatches[i].toLowerCase();
     li.className = "";
-    // li.addEventListener('click', highlightSelection);
+    li.addEventListener('mouseover', highlightLI);
+    li.addEventListener('mouseout', unhighlightLI);
+    // li.addEventListener('click', printScore);
     li.addEventListener('dblclick', fillGridWithMatch);
     acrossMatchList.appendChild(li);
   }
   for (i = 0; i < downMatches.length; i++) {
-    var li = document.createElement("LI");
+    let li = document.createElement("LI");
     li.innerHTML = downMatches[i].toLowerCase();
     li.className = "";
-    // li.addEventListener('click', highlightSelection);
+    li.addEventListener('mouseover', highlightLI);
+    li.addEventListener('mouseout', unhighlightLI);
     li.addEventListener('dblclick', fillGridWithMatch);
     downMatchList.appendChild(li);
   }
 }
 
-function highlightSelection() {
+function highlightLI() {
   const currentSelection = event.currentTarget;
-  if (currentSelection.className.search("highlight") > -1) {
-    currentSelection.className = currentSelection.className.replace("highlight", "").trim();
-  } else {
-    currentSelection.className += " highlight";
-  }
+  currentSelection.className += " highlight";
+}
+
+function unhighlightLI() {
+  const currentSelection = event.currentTarget;
+  currentSelection.className = currentSelection.className.replace("highlight", "").trim();
 }
 
 function fillGridWithMatch() {
@@ -96,12 +100,12 @@ function fillGridWithMatch() {
   const dir = (li.parentNode.id == "across-matches") ? ACROSS : DOWN;
 
   if (dir == ACROSS) {
-    for (var i = current.acrossStartIndex; i < current.acrossEndIndex; i++) {
+    for (let i = current.acrossStartIndex; i < current.acrossEndIndex; i++) {
       const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]');
       square.lastChild.innerHTML = fill[i - current.acrossStartIndex];
     }
   } else {
-    for (var j = current.downStartIndex; j < current.downEndIndex; j++) {
+    for (let j = current.downStartIndex; j < current.downEndIndex; j++) {
       const square = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]');
       square.lastChild.innerHTML = fill[j - current.downStartIndex];
     }
@@ -110,6 +114,22 @@ function fillGridWithMatch() {
   updateActiveWords();
   updateMatchesUI();
 }
+
+// function printScore() {
+//   console.log(scoreWord(event.currentTarget.innerHTML));
+// }
+
+// function scoreWord(word) {
+//   let f = new XMLHttpRequest();
+//   f.open("GET", "http://crosswordtracker.com/answer/" + word + "/", true);
+//   f.onreadystatechange = function() {
+//     if (f.readyState === 4 && f.status === 200) {
+//       const raw = f.responseText;
+//       return raw;
+//     }
+//   }
+// }
+
 // class Rectangle {
 //   constructor(height, width) {
 //     this.height = height;

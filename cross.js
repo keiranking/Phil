@@ -3,7 +3,7 @@ const keyboard = {
   "i":      73, "j": 74, "k": 75, "l": 76, "m": 77, "n": 78, "o": 79, "p": 80,
   "q":      81, "r": 82, "s": 83, "t": 84, "u": 85, "v": 86, "w": 87, "x": 88, "y": 89,
   "z":      90,
-  "black":  190,
+  "black":  190, ".": 190,
   "delete": 8,
   "enter":  13,
   "space":  32,
@@ -19,10 +19,11 @@ const ACROSS = "across";
 const DOWN = "down";
 const SIZE = 15;
 
+let clues = {};
 createGrid(SIZE);
 
-var isSymmetrical = true;
-var current = {
+let isSymmetrical = true;
+let current = {
   row:        0,
   col:        0,
   acrossWord: '',
@@ -41,6 +42,7 @@ updateActiveWords();
 
 for (const square of squares) {
   square.addEventListener('click', mouseHandler);
+  // square.addEventListener('keydown', keyboardHandler);
 }
 window.addEventListener('keydown', keyboardHandler);
 
@@ -60,135 +62,135 @@ function mouseHandler() {
   activeCell.className += " active";
   activeCell.className.trim();
 
-  updateActiveWords();
-  updateActiveWordsUI();
-  updateMatchesUI();
+  updateUI();
 }
 
 function keyboardHandler(e) {
-  var activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   const symRow = SIZE - 1 - current.row;
   const symCol = SIZE - 1 - current.col;
   const symmetricalCell = grid.querySelector('[data-row="' + symRow + '"]').querySelector('[data-col="' + symCol + '"]');
 
-  // If the input is different from what's already in the square...
-  // if (activeCell.lastChild.innerHTML != String.fromCharCode(e.which)) {
-    if ((e.which >= keyboard.a && e.which <= keyboard.z) || e.which == keyboard.space) {
-        activeCell.lastChild.innerHTML = String.fromCharCode(e.which);
-        if (activeCell.className.search("black") > -1) {
-          activeCell.className = activeCell.className.replace("black", "").trim();
-          if (isSymmetrical == true) {
-            symmetricalCell.lastChild.innerHTML = BLANK;
-            symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
-          }
-        }
-        // move the cursor
-        e = new Event('keydown');
-        if (current.direction == ACROSS) {
-          e.which = keyboard.right;
-        } else {
-          e.which = keyboard.down;
-        }
-        keyboardHandler(e);
-    } else if (e.which == keyboard.black) {
-        activeCell.lastChild.innerHTML = BLACK;
-        activeCell.className += " black";
-        activeCell.className.trim();
+  if ((e.which >= keyboard.a && e.which <= keyboard.z) || e.which == keyboard.space) {
+      activeCell.lastChild.innerHTML = String.fromCharCode(e.which);
+      if (activeCell.className.search("black") > -1) {
+        activeCell.className = activeCell.className.replace("black", "").trim();
         if (isSymmetrical == true) {
-          symmetricalCell.lastChild.innerHTML = BLACK;
-          symmetricalCell.className += " black";
-          symmetricalCell.className.trim();
+          symmetricalCell.lastChild.innerHTML = BLANK;
+          symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
         }
-    } else if (e.which == keyboard.enter) {
-        current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
-    } else if (e.which == keyboard.delete) {
-        activeCell.lastChild.innerHTML = BLANK;
-        if (activeCell.className.search("black") > -1) {
-          activeCell.className = activeCell.className.replace("black", "").trim();
-          if (isSymmetrical == true) {
-            symmetricalCell.lastChild.innerHTML = BLANK;
-            symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
+      }
+      // move the cursor
+      e = new Event('keydown');
+      if (current.direction == ACROSS) {
+        e.which = keyboard.right;
+      } else {
+        e.which = keyboard.down;
+      }
+      keyboardHandler(e);
+  } else if (e.which == keyboard.black) {
+      activeCell.lastChild.innerHTML = BLACK;
+      activeCell.className += " black";
+      activeCell.className.trim();
+      if (isSymmetrical == true) {
+        symmetricalCell.lastChild.innerHTML = BLACK;
+        symmetricalCell.className += " black";
+        symmetricalCell.className.trim();
+      }
+  } else if (e.which == keyboard.enter) {
+      current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
+  } else if (e.which == keyboard.delete) {
+      activeCell.lastChild.innerHTML = BLANK;
+      if (activeCell.className.search("black") > -1) {
+        activeCell.className = activeCell.className.replace("black", "").trim();
+        if (isSymmetrical == true) {
+          symmetricalCell.lastChild.innerHTML = BLANK;
+          symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
+        }
+      }
+      // move the cursor
+      e = new Event('keydown');
+      if (current.direction == ACROSS) {
+        e.which = keyboard.left;
+      } else {
+        e.which = keyboard.up;
+      }
+      keyboardHandler(e);
+  } else if (e.which >= keyboard.left && e.which <= keyboard.down) {
+      const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+      previousCell.className = previousCell.className.replace("active", "");
+      switch (e.which) {
+        case keyboard.left:
+          if (current.direction == ACROSS) {
+            current.col = (current.col == 0) ? current.col : current.col - 1;
+          } else {
+            current.direction = ACROSS;
           }
-        }
-        // move the cursor
-        e = new Event('keydown');
-        if (current.direction == ACROSS) {
-          e.which = keyboard.left;
-        } else {
-          e.which = keyboard.up;
-        }
-        keyboardHandler(e);
-    } else if (e.which >= keyboard.left && e.which <= keyboard.down) {
-        const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
-        previousCell.className = previousCell.className.replace("active", "");
-        switch (e.which) {
-          case keyboard.left:
-            if (current.direction == ACROSS) {
-              current.col = (current.col == 0) ? current.col : current.col - 1;
-            } else {
-              current.direction = ACROSS;
-            }
-            break;
-          case keyboard.up:
-            if (current.direction == DOWN) {
-              current.row = (current.row == 0) ? current.row : current.row - 1;
-            } else {
-              current.direction = DOWN;
-            }
-            break;
-          case keyboard.right:
-            if (current.direction == ACROSS) {
-              current.col = (current.col == SIZE - 1) ? current.col : Number(current.col) + 1;
-            } else {
-              current.direction = ACROSS;
-            }
-            break;
-          case keyboard.down:
-            if (current.direction == DOWN) {
-              current.row = (current.row == SIZE - 1) ? current.row : Number(current.row) + 1;
-            } else {
-              current.direction = DOWN;
-            }
-            break;
-        }
-        console.log("[" + current.row + "," + current.col + "]");
-        // console.log(current.direction);
-        activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
-        activeCell.className = (activeCell.className + " active").trim();
-    }
-    console.log(activeCell.lastChild.innerHTML);
-    updateLabels();
-    updateActiveWords();
-    updateActiveWordsUI();
-    updateMatchesUI();
-  // }
+          break;
+        case keyboard.up:
+          if (current.direction == DOWN) {
+            current.row = (current.row == 0) ? current.row : current.row - 1;
+          } else {
+            current.direction = DOWN;
+          }
+          break;
+        case keyboard.right:
+          if (current.direction == ACROSS) {
+            current.col = (current.col == SIZE - 1) ? current.col : Number(current.col) + 1;
+          } else {
+            current.direction = ACROSS;
+          }
+          break;
+        case keyboard.down:
+          if (current.direction == DOWN) {
+            current.row = (current.row == SIZE - 1) ? current.row : Number(current.row) + 1;
+          } else {
+            current.direction = DOWN;
+          }
+          break;
+      }
+      console.log("[" + current.row + "," + current.col + "]");
+      // console.log(current.direction);
+      activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+      activeCell.className = (activeCell.className + " active").trim();
+  }
+  // console.log(activeCell.lastChild.innerHTML);
+  updateUI();
+}
+
+function updateUI() {
+  updateLabels();
+  updateActiveWords();
+  updateGridHighlights();
+  updateMatchesUI();
 }
 
 function createGrid(size) {
   const rows = size;
   const cols = size;
-  var table = document.createElement("TABLE");
+  let table = document.createElement("TABLE");
   table.setAttribute("id", "grid");
+  // table.setAttribute("tabindex", "0");
   document.getElementById("main").appendChild(table);
 
-	for (var i = 0; i < rows; i++) {
-    	var row = document.createElement("TR");
+	for (let i = 0; i < rows; i++) {
+    	let row = document.createElement("TR");
     	row.setAttribute("data-row", i);
     	document.getElementById("grid").appendChild(row);
 
-		for (var j = 0; j < cols; j++) {
-		    var col = document.createElement("TD");
+		for (let j = 0; j < cols; j++) {
+		    let col = document.createElement("TD");
         col.setAttribute("data-col", j);
 
-        var label = document.createElement("DIV");
+        let label = document.createElement("DIV");
         label.setAttribute("class", "label");
-        var labelContent = document.createTextNode("");
+        let labelContent = document.createTextNode("");
 
-        var fill = document.createElement("DIV");
+        let fill = document.createElement("DIV");
         fill.setAttribute("class", "fill");
-        var fillContent = document.createTextNode(BLANK);
+        let fillContent = document.createTextNode(BLANK);
 
-    		// var t = document.createTextNode("[" + i + "," + j + "]");
+    		// let t = document.createTextNode("[" + i + "," + j + "]");
         label.appendChild(labelContent);
         fill.appendChild(fillContent);
         col.appendChild(label);
@@ -200,17 +202,17 @@ function createGrid(size) {
 }
 
 function updateLabels() {
-  var count = 1;
-  var increment = false;
+  let count = 1;
+  let increment = false;
   const rows = SIZE;
   const cols = SIZE;
   const grid = document.getElementById("grid");
 
-  for (var i = 0; i < rows; i++) {
-    for (var j = 0; j < cols; j++) {
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
       increment = false;
       // if the cell isn't 'black'
-      var currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       if (currentCell.className.search("black") == -1) {
         // if the row is 0, increment the clue number
         if (i == 0) {
@@ -256,9 +258,9 @@ function updateActiveWords() {
     current.downEndIndex = null;
   } else {
     // Across
-    var rowText = '';
-    for (var i = 0; i < SIZE; i++) {
-      var nextAcrossLetter = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]').lastChild.innerHTML;
+    let rowText = '';
+    for (let i = 0; i < SIZE; i++) {
+      let nextAcrossLetter = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]').lastChild.innerHTML;
       nextAcrossLetter = (nextAcrossLetter == BLANK) ? DASH : nextAcrossLetter;
       rowText += nextAcrossLetter;
     }
@@ -266,9 +268,9 @@ function updateActiveWords() {
     current.acrossWord = rowText.slice(current.acrossStartIndex, current.acrossEndIndex);
 
     // Down
-    var colText = '';
-    for (var j = 0; j < SIZE; j++) {
-      var nextDownLetter = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]').lastChild.innerHTML;
+    let colText = '';
+    for (let j = 0; j < SIZE; j++) {
+      let nextDownLetter = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]').lastChild.innerHTML;
       nextDownLetter = (nextDownLetter == BLANK) ? DASH : nextDownLetter;
       colText += nextDownLetter;
     }
@@ -282,19 +284,19 @@ function updateActiveWords() {
 }
 
 function getWordIndices(text, position) {
-  var startIndex = text.slice(0, position).lastIndexOf(BLACK);
+  let startIndex = text.slice(0, position).lastIndexOf(BLACK);
   startIndex = (startIndex == -1) ? 0 : startIndex + 1;
-  var endIndex = text.slice(position, SIZE).indexOf(BLACK);
+  let endIndex = text.slice(position, SIZE).indexOf(BLACK);
   endIndex = (endIndex == -1) ? SIZE : Number(position) + Number(endIndex);
   return [startIndex, endIndex];
 }
 
-function updateActiveWordsUI() {
+function updateGridHighlights() {
   const rows = SIZE;
   const cols = SIZE;
   // Clear the grid of any highlights
-  for (var i = 0; i < rows; i++) {
-    for (var j = 0; j < cols; j++) {
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
       const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       if (square.className.search("highlight") > -1) {
         square.className = square.className.replace("highlight", "").trim();
@@ -306,7 +308,7 @@ function updateActiveWordsUI() {
   }
 
   // Highlight across
-  for (var i = current.acrossStartIndex; i < current.acrossEndIndex; i++) {
+  for (let i = current.acrossStartIndex; i < current.acrossEndIndex; i++) {
     const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]');
     if (i != current.col) {
       square.className += (current.direction == ACROSS) ? " highlight" : " lowlight";
@@ -314,7 +316,7 @@ function updateActiveWordsUI() {
     }
   }
   // Highlight down
-  for (var j = current.downStartIndex; j < current.downEndIndex; j++) {
+  for (let j = current.downStartIndex; j < current.downEndIndex; j++) {
     const square = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]');
     if (j != current.row) {
       square.className += (current.direction == DOWN) ? " highlight" : " lowlight";
@@ -325,21 +327,27 @@ function updateActiveWordsUI() {
 
 function generateLayout() {
   gridPatterns = [
-    [0,4], [1,4], [2,4], [12,4], [13,4], [14,4],
-    [4,0], [4,1], [4,2], [4,12], [4,13], [4,14],
-    [8,3], [7,4], [6,5], [5,6], [4,7], [3,8],
+    [
+      [0,4], [1,4], [2,4], [12,4], [13,4], [14,4],
+      [4,0], [4,1], [4,2], [4,12], [4,13], [4,14],
+      [8,3], [7,4], [6,5], [5,6], [4,7], [3,8]
+    ],
+    [
+      [0,5], [1,5], [2,5], [12,4], [13,4], [14,4],
+      [5,0], [5,1], [5,2], [4,3], [3,13], [3,14],
+      [5,6], [4,7], [4,8], [6,9], [7,10], [5,11]
+    ]
   ];
 
   // "Delete" active square before applying pattern to prevent 2 active squares
   const activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   activeCell.className = activeCell.className.replace("active", "").trim();
 
+  const pattern = gridPatterns[randomNumber(0, gridPatterns.length)]; // select random pattern
   isSymmetrical = true;
-  for (var i = 0; i < gridPatterns.length; i++) {
-    [current.row, current.col] = gridPatterns[i];
-    // var e = new Event('click');
-    // mouseHandler(e);
-    var e = new Event('keydown');
+  for (let i = 0; i < pattern.length; i++) {
+    [current.row, current.col] = pattern[i];
+    let e = new Event('keydown');
     e.which = keyboard.black;
     keyboardHandler(e);
   }
@@ -353,8 +361,8 @@ function toggleSymmetry() {
 function clearFill() {
   const rows = SIZE;
   const cols = SIZE;
-  for (var i = 0; i < rows; i++) {
-    for (var j = 0; j < cols; j++) {
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
       const currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       if (currentCell.className.search("black") == -1) {
         currentCell.lastChild.innerHTML = BLANK;
@@ -368,8 +376,8 @@ function randomNumber(min, max) {
 }
 
 function randomLetter() {
-  var alphabet = "AAAAAAAAABBCCDDDDEEEEEEEEEEEEFFGGGHHIIIIIIIIIJKLLLLMMNNNNNNOOOOOOOOPPQRRRRRRSSSSSSTTTTTTUUUUVVWWXYYZ";
-  var random = randomNumber(0, 100);
+  let alphabet = "AAAAAAAAABBCCDDDDEEEEEEEEEEEEFFGGGHHIIIIIIIIIJKLLLLMMNNNNNNOOOOOOOOPPQRRRRRRSSSSSSTTTTTTUUUUVVWWXYYZ";
+  let random = randomNumber(0, 100);
   return alphabet.substring(random, random + 1);
 }
 

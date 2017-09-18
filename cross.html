@@ -7,20 +7,25 @@
   <div id="sidebar">
     <div class="half-sidebar">
       <h2 class="direction-heading">Across</h2>
+      <p id="across-clue" class="editable-clue" contenteditable="true">17. Unwritten clue</p>
       <p id="across-word" class="current-word"></p>
       <ul id="across-matches" class="matches"></ul>
     </div>
     <div class="half-sidebar">
       <h2 class="direction-heading">Down</h2>
+      <p id="down-clue" class="editable-clue" contenteditable="true">36. Apple error, originally?</p>
       <p id="down-word" class="current-word"></p>
       <ul id="down-matches" class="matches"></ul>
     </div>
   </div>
   <input id="quick-layout" type="button" value="Quick Layout" onclick="generateLayout();" />
-  <input id="toggle-symmetry" type="button" value="Toggle Symmetry" onclick="toggleSymmetry();" />
   <input id="clear-fill" type="button" value="Clear Words" onclick="clearFill();" />
+  <input id="file-input" type="file" />
+  <!-- <input id="toggle-symmetry" type="button" value="Toggle Symmetry" onclick="toggleSymmetry();" /> -->
+  <!-- <img src="https://png.icons8.com/camera/ios7/25" title="Quick Layout" width="25" height="25" onclick="generateLayout();"> -->
 
   <script src="cross.js"></script>
   <script src="wordlist.js"></script>
+  <script src="files.js"></script>
 </body>
 </html>
