@@ -20,6 +20,7 @@ const DOWN = "down";
 const SIZE = 15;
 
 let clues = {};
+
 createGrid(SIZE);
 
 let isSymmetrical = true;
@@ -39,12 +40,14 @@ const grid = document.getElementById("grid");
 const squares = grid.querySelectorAll('td');
 
 updateActiveWords();
+updateGridHighlights();
+updateCluesUI();
 
 for (const square of squares) {
   square.addEventListener('click', mouseHandler);
   // square.addEventListener('keydown', keyboardHandler);
 }
-window.addEventListener('keydown', keyboardHandler);
+grid.addEventListener('keydown', keyboardHandler);
 
 //____________________
 // F U N C T I O N S
@@ -159,10 +162,28 @@ function keyboardHandler(e) {
 }
 
 function updateUI() {
-  updateLabels();
+  updateLabelsAndClues();
   updateActiveWords();
   updateGridHighlights();
   updateMatchesUI();
+  updateCluesUI();
+}
+
+function updateCluesUI() {
+  let acrossClue = document.getElementById("across-clue");
+  let downClue = document.getElementById("down-clue");
+  const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  // If the current cell is black, empty clues and get out
+  if (currentCell.className.search("black") != -1) {
+    acrossClue.innerHTML = "";
+    downClue.innerHTML = "";
+    return;
+  }
+
+  const acrossCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.acrossStartIndex + '"]');
+  const downCell = grid.querySelector('[data-row="' + current.downStartIndex + '"]').querySelector('[data-col="' + current.col + '"]');
+  acrossClue.innerHTML = acrossCell.firstChild.innerHTML + ". " + clues[[current.row, current.acrossStartIndex, ACROSS]];
+  downClue.innerHTML = downCell.firstChild.innerHTML + ". " + clues[[current.downStartIndex, current.col, DOWN]];
 }
 
 function createGrid(size) {
@@ -170,6 +191,7 @@ function createGrid(size) {
   const cols = size;
   let table = document.createElement("TABLE");
   table.setAttribute("id", "grid");
+  table.setAttribute("tabindex", "1");
   // table.setAttribute("tabindex", "0");
   document.getElementById("main").appendChild(table);
 
@@ -198,10 +220,10 @@ function createGrid(size) {
     		document.querySelector('[data-row="' + i + '"]').appendChild(col);
       }
   }
-  updateLabels();
+  updateLabelsAndClues();
 }
 
-function updateLabels() {
+function updateLabelsAndClues() {
   let count = 1;
   let increment = false;
   const rows = SIZE;
@@ -210,6 +232,8 @@ function updateLabels() {
 
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < cols; j++) {
+      let isAcross = false;
+      let isDown = false;
       increment = false;
       // if the cell isn't 'black'
       let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
@@ -217,21 +241,25 @@ function updateLabels() {
         // if the row is 0, increment the clue number
         if (i == 0) {
           increment = true;
+          isDown = true;
         // else if the square above me is black, increment
         } else {
-          upCell = grid.querySelector('[data-row="' + (i - 1) + '"]').querySelector('[data-col="' + j + '"]');
+          const upCell = grid.querySelector('[data-row="' + (i - 1) + '"]').querySelector('[data-col="' + j + '"]');
           if (upCell.className.search("black") > -1) {
             increment = true;
+            isDown = true;
           }
         }
         // if the column is 0, increment
         if (j == 0) {
           increment = true;
+          isAcross = true;
         // else if the square to my left is black, increment
         } else {
-          leftCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + (j - 1) + '"]');
+          const leftCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + (j - 1) + '"]');
           if (leftCell.className.search("black") > -1) {
             increment = true;
+            isAcross = true;
           }
         }
       }
@@ -239,8 +267,17 @@ function updateLabels() {
         currentCell.firstChild.innerHTML = count;
         count++;
         increment = false;
+
+        if (isAcross) {
+          clues[[i, j, ACROSS]] = clues[[i, j, ACROSS]] || "Created across clue";
+        }
+        if (isDown) {
+          clues[[i, j, DOWN]] = clues[[i, j, DOWN]] || "Created down clue";
+        }
       } else {
         currentCell.firstChild.innerHTML = "";
+        clues[[i, j, ACROSS]] = undefined;
+        clues[[i, j, DOWN]] = undefined;
       }
     }
   }
