@@ -67,8 +67,6 @@ function updateMatchesUI() {
     let li = document.createElement("LI");
     li.innerHTML = acrossMatches[i].toLowerCase();
     li.className = "";
-    li.addEventListener('mouseover', highlightLI);
-    li.addEventListener('mouseout', unhighlightLI);
     // li.addEventListener('click', printScore);
     li.addEventListener('dblclick', fillGridWithMatch);
     acrossMatchList.appendChild(li);
@@ -77,21 +75,9 @@ function updateMatchesUI() {
     let li = document.createElement("LI");
     li.innerHTML = downMatches[i].toLowerCase();
     li.className = "";
-    li.addEventListener('mouseover', highlightLI);
-    li.addEventListener('mouseout', unhighlightLI);
     li.addEventListener('dblclick', fillGridWithMatch);
     downMatchList.appendChild(li);
   }
-}
-
-function highlightLI() {
-  const currentSelection = event.currentTarget;
-  currentSelection.className += " highlight";
-}
-
-function unhighlightLI() {
-  const currentSelection = event.currentTarget;
-  currentSelection.className = currentSelection.className.replace("highlight", "").trim();
 }
 
 function fillGridWithMatch() {
