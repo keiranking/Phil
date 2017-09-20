@@ -4,20 +4,26 @@
 </head>
 <body>
   <div id="header">
-    <h1><span id="puzzle-title" contenteditable="true">Untitled</span>
-     by <span id="puzzle-author" contenteditable="true">Anonymous</span></h1>
+    <h1><span id="puzzle-title" class="editable" contenteditable="true">Untitled</span>
+     by <span id="puzzle-author" class="editable" contenteditable="true">Anonymous</span></h1>
   </div>
   <div id="main"></div>
   <div id="sidebar">
     <div class="half-sidebar">
-      <h2 class="direction-heading">Across</h2>
-      <p id="across-clue" class="editable-clue" contenteditable="true">17. Unwritten clue</p>
+      <!-- <h2 class="direction-heading">Across</h2> -->
+      <div class="clue">
+        <span id="across-clue-number" class="clue-number">17a.</span>
+        <span id="across-clue-text" class="editable" contenteditable="true">Unwritten clue</span>
+      </div>
       <p id="across-word" class="current-word"></p>
       <ul id="across-matches" class="matches"></ul>
     </div>
     <div class="half-sidebar">
-      <h2 class="direction-heading">Down</h2>
-      <p id="down-clue" class="editable-clue" contenteditable="true">36. Apple error, originally?</p>
+      <!-- <h2 class="direction-heading">Down</h2> -->
+      <div class="clue">
+        <span id="down-clue-number" class="clue-number">36d.</span>
+        <span id="down-clue-text" class="editable" contenteditable="true">Apple error, originally?</span>
+      </div>
       <p id="down-word" class="current-word"></p>
       <ul id="down-matches" class="matches"></ul>
     </div>

@@ -45,7 +45,6 @@ updateCluesUI();
 
 for (const square of squares) {
   square.addEventListener('click', mouseHandler);
-  // square.addEventListener('keydown', keyboardHandler);
 }
 grid.addEventListener('keydown', keyboardHandler);
 
@@ -170,20 +169,27 @@ function updateUI() {
 }
 
 function updateCluesUI() {
-  let acrossClue = document.getElementById("across-clue");
-  let downClue = document.getElementById("down-clue");
+  let acrossClueNumber = document.getElementById("across-clue-number");
+  let downClueNumber = document.getElementById("down-clue-number");
+  let acrossClueText = document.getElementById("across-clue-text");
+  let downClueText = document.getElementById("down-clue-text");
   const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+
   // If the current cell is black, empty clues and get out
   if (currentCell.className.search("black") != -1) {
-    acrossClue.innerHTML = "";
-    downClue.innerHTML = "";
+    acrossClueNumber.innerHTML = "";
+    downClueNumber.innerHTML = "";
+    acrossClueText.innerHTML = "";
+    downClueText.innerHTML = "";
     return;
   }
-
+  // Otherwise, assign values
   const acrossCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.acrossStartIndex + '"]');
   const downCell = grid.querySelector('[data-row="' + current.downStartIndex + '"]').querySelector('[data-col="' + current.col + '"]');
-  acrossClue.innerHTML = acrossCell.firstChild.innerHTML + ". " + clues[[current.row, current.acrossStartIndex, ACROSS]];
-  downClue.innerHTML = downCell.firstChild.innerHTML + ". " + clues[[current.downStartIndex, current.col, DOWN]];
+  acrossClueNumber.innerHTML = acrossCell.firstChild.innerHTML + "a.";
+  downClueNumber.innerHTML = downCell.firstChild.innerHTML + "d.";
+  acrossClueText.innerHTML = clues[[current.row, current.acrossStartIndex, ACROSS]];
+  downClueText.innerHTML = clues[[current.downStartIndex, current.col, DOWN]];
 }
 
 function createGrid(size) {
@@ -264,15 +270,15 @@ function updateLabelsAndClues() {
         }
       }
       if (increment == true) {
-        currentCell.firstChild.innerHTML = count;
+        currentCell.firstChild.innerHTML = count; // Set square's label to the count
         count++;
         increment = false;
 
         if (isAcross) {
-          clues[[i, j, ACROSS]] = clues[[i, j, ACROSS]] || "Created across clue";
+          clues[[i, j, ACROSS]] = clues[[i, j, ACROSS]] || "(blank clue)";
         }
         if (isDown) {
-          clues[[i, j, DOWN]] = clues[[i, j, DOWN]] || "Created down clue";
+          clues[[i, j, DOWN]] = clues[[i, j, DOWN]] || "(blank clue)";
         }
       } else {
         currentCell.firstChild.innerHTML = "";

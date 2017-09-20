@@ -13,8 +13,17 @@ function openJSONFile(e) {
 }
 
 function displayJSONPuzzle(puz) {
+
+  if (puz.size.rows != SIZE || puz.size.cols != SIZE) {
+    console.log("Oops. JSON puzzle is the wrong size.");
+    return;
+  }
   const rows = SIZE;
   const cols = SIZE;
+
+  // Display puzzle title, author
+  document.getElementById("puzzle-title").innerHTML = puz.title;
+  document.getElementById("puzzle-author").innerHTML = puz.author;
 
   // Display fill in grid
   for (let i = 0; i < rows; i++) {
@@ -32,7 +41,30 @@ function displayJSONPuzzle(puz) {
     }
   }
   // console.log(puz.clues.across, puz.clues.down)
-  // clearFill();
+  updateUI();
+
+  // Load in clues and display current clues
+  for (let i = 0; i < rows; i++) {
+    for (let j = 0; j < cols; j++) {
+      const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      if (activeCell.firstChild.innerHTML) {
+        const label = activeCell.firstChild.innerHTML + ".";
+        for (let k = 0; k < puz.clues.across.length; k++) {
+          if (label == puz.clues.across[k].slice(0, label.length)) {
+            // clues[[i, j, ACROSS]] = puz.clues.across[k];
+            clues[[i, j, ACROSS]] = puz.clues.across[k].slice(label.length).trim();
+          }
+        }
+        for (let l = 0; l < puz.clues.down.length; l++) {
+          if (label == puz.clues.down[l].slice(0, label.length)) {
+            // clues[[i, j, DOWN]] = puz.clues.down[l];
+            clues[[i, j, DOWN]] = puz.clues.down[l].slice(label.length).trim();
+          }
+        }
+      }
+    }
+  }
+
   updateUI();
 }
 
