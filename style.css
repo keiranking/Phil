@@ -1,6 +1,6 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Roboto", "Droid Sans", "Arial", sans-serif;
-  width: 840px;
+  width: 850px;
 }
 
 h1 {
@@ -10,17 +10,17 @@ h1 {
   margin-bottom: 5px;
 }
 
-h2.direction-heading {
-  font-size: 15pt;
-  margin: 0;
-}
-
 #grid {
   border: 1px solid #000;
   border-collapse: collapse;
   text-align: center;
   font-size: 15pt;
   font-weight: 300;
+}
+
+#grid:focus {
+  /*outline: 0px solid transparent;*/
+  outline: 3px solid #def1ff;
 }
 
 #grid td {
@@ -54,7 +54,7 @@ h2.direction-heading {
 }
 
 #main {
-  width: 580px;
+  width: auto;
   height: 550px;
   float: left;
 }
@@ -76,13 +76,26 @@ h2.direction-heading {
 #sidebar {
   width: 260px;
   height: 550px;
-  float: right;
+  float: left;
+  margin-left: 8px;
 }
 
-#sidebar p.current-word {
+#sidebar .current-word {
   margin:0;
   font-size: 21pt;
   font-weight: 300;
+}
+
+#sidebar .direction-heading {
+  padding: 3px 0;
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
+
+}
+
+#sidebar .direction-heading.highlight {
+  border-top: 1px solid #55b8fe;
+  border-bottom: 1px solid #55b8fe;
 }
 
 #sidebar ul.matches {

@@ -23,6 +23,10 @@ function displayJSONPuzzle(puz) {
 
   // Display puzzle title, author
   document.getElementById("puzzle-title").innerHTML = puz.title;
+  if (puz.title.slice(0,8) == "NY TIMES") {
+    document.getElementById("puzzle-title").innerHTML = "NYT Crossword";
+  }
+
   document.getElementById("puzzle-author").innerHTML = puz.author;
 
   // Display fill in grid

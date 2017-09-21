@@ -41,6 +41,7 @@ const squares = grid.querySelectorAll('td');
 
 updateActiveWords();
 updateGridHighlights();
+updateSidebarHighlights();
 updateCluesUI();
 
 for (const square of squares) {
@@ -164,6 +165,7 @@ function updateUI() {
   updateLabelsAndClues();
   updateActiveWords();
   updateGridHighlights();
+  updateSidebarHighlights();
   updateMatchesUI();
   updateCluesUI();
 }
@@ -350,7 +352,7 @@ function updateGridHighlights() {
     }
   }
 
-  // Highlight across
+  // Highlight across squares
   for (let i = current.acrossStartIndex; i < current.acrossEndIndex; i++) {
     const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]');
     if (i != current.col) {
@@ -358,12 +360,34 @@ function updateGridHighlights() {
       square.className.trim();
     }
   }
-  // Highlight down
+
+  // Highlight down squares
   for (let j = current.downStartIndex; j < current.downEndIndex; j++) {
     const square = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]');
     if (j != current.row) {
       square.className += (current.direction == DOWN) ? " highlight" : " lowlight";
       square.className.trim();
+    }
+  }
+}
+
+function updateSidebarHighlights() {
+  let acrossHeading = document.getElementById("across-heading");
+  let downHeading = document.getElementById("down-heading");
+  const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+
+  if (acrossHeading.className.search("highlight") > -1) {
+    acrossHeading.className = acrossHeading.className.replace("highlight", "").trim();
+  }
+  if (downHeading.className.search("highlight") > -1) {
+    downHeading.className = downHeading.className.replace("highlight", "").trim();
+  }
+
+  if (currentCell.className.search("black") == -1) {
+    if (current.direction == ACROSS) {
+      acrossHeading.className += " highlight";
+    } else {
+      downHeading.className += " highlight";
     }
   }
 }
