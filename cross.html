@@ -4,8 +4,8 @@
 </head>
 <body>
   <div id="header">
-    <h1><span id="puzzle-title" class="editable" contenteditable="true">Untitled</span>
-     by <span id="puzzle-author" class="editable" contenteditable="true">Anonymous</span></h1>
+    <h1><span id="puzzle-title" class="editable" contenteditable="true" onkeydown="suppressEnterKey(event)">Untitled</span>
+     by <span id="puzzle-author" class="editable" contenteditable="true" onkeydown="suppressEnterKey(event)">Anonymous</span></h1>
   </div>
   <div id="main"></div>
   <div id="sidebar">
@@ -13,7 +13,7 @@
       <div id="across-heading" class="direction-heading">
         <div class="clue">
           <span id="across-clue-number" class="clue-number"></span>
-          <span id="across-clue-text" class="editable" contenteditable="true" onfocusout="setClues()"></span>
+          <span id="across-clue-text" class="editable" contenteditable="true" onkeydown="suppressEnterKey(event)" onfocusout="setClues()"></span>
         </div>
         <div id="across-word" class="current-word"></div>
       </div>
@@ -23,7 +23,7 @@
       <div id="down-heading" class="direction-heading">
         <div class="clue">
           <span id="down-clue-number" class="clue-number"></span>
-          <span id="down-clue-text" class="editable" contenteditable="true" onfocusout="setClues()"></span>
+          <span id="down-clue-text" class="editable" contenteditable="true" onkeydown="suppressEnterKey(event)" onfocusout="setClues()"></span>
         </div>
         <div id="down-word" class="current-word"></div>
       </div>

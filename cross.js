@@ -395,6 +395,13 @@ function setClues() {
     // console.log("Stored clue:", clues[[current.downStartIndex, current.col, DOWN]], "at [" + current.downStartIndex + "," + current.col + "]");
 }
 
+function suppressEnterKey(e) {
+  if (e.which == keyboard.enter) {
+    e.preventDefault();
+    // console.log("Enter key behavior suppressed.");
+  }
+}
+
 function generateLayout() {
   gridPatterns = [
     [
