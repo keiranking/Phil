@@ -177,7 +177,7 @@ function updateCluesUI() {
   let downClueText = document.getElementById("down-clue-text");
   const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
 
-  // If the current cell is black, empty clues and get out
+  // If the current cell is black, empty interface and get out
   if (currentCell.className.search("black") != -1) {
     acrossClueNumber.innerHTML = "";
     downClueNumber.innerHTML = "";
@@ -246,24 +246,20 @@ function updateLabelsAndClues() {
       // if the cell isn't 'black'
       let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       if (currentCell.className.search("black") == -1) {
-        // if the row is 0, increment the clue number
-        if (i == 0) {
+        if (i == 0) { // if the row is 0, increment the clue number
           increment = true;
           isDown = true;
-        // else if the square above me is black, increment
-        } else {
+        } else {      // else if the square above me is black, increment
           const upCell = grid.querySelector('[data-row="' + (i - 1) + '"]').querySelector('[data-col="' + j + '"]');
           if (upCell.className.search("black") > -1) {
             increment = true;
             isDown = true;
           }
         }
-        // if the column is 0, increment
-        if (j == 0) {
+        if (j == 0) { // if the column is 0, increment
           increment = true;
           isAcross = true;
-        // else if the square to my left is black, increment
-        } else {
+        } else {      // else if the square to my left is black, increment
           const leftCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + (j - 1) + '"]');
           if (leftCell.className.search("black") > -1) {
             increment = true;
@@ -271,7 +267,7 @@ function updateLabelsAndClues() {
           }
         }
       }
-      if (increment == true) {
+      if (increment) {
         currentCell.firstChild.innerHTML = count; // Set square's label to the count
         count++;
         increment = false;
@@ -392,6 +388,13 @@ function updateSidebarHighlights() {
   }
 }
 
+function setClues() {
+    clues[[current.row, current.acrossStartIndex, ACROSS]] = document.getElementById("across-clue-text").innerHTML;
+    // console.log("Stored clue:", clues[[current.row, current.acrossStartIndex, ACROSS]], "at [" + current.row + "," + current.acrossStartIndex + "]");
+    clues[[current.downStartIndex, current.col, DOWN]] = document.getElementById("down-clue-text").innerHTML;
+    // console.log("Stored clue:", clues[[current.downStartIndex, current.col, DOWN]], "at [" + current.downStartIndex + "," + current.col + "]");
+}
+
 function generateLayout() {
   gridPatterns = [
     [
@@ -436,6 +439,7 @@ function clearFill() {
       }
     }
   }
+  updateUI();
 }
 
 function randomNumber(min, max) {
