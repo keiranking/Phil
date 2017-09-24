@@ -1,6 +1,7 @@
 <html>
 <head>
   <link rel="stylesheet" type="text/css" href="style.css" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
 </head>
 <body>
   <div id="header">
@@ -30,11 +31,33 @@
       <ul id="down-matches" class="matches"></ul>
     </div>
   </div>
-  <input id="quick-layout" type="button" value="Quick Layout" onclick="generateLayout();" />
-  <input id="clear-fill" type="button" value="Clear Words" onclick="clearFill();" />
-  <input id="file-input" type="file" />
+  <div id="toolbar">
+    <button id="new-grid" type="button" data-tooltip="New puzzle" class="disabled">
+      <i class="fa fa-plus" aria-hidden="true"></i>
+    </button>
+    <button id="open-JSON" type="button" data-tooltip="Open puzzle (.json)" class="disabled">
+      <i class="fa fa-folder-open-o" aria-hidden="true"></i>
+    </button>
+    <input id="file-input" type="file" />
+    <button id="export-JSON" type="button" data-tooltip="Export puzzle (.json)" class="disabled">
+      <i class="fa fa-download" aria-hidden="true"></i>
+    </button>
+    <button id="quick-layout" type="button" data-tooltip="Generate pattern" onclick="generateLayout();">
+      <i class="fa fa-delicious" aria-hidden="true"></i>
+    </button>
+    <button id="clear-fill" type="button" data-tooltip="Erase all words" onclick="clearFill();">
+      <i class="fa fa-eraser" aria-hidden="true"></i>
+    </button>
+    <button id="toggle-symmetry" type="button" data-tooltip="Turn off 180&#176; symmetry" onclick="toggleSymmetry();">
+      <i class="fa fa-balance-scale" aria-hidden="true"></i>
+    </button>
+    <button id="auto-fill" type="button" data-tooltip="Auto-fill puzzle" class="disabled" class="disabled">
+      <i class="fa fa-magic" aria-hidden="true"></i>
+    </button>
+  </div>
+  <!-- <input id="quick-layout" type="button" value="Quick Layout" onclick="generateLayout();" /> -->
+  <!-- <input id="clear-fill" type="button" value="Clear Words" onclick="clearFill();" /> -->
   <!-- <input id="toggle-symmetry" type="button" value="Toggle Symmetry" onclick="toggleSymmetry();" /> -->
-  <!-- <img src="https://png.icons8.com/camera/ios7/25" title="Quick Layout" width="25" height="25" onclick="generateLayout();"> -->
 
   <script src="cross.js"></script>
   <script src="wordlist.js"></script>

@@ -20,7 +20,6 @@ h1 {
 
 #grid:focus {
   outline: 2px solid #55b8fe;
-  /*outline: 3px solid #def1ff;*/
 }
 
 #grid td {
@@ -33,7 +32,6 @@ h1 {
 
 #grid td.active {
   border: 1px solid #55b8fe;
-  /*color: #55b8fe;*/
   opacity: 0.8;
   font-weight: 400;
 }
@@ -49,7 +47,6 @@ h1 {
 }
 
 #grid td.lowlight {
-  /*background-color: #edeff0;*/
   background-color: #f5f7f7;
 }
 
@@ -123,6 +120,44 @@ h1 {
 
   color: black;
   font-weight: 500;
+}
+
+#toolbar button {
+  position: relative;
+  border-radius: 4px;
+  background-color: white;
+  /*border: 1px solid #eee;*/
+  border: none;
+  color: #444;
+  text-align: center;
+  font-size: 14pt;
+  padding: 6px;
+  transition: all 0.3s;
+  margin: 0;
+}
+
+#toolbar button:hover {
+  background-color: #def1ff;
+  /*border-color: #444;*/
+}
+
+#toolbar button:hover:after {
+  content: attr(data-tooltip);
+  margin-top: 2px;
+  padding: 2px 0;
+  background: white;
+  color: #444;
+  font-size: 9pt;
+  font-weight: 400;
+  position: absolute;
+  left: 0;
+  top: 100%;
+  white-space: nowrap;
+  z-index: 20px;
+}
+
+#toolbar button.disabled {
+  color: #ccc;
 }
 
 .clue {
