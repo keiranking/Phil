@@ -10,6 +10,10 @@ h1 {
   margin-bottom: 5px;
 }
 
+#file-input {
+  display: none;
+}
+
 #grid {
   border: 1px solid #000;
   border-collapse: collapse;
@@ -132,8 +136,16 @@ h1 {
   text-align: center;
   font-size: 14pt;
   padding: 6px;
-  transition: all 0.3s;
+  transition: all 0.1s;
   margin: 0;
+}
+
+#toolbar button.button-on {
+  background-color: #cae9ff;
+}
+
+#toolbar button:focus {
+  outline: none;
 }
 
 #toolbar button:hover {

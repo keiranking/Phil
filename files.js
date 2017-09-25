@@ -1,3 +1,7 @@
+function openFile() {
+  document.getElementById("file-input").click();
+}
+
 function openJSONFile(e) {
   const file = e.target.files[0];
   if (!file) {

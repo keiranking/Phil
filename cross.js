@@ -20,37 +20,47 @@ const DOWN = "down";
 const SIZE = 15;
 
 let clues = {};
-
-createGrid(SIZE);
-
+let current = {};
 let isSymmetrical = true;
-let current = {
-  row:        0,
-  col:        0,
-  acrossWord: '',
-  downWord:   '',
-  acrossStartIndex:0,
-  acrossEndIndex:  SIZE,
-  downStartIndex:  0,
-  downEndIndex:    SIZE,
-  direction:  ACROSS
-};
+let grid = undefined;
+let squares = undefined;
 
-const grid = document.getElementById("grid");
-const squares = grid.querySelectorAll('td');
-
-updateActiveWords();
-updateGridHighlights();
-updateSidebarHighlights();
-updateCluesUI();
-
-for (const square of squares) {
-  square.addEventListener('click', mouseHandler);
-}
-grid.addEventListener('keydown', keyboardHandler);
+createNewPuzzle();
 
 //____________________
 // F U N C T I O N S
+
+function createNewPuzzle() {
+  clues = {};
+  document.getElementById("main").innerHTML = "";
+  createGrid(SIZE);
+
+  isSymmetrical = true;
+  current = {
+    row:        0,
+    col:        0,
+    acrossWord: '',
+    downWord:   '',
+    acrossStartIndex:0,
+    acrossEndIndex:  SIZE,
+    downStartIndex:  0,
+    downEndIndex:    SIZE,
+    direction:  ACROSS
+  };
+
+  grid = document.getElementById("grid");
+  squares = grid.querySelectorAll('td');
+
+  updateActiveWords();
+  updateGridHighlights();
+  updateSidebarHighlights();
+  updateCluesUI();
+
+  for (const square of squares) {
+    square.addEventListener('click', mouseHandler);
+  }
+  grid.addEventListener('keydown', keyboardHandler);
+}
 
 function mouseHandler() {
   const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
@@ -63,7 +73,7 @@ function mouseHandler() {
   current.col = activeCell.dataset.col;
   console.log("[" + current.row + "," + current.col + "]");
   activeCell.className += " active";
-  activeCell.className.trim();
+  activeCell.className = activeCell.className.trim();
 
   updateUI();
 }
@@ -94,11 +104,11 @@ function keyboardHandler(e) {
   } else if (e.which == keyboard.black) {
       activeCell.lastChild.innerHTML = BLACK;
       activeCell.className += " black";
-      activeCell.className.trim();
+      activeCell.className = activeCell.className.trim();
       if (isSymmetrical == true) {
         symmetricalCell.lastChild.innerHTML = BLACK;
         symmetricalCell.className += " black";
-        symmetricalCell.className.trim();
+        symmetricalCell.className = symmetricalCell.className.trim();
       }
   } else if (e.which == keyboard.enter) {
       current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
@@ -353,7 +363,7 @@ function updateGridHighlights() {
     const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]');
     if (i != current.col) {
       square.className += (current.direction == ACROSS) ? " highlight" : " lowlight";
-      square.className.trim();
+      square.className = square.className.trim();
     }
   }
 
@@ -362,7 +372,7 @@ function updateGridHighlights() {
     const square = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]');
     if (j != current.row) {
       square.className += (current.direction == DOWN) ? " highlight" : " lowlight";
-      square.className.trim();
+      square.className = square.className.trim();
     }
   }
 }
@@ -433,6 +443,19 @@ function generateLayout() {
 
 function toggleSymmetry() {
   isSymmetrical = (isSymmetrical) ? false : true;
+
+  // Update UI button
+  let symButton = document.getElementById("toggle-symmetry");
+  if (symButton.getAttribute("data-state") == "on") {
+    symButton.setAttribute("data-state", "off");
+    symButton.className = symButton.className.replace("button-on", "");
+    symButton.setAttribute("data-tooltip", "Turn on symmetry");
+  } else {
+    symButton.setAttribute("data-state", "on");
+    symButton.className += " button-on";
+    symButton.className = symButton.className.trim();
+    symButton.setAttribute("data-tooltip", "Turn off symmetry");
+  }
 }
 
 function clearFill() {
