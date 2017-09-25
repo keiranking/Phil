@@ -8,7 +8,35 @@
     <h1><span id="puzzle-title" class="editable" contenteditable="true" onkeydown="suppressEnterKey(event)">Untitled</span>
      by <span id="puzzle-author" class="editable" contenteditable="true" onkeydown="suppressEnterKey(event)">Anonymous</span></h1>
   </div>
+  <div id="toolbar">
+    <button id="new-grid" type="button" data-tooltip="New puzzle" onclick="createNewPuzzle();">
+      <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
+    </button>
+    <button id="open-JSON" type="button" data-tooltip="Open puzzle (.json)" onclick="openFile();">
+      <i class="fa fa-folder-open-o fa-fw" aria-hidden="true"></i>
+    </button>
+    <input id="file-input" type="file" />
+    <button id="export-JSON" type="button" data-tooltip="Export puzzle (.json)" class="disabled">
+      <i class="fa fa-download fa-fw" aria-hidden="true"></i>
+    </button>
+    <div class="divider"></div>
+    <button id="quick-layout" type="button" data-tooltip="Generate pattern" onclick="generateLayout();">
+      <i class="fa fa-delicious fa-fw" aria-hidden="true"></i>
+    </button>
+    <button id="clear-fill" type="button" data-tooltip="Erase all words" onclick="clearFill();">
+      <i class="fa fa-eraser fa-fw" aria-hidden="true"></i>
+    </button>
+    <button id="toggle-symmetry" type="button" data-tooltip="Turn off symmetry" data-state="on" class="button-on" onclick="toggleSymmetry();">
+      <i class="fa fa-balance-scale fa-fw" aria-hidden="true"></i>
+    </button>
+    <div class="divider"></div>
+    <button id="auto-fill" type="button" data-tooltip="Auto-fill puzzle" class="disabled" class="disabled">
+      <i class="fa fa-magic fa-fw" aria-hidden="true"></i>
+    </button>
+  </div>
+
   <div id="main"></div>
+
   <div id="sidebar">
     <div class="half-sidebar">
       <div id="across-heading" class="direction-heading">
@@ -31,7 +59,7 @@
       <ul id="down-matches" class="matches"></ul>
     </div>
   </div>
-  <div id="toolbar">
+  <!-- <div id="toolbar">
     <button id="new-grid" type="button" data-tooltip="New puzzle" onclick="createNewPuzzle();">
       <i class="fa fa-plus" aria-hidden="true"></i>
     </button>
@@ -54,10 +82,7 @@
     <button id="auto-fill" type="button" data-tooltip="Auto-fill puzzle" class="disabled" class="disabled">
       <i class="fa fa-magic" aria-hidden="true"></i>
     </button>
-  </div>
-  <!-- <input id="quick-layout" type="button" value="Quick Layout" onclick="generateLayout();" /> -->
-  <!-- <input id="clear-fill" type="button" value="Clear Words" onclick="clearFill();" /> -->
-  <!-- <input id="toggle-symmetry" type="button" value="Toggle Symmetry" onclick="toggleSymmetry();" /> -->
+  </div> -->
 
   <script src="cross.js"></script>
   <script src="wordlist.js"></script>

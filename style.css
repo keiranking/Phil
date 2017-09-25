@@ -1,6 +1,7 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Roboto", "Droid Sans", "Arial", sans-serif;
-  width: 850px;
+  width: 885px;
+  margin: 5px;
 }
 
 h1 {
@@ -52,6 +53,10 @@ h1 {
 
 #grid td.lowlight {
   background-color: #f5f7f7;
+}
+
+#header {
+  margin-left: 38px;
 }
 
 #main {
@@ -126,7 +131,17 @@ h1 {
   font-weight: 500;
 }
 
+#toolbar {
+  width: 32px;
+  margin: 0;
+  padding: 0;
+  margin-right: 6px;
+  float: left;
+}
+
 #toolbar button {
+  width: 32px;
+  height: 32px;
   position: relative;
   border-radius: 4px;
   background-color: white;
@@ -135,9 +150,9 @@ h1 {
   color: #444;
   text-align: center;
   font-size: 14pt;
-  padding: 6px;
+  padding: 6px 4px;
   transition: all 0.1s;
-  margin: 0;
+  margin: 2px 0;
 }
 
 #toolbar button.button-on {
@@ -155,21 +170,30 @@ h1 {
 
 #toolbar button:hover:after {
   content: attr(data-tooltip);
-  margin-top: 2px;
-  padding: 2px 0;
-  background: white;
-  color: #444;
+  margin: 4px 0;
+  padding: 4px;
+  background: #444;
+  color: white;
   font-size: 9pt;
   font-weight: 400;
   position: absolute;
-  left: 0;
-  top: 100%;
+  left: 110%;
+  top: 0;
   white-space: nowrap;
-  z-index: 20px;
+  z-index: 20;
 }
 
 #toolbar button.disabled {
   color: #ccc;
+}
+
+#toolbar .divider {
+  width: 32px;
+  border-bottom: 1px solid #ccc;
+  margin: 0;
+  padding: 0;
+  margin-bottom: 2px;
+  padding-bottom: 2px;
 }
 
 .clue {

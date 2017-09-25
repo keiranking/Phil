@@ -32,6 +32,8 @@ createNewPuzzle();
 
 function createNewPuzzle() {
   clues = {};
+  document.getElementById("puzzle-title").innerHTML = "Untitled";
+  document.getElementById("puzzle-author").innerHTML = "Anonymous";
   document.getElementById("main").innerHTML = "";
   createGrid(SIZE);
 
@@ -431,7 +433,9 @@ function generateLayout() {
   activeCell.className = activeCell.className.replace("active", "").trim();
 
   const pattern = gridPatterns[randomNumber(0, gridPatterns.length)]; // select random pattern
-  isSymmetrical = true;
+  if (!isSymmetrical) {
+    toggleSymmetry();
+  }
   for (let i = 0; i < pattern.length; i++) {
     [current.row, current.col] = pattern[i];
     let e = new Event('keydown');
