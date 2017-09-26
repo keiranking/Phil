@@ -57,6 +57,7 @@ function openDefaultWordlist(url) {
       const words = textFile.responseText.split(/\s/g);
       addToWordlist(words);
       sortWordlist();
+      console.log("Loaded default wordlist.")
     }
   }
   textFile.send(null);
