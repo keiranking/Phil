@@ -4,9 +4,7 @@ let wordlist = [
   [], [], [], [], [], []
 ];
 
-// importWordlist("https://raw.githubusercontent.com/keiranking/kCrossword/master/wordlist.txt");
-importWordlist("https://raw.githubusercontent.com/keiranking/kCrossword/master/WL-MirriamWebster9thCollegiate.txt");
-sortWordlist();
+openDefaultWordlist("https://raw.githubusercontent.com/keiranking/kCrossword/master/WL-MirriamWebster9thCollegiate.txt");
 
 //____________________
 // F U N C T I O N S
@@ -21,21 +19,59 @@ function addToWordlist(newWords) {
 }
 
 function sortWordlist() {
-  for (i = 3; i < wordlist.length; i++) {
+  for (let i = 3; i < wordlist.length; i++) {
     wordlist[i].sort();
   }
 }
 
-function importWordlist(url) {
+function openWordlist() {
+  document.getElementById("open-wordlist-input").click();
+}
+
+function openWordlistFile(e) {
+  wordlist = [
+    [], [], [], [], [],
+    [], [], [], [], [],
+    [], [], [], [], [], []
+  ];
+
+  const file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  let reader = new FileReader();
+  reader.onload = function(e) {
+    const words = e.target.result.split(/\s/g);
+    addToWordlist(words);
+    sortWordlist();
+    removeWordlistDuplicates();
+  };
+  reader.readAsText(file);
+}
+
+function openDefaultWordlist(url) {
   let textFile = new XMLHttpRequest();
   textFile.open("GET", url, true);
   textFile.onreadystatechange = function() {
     if (textFile.readyState === 4 && textFile.status === 200) {  // Makes sure the document is ready to parse, and it's found the file.
       const words = textFile.responseText.split(/\s/g);
       addToWordlist(words);
+      sortWordlist();
     }
   }
   textFile.send(null);
+}
+
+function removeWordlistDuplicates() {
+  for (let i = 3; i < wordlist.length; i++) {
+    if (wordlist[i].length >= 2) {
+      for (let j = wordlist[i].length - 1; j >0; j--) {
+        if (wordlist[i][j] == wordlist[i][j - 1]) {
+          wordlist[i].splice(j, 1);
+        }
+      }
+    }
+  }
 }
 
 function matchFromWordlist(word) {
@@ -100,25 +136,3 @@ function fillGridWithMatch() {
   updateActiveWords();
   updateMatchesUI();
 }
-
-// function printScore() {
-//   console.log(scoreWord(event.currentTarget.innerHTML));
-// }
-
-// function scoreWord(word) {
-//   let f = new XMLHttpRequest();
-//   f.open("GET", "http://crosswordtracker.com/answer/" + word + "/", true);
-//   f.onreadystatechange = function() {
-//     if (f.readyState === 4 && f.status === 200) {
-//       const raw = f.responseText;
-//       return raw;
-//     }
-//   }
-// }
-
-// class Rectangle {
-//   constructor(height, width) {
-//     this.height = height;
-//     this.width = width;
-//   }
-// }

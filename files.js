@@ -1,4 +1,4 @@
-function openFile() {
+function openPuzzle() {
   document.getElementById("open-puzzle-input").click();
 }
 
@@ -7,7 +7,7 @@ function openJSONFile(e) {
   if (!file) {
     return;
   }
-  var reader = new FileReader();
+  let reader = new FileReader();
   reader.onload = function(e) {
     const puz = JSON.parse(e.target.result);
     console.log("Loaded", puz.title, "by", puz.author);
@@ -77,7 +77,7 @@ function convertJSONToPuzzle(puz) {
 }
 
 function writeJSONFile() {
-  let filename = "puzzle.json";
+  let filename = xw.title + ".xw";
   let file = new File([convertPuzzleToJSON()], filename);
   let puzzleURL = window.URL.createObjectURL(file);
 
@@ -124,3 +124,4 @@ function convertPuzzleToJSON() {
 }
 
 document.getElementById('open-puzzle-input').addEventListener('change', openJSONFile, false);
+document.getElementById('open-wordlist-input').addEventListener('change', openWordlistFile, false);

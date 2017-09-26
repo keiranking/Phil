@@ -18,6 +18,9 @@ const BLANK = " ";
 const ACROSS = "across";
 const DOWN = "down";
 const SIZE = 15;
+const DEFAULT_TITLE = "Untitled";
+const DEFAULT_AUTHOR = "Anonymous";
+const DEFAULT_CLUE = "(blank clue)";
 
 let xw = {};
 let current = {};
@@ -32,8 +35,8 @@ createNewPuzzle();
 
 function createNewPuzzle(rows, cols) {
   xw["clues"] = {};
-  xw["title"] = "Untitled";
-  xw["author"] = "Anonymous";
+  xw["title"] = DEFAULT_TITLE;
+  xw["author"] = DEFAULT_AUTHOR;
   xw["rows"] = rows || SIZE;
   xw["cols"] = cols || xw.rows;
   updateInfoUI();
@@ -253,12 +256,10 @@ function createGrid(rows, cols) {
 function updateLabelsAndClues() {
   let count = 1;
   let increment = false;
-  const rows = SIZE;
-  const cols = SIZE;
   const grid = document.getElementById("grid");
 
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
+  for (let i = 0; i < xw.rows; i++) {
+    for (let j = 0; j < xw.cols; j++) {
       let isAcross = false;
       let isDown = false;
       increment = false;
@@ -292,10 +293,10 @@ function updateLabelsAndClues() {
         increment = false;
 
         if (isAcross) {
-          xw.clues[[i, j, ACROSS]] = xw.clues[[i, j, ACROSS]] || "(blank clue)";
+          xw.clues[[i, j, ACROSS]] = xw.clues[[i, j, ACROSS]] || DEFAULT_CLUE;
         }
         if (isDown) {
-          xw.clues[[i, j, DOWN]] = xw.clues[[i, j, DOWN]] || "(blank clue)";
+          xw.clues[[i, j, DOWN]] = xw.clues[[i, j, DOWN]] || DEFAULT_CLUE;
         }
       } else {
         currentCell.firstChild.innerHTML = "";
@@ -441,7 +442,11 @@ function generateLayout() {
     ]
   ];
 
+  let title = xw.title;
+  let author = xw.author;
   createNewPuzzle();
+  xw.title = title;
+  xw.author = author;
   // "Delete" active square before applying pattern to prevent 2 active squares
   const activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   activeCell.className = activeCell.className.replace("active", "").trim();
@@ -456,7 +461,7 @@ function generateLayout() {
     e.which = keyboard.black;
     keyboardHandler(e);
   }
-  console.log("Quick layout.")
+  console.log("Generated layout.")
 }
 
 function toggleSymmetry() {
@@ -477,10 +482,8 @@ function toggleSymmetry() {
 }
 
 function clearFill() {
-  const rows = SIZE;
-  const cols = SIZE;
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
+  for (let i = 0; i < xw.rows; i++) {
+    for (let j = 0; j < xw.cols; j++) {
       const currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       if (currentCell.className.search("black") == -1) {
         currentCell.lastChild.innerHTML = BLANK;

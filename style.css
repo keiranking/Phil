@@ -12,12 +12,13 @@ h1 {
 }
 
 #download-puzzle-link,
-#open-puzzle-input {
+#open-puzzle-input,
+#open-wordlist-input {
   display: none;
 }
 
 #grid {
-  border: 1px solid #000;
+  border: 2px solid black;
   border-collapse: collapse;
   text-align: center;
   font-size: 15pt;
@@ -32,8 +33,8 @@ h1 {
   width: 35px;
   height: 36px;
   position: relative;
-  border-left: 1px solid #000;
-  border-top: 1px solid #000;
+  border-left: 1px solid black;
+  border-top: 1px solid black;
 }
 
 #grid td.active {
@@ -187,6 +188,9 @@ h1 {
 
 #toolbar button.disabled {
   color: #ccc;
+}
+#toolbar button.disabled:hover {
+  background-color: white;
 }
 
 #toolbar .divider {

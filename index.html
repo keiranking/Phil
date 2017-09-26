@@ -13,17 +13,18 @@
     <button id="new-grid" type="button" data-tooltip="New puzzle" onclick="createNewPuzzle();">
       <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
     </button>
-    <button id="open-JSON" type="button" data-tooltip="Open puzzle... (.json)" onclick="openFile();">
+    <button id="open-JSON" type="button" data-tooltip="Open puzzle..." onclick="openPuzzle();">
       <i class="fa fa-folder-open-o fa-fw" aria-hidden="true"></i>
     </button>
-    <input id="open-puzzle-input" type="file" />
-    <button id="export-JSON" type="button" data-tooltip="Export puzzle (.json)" onclick="writeJSONFile();">
+    <input id="open-puzzle-input" type="file" accept=".json,.txt,.xw"/>
+    <button id="export-JSON" type="button" data-tooltip="Export puzzle" onclick="writeJSONFile();">
       <i class="fa fa-download fa-fw" aria-hidden="true"></i>
     </button>
     <a id="download-puzzle-link">Download puzzle</a>
-    <button id="open-dictionary" type="button" data-tooltip="Change dictionary... (.txt)" class="disabled">
+    <button id="open-wordlist" type="button" data-tooltip="Change dictionary..." onclick="openWordlist();">
       <i class="fa fa-book fa-fw" aria-hidden="true"></i>
     </button>
+    <input id="open-wordlist-input" type="file" accept=".txt"/>
 
     <div class="divider"></div>
 
@@ -67,6 +68,9 @@
       </div>
       <ul id="down-matches" class="matches"></ul>
     </div>
+  </div>
+
+  <div id="how-to">
   </div>
 
   <div id="footer">
