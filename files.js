@@ -1,5 +1,5 @@
 function openFile() {
-  document.getElementById("file-input").click();
+  document.getElementById("open-puzzle-input").click();
 }
 
 function openJSONFile(e) {
@@ -77,7 +77,14 @@ function convertJSONToPuzzle(puz) {
 }
 
 function writeJSONFile() {
-  console.log(convertPuzzleToJSON());
+  let filename = "puzzle.json";
+  let file = new File([convertPuzzleToJSON()], filename);
+  let puzzleURL = window.URL.createObjectURL(file);
+
+  let puzzleLink = document.getElementById("download-puzzle-link");
+  puzzleLink.setAttribute("href", puzzleURL);
+  puzzleLink.setAttribute("download", filename);
+  puzzleLink.click();
 }
 
 function convertPuzzleToJSON() {
@@ -104,7 +111,6 @@ function convertPuzzleToJSON() {
       }
     }
   }
-
   // Read grid
   puz["grid"] = [];
   for (let i = 0; i < xw.rows; i++) {
@@ -117,4 +123,4 @@ function convertPuzzleToJSON() {
   return JSON.stringify(puz);  // Convert JS object to JSON text
 }
 
-document.getElementById('file-input').addEventListener('change', openJSONFile, false);
+document.getElementById('open-puzzle-input').addEventListener('change', openJSONFile, false);

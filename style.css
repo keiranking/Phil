@@ -11,7 +11,8 @@ h1 {
   margin-bottom: 5px;
 }
 
-#file-input {
+#download-puzzle-link,
+#open-puzzle-input {
   display: none;
 }
 
