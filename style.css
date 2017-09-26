@@ -172,6 +172,7 @@ h1 {
   content: attr(data-tooltip);
   margin: 4px 0;
   padding: 4px;
+  border-radius: 2px;
   background: #444;
   color: white;
   font-size: 9pt;

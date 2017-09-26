@@ -9,36 +9,36 @@ function openJSONFile(e) {
   }
   var reader = new FileReader();
   reader.onload = function(e) {
-    const puzzle = JSON.parse(e.target.result);
-    console.log("Loaded", puzzle.title, "by", puzzle.author);
-    displayJSONPuzzle(puzzle);
+    const puz = JSON.parse(e.target.result);
+    console.log("Loaded", puz.title, "by", puz.author);
+    convertJSONToPuzzle(puz);
   };
   reader.readAsText(file);
 }
 
-function displayJSONPuzzle(puz) {
+function convertJSONToPuzzle(puz) {
+  createNewPuzzle();
 
   if (puz.size.rows != SIZE || puz.size.cols != SIZE) {
     console.log("Oops. JSON puzzle is the wrong size.");
     return;
   }
-  const rows = SIZE;
-  const cols = SIZE;
+  xw.rows = SIZE;
+  xw.cols = SIZE;
 
   // Display puzzle title, author
-  document.getElementById("puzzle-title").innerHTML = puz.title;
+  xw.title = puz.title;
   if (puz.title.slice(0,8) == "NY TIMES") {
-    document.getElementById("puzzle-title").innerHTML = "NYT Crossword";
+    xw.title = "NYT Crossword";
   }
-
-  document.getElementById("puzzle-author").innerHTML = puz.author;
+  xw.author = puz.author;
 
   // Display fill in grid
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
+  for (let i = 0; i < xw.rows; i++) {
+    for (let j = 0; j < xw.cols; j++) {
       const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
 
-      const k = (i * rows) + j;
+      const k = (i * xw.rows) + j;
       const fill = (puz.grid[k].length > 1) ? puz.grid[k][0] : puz.grid[k];
 
       activeCell.lastChild.innerHTML = fill.toUpperCase();
@@ -52,21 +52,21 @@ function displayJSONPuzzle(puz) {
   updateUI();
 
   // Load in clues and display current clues
-  for (let i = 0; i < rows; i++) {
-    for (let j = 0; j < cols; j++) {
+  for (let i = 0; i < xw.rows; i++) {
+    for (let j = 0; j < xw.cols; j++) {
       const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       if (activeCell.firstChild.innerHTML) {
         const label = activeCell.firstChild.innerHTML + ".";
         for (let k = 0; k < puz.clues.across.length; k++) {
           if (label == puz.clues.across[k].slice(0, label.length)) {
             // clues[[i, j, ACROSS]] = puz.clues.across[k];
-            clues[[i, j, ACROSS]] = puz.clues.across[k].slice(label.length).trim();
+            xw.clues[[i, j, ACROSS]] = puz.clues.across[k].slice(label.length).trim();
           }
         }
         for (let l = 0; l < puz.clues.down.length; l++) {
           if (label == puz.clues.down[l].slice(0, label.length)) {
             // clues[[i, j, DOWN]] = puz.clues.down[l];
-            clues[[i, j, DOWN]] = puz.clues.down[l].slice(label.length).trim();
+            xw.clues[[i, j, DOWN]] = puz.clues.down[l].slice(label.length).trim();
           }
         }
       }
@@ -74,6 +74,47 @@ function displayJSONPuzzle(puz) {
   }
 
   updateUI();
+}
+
+function writeJSONFile() {
+  console.log(convertPuzzleToJSON());
+}
+
+function convertPuzzleToJSON() {
+  let puz = {};
+  puz["author"] = xw.author;
+  puz["title"] = xw.title;
+  puz["size"] = {
+    "rows": xw.rows,
+    "cols": xw.cols
+  };
+  // Translate clues to standard JSON puzzle format
+  puz["clues"] = {
+    "across": [],
+    "down": []
+  };
+  for (const key in xw.clues) {
+    const location = key.split(",");
+    const label = grid.querySelector('[data-row="' + location[0] + '"]').querySelector('[data-col="' + location[1] + '"]').firstChild.innerHTML;
+    if (label) {
+      if (location[2] == ACROSS) {
+        puz.clues.across.push(label + ". " + xw.clues[location]);
+      } else {
+        puz.clues.down.push(label + ". " + xw.clues[location]);
+      }
+    }
+  }
+
+  // Read grid
+  puz["grid"] = [];
+  for (let i = 0; i < xw.rows; i++) {
+    for (let j = 0; j < xw.cols; j++) {
+      const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      puz.grid.push(square.lastChild.innerHTML);
+    }
+  }
+
+  return JSON.stringify(puz);  // Convert JS object to JSON text
 }
 
 document.getElementById('file-input').addEventListener('change', openJSONFile, false);
