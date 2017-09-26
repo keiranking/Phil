@@ -481,6 +481,14 @@ function toggleSymmetry() {
   }
 }
 
+function toggleHelp() {
+  let helpLink = document.getElementById("help-link");
+  let helpText = document.getElementById("help-text");
+
+  helpLink.innerHTML = (helpLink.innerHTML == "Help") ? "Hide help" : "Help";
+  helpText.style.display = (helpText.style.display == "block") ? "none" : "block";
+}
+
 function clearFill() {
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {

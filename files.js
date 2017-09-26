@@ -9,9 +9,17 @@ function openJSONFile(e) {
   }
   let reader = new FileReader();
   reader.onload = function(e) {
-    const puz = JSON.parse(e.target.result);
-    console.log("Loaded", puz.title, "by", puz.author);
-    convertJSONToPuzzle(puz);
+    try {
+      const puz = JSON.parse(e.target.result);
+      console.log("Loaded", puz.title, "by", puz.author);
+      convertJSONToPuzzle(puz);
+    }
+    catch(err) {
+      if (err.name == "SyntaxError") {
+        window.alert("Invalid puzzle file.");
+        return;
+      }
+    }
   };
   reader.readAsText(file);
 }
