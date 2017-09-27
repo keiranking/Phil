@@ -1,3 +1,13 @@
+:root {
+  --black: black;
+  --lt-grey: #f5f7f7;
+  --med-grey: #999;
+  --dk-grey: #444;
+  --lt-blue: #def1ff;
+  --med-blue: #55b8fe;
+  --dk-blue: #0181dc;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Helvetica", "Roboto", "Droid Sans", "Arial", sans-serif;
   width: 885px;
@@ -7,7 +17,7 @@ body {
 h1 {
   font-size: 20pt;
   font-weight: 300;
-  color: #999;
+  color: var(--med-grey);
   margin-bottom: 5px;
 }
 
@@ -18,22 +28,37 @@ h1 {
 }
 
 #footer {
+  width: 573px;
+  margin: 0;
+  padding: 0;
   margin-left: 38px;
+  margin-top: 3px;
   font-size: 9.5pt;
+  line-height: 11pt;
 }
 
 #footer a {
-  color: #999;
+  color: var(--dk-grey);
   font-weight: 500;
   text-decoration: none;
 }
 
 #footer a:hover {
-  color: #55b8fe;
+  color: var(--med-blue);
+}
+
+#footer #credits {
+  color: var(--med-grey);
+  float: right;
+}
+
+#footer #help {
+  color: var(--dk-grey);
+  float: left;
 }
 
 #grid {
-  border: 2px solid black;
+  border: 2px solid var(--black);
   border-collapse: collapse;
   text-align: center;
   font-size: 15pt;
@@ -41,53 +66,39 @@ h1 {
 }
 
 #grid:focus {
-  outline: 2px solid #55b8fe;
+  outline: 2px solid var(--med-blue);
 }
 
 #grid td {
   width: 35px;
   height: 36px;
   position: relative;
-  border-left: 1px solid black;
-  border-top: 1px solid black;
+  border-left: 1px solid var(--black);
+  border-top: 1px solid var(--black);
 }
 
 #grid td.active {
-  border: 1px solid #55b8fe;
+  border: 1px solid var(--med-blue);
   opacity: 0.8;
   font-weight: 400;
 }
 
 #grid td.black {
-  background-color: black;
+  background-color: var(--black);
 }
 
 #grid td.highlight {
-  border: 1px solid #55b8fe;
-  background-color: #def1ff;
+  border: 1px solid var(--med-blue);
+  background-color: var(--lt-blue);
   font-weight: 400;
 }
 
 #grid td.lowlight {
-  background-color: #f5f7f7;
+  background-color: var(--lt-grey);
 }
 
 #header {
   margin-left: 38px;
-}
-
-#help-text {
-  /*display: none;*/
-  margin-left: 38px;
-  margin-top: 3px;
-  font-size: 10pt;
-  line-height: 11pt;
-  color: #444;
-}
-
-#help-text p {
-  margin: 0;
-  padding: 0;
 }
 
 #main {
@@ -107,7 +118,7 @@ h1 {
   max-width: 400px;
   overflow: hidden;
   font-weight: 500;
-  color: black;
+  color: var(--black);
 }
 
 #sidebar {
@@ -131,8 +142,8 @@ h1 {
 }
 
 #sidebar .direction-heading.highlight {
-  border-top: 1px solid #55b8fe;
-  border-bottom: 1px solid #55b8fe;
+  border-top: 1px solid var(--med-blue);
+  border-bottom: 1px solid var(--med-blue);
 }
 
 #sidebar ul.matches {
@@ -141,7 +152,7 @@ h1 {
   /*width: 160px;*/
   list-style-type: none;
   padding: 0;
-  color: #999;
+  color: var(--med-grey);
   font-weight: 400;
   overflow: hidden;
   overflow-y: scroll;
@@ -152,13 +163,8 @@ h1 {
 }
 
 #sidebar ul.matches li:hover {
-  background: #f5f7f7; /* For browsers that do not support gradients */
-  background: -webkit-linear-gradient(left, #f2f2f2 , transparent); /* For Safari 5.1 to 6.0 */
-  background: -o-linear-gradient(right, #f2f2f2, transparent); /* For Opera 11.1 to 12.0 */
-  background: -moz-linear-gradient(right, #f2f2f2, transparent); /* For Firefox 3.6 to 15 */
-  background: linear-gradient(to right, #f2f2f2 , transparent); /* Standard syntax */
-
-  color: black;
+  background: var(--lt-grey); /* For browsers that do not support gradients */
+  color: var(--black);
   font-weight: 500;
 }
 
@@ -178,7 +184,7 @@ h1 {
   background-color: white;
   /*border: 1px solid #eee;*/
   border: none;
-  color: #444;
+  color: var(--dk-grey);
   text-align: center;
   font-size: 14pt;
   padding: 6px 4px;
@@ -188,8 +194,8 @@ h1 {
 
 #toolbar button.button-on {
   /*background-color: #cae9ff;*/
-  /*color: #55b8fe;*/
-  color: #0181dc;
+  /*color: var(--med-blue);*/
+  color: var(--dk-blue);
 }
 
 #toolbar button:focus {
@@ -197,8 +203,8 @@ h1 {
 }
 
 #toolbar button:hover {
-  background-color: #def1ff;
-  /*border-color: #444;*/
+  background-color: var(--lt-blue);
+  /*border-color: var(--dk-grey);*/
 }
 
 #toolbar button:hover:after {
@@ -206,7 +212,7 @@ h1 {
   margin: 4px 0;
   padding: 4px;
   border-radius: 2px;
-  background: #444;
+  background: var(--dk-grey);
   color: white;
   font-size: 9pt;
   font-weight: 400;

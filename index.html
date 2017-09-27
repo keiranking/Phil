@@ -5,36 +5,38 @@
 </head>
 <body>
   <div id="header">
-    <h1><span id="puzzle-title" class="editable" contenteditable="true" onkeydown="suppressEnterKey(event)" onfocusout="setTitle()">Untitled</span>
-     by <span id="puzzle-author" class="editable" contenteditable="true" onkeydown="suppressEnterKey(event)" onfocusout="setAuthor()">Anonymous</span></h1>
+    <h1><span id="puzzle-title" class="editable" contenteditable="true"
+      onkeydown="suppressEnterKey(event)" onfocusout="setTitle()">Untitled</span>
+     by <span id="puzzle-author" class="editable" contenteditable="true"
+      onkeydown="suppressEnterKey(event)" onfocusout="setAuthor()">Anonymous</span></h1>
   </div>
 
   <div id="toolbar">
-    <button id="new-grid" type="button" data-tooltip="New puzzle" onclick="createNewPuzzle();">
+    <button id="new-grid" type="button" data-tooltip="New puzzle" onclick="createNewPuzzle()">
       <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
     </button>
-    <button id="open-JSON" type="button" data-tooltip="Open puzzle..." onclick="openPuzzle();">
+    <button id="open-JSON" type="button" data-tooltip="Open puzzle..." onclick="openPuzzle()">
       <i class="fa fa-folder-open-o fa-fw" aria-hidden="true"></i>
     </button>
     <input id="open-puzzle-input" type="file" accept=".json,.txt,.xw"/>
-    <button id="export-JSON" type="button" data-tooltip="Export puzzle" onclick="writeJSONFile();">
+    <button id="export-JSON" type="button" data-tooltip="Export puzzle" onclick="writeJSONFile()">
       <i class="fa fa-download fa-fw" aria-hidden="true"></i>
     </button>
     <a id="download-puzzle-link">Download puzzle</a>
-    <button id="open-wordlist" type="button" data-tooltip="Change dictionary..." onclick="openWordlist();">
+    <button id="open-wordlist" type="button" data-tooltip="Change dictionary..." onclick="openWordlist()">
       <i class="fa fa-book fa-fw" aria-hidden="true"></i>
     </button>
     <input id="open-wordlist-input" type="file" accept=".txt"/>
 
     <div class="divider"></div>
 
-    <button id="quick-layout" type="button" data-tooltip="Generate pattern" onclick="generateLayout();">
+    <button id="quick-layout" type="button" data-tooltip="Generate pattern" onclick="generateLayout()">
       <i class="fa fa-delicious fa-fw" aria-hidden="true"></i>
     </button>
-    <button id="clear-fill" type="button" data-tooltip="Erase all words" onclick="clearFill();">
+    <button id="clear-fill" type="button" data-tooltip="Erase all words" onclick="clearFill()">
       <i class="fa fa-eraser fa-fw" aria-hidden="true"></i>
     </button>
-    <button id="toggle-symmetry" type="button" data-tooltip="Turn off symmetry" data-state="on" class="button-on" onclick="toggleSymmetry();">
+    <button id="toggle-symmetry" type="button" data-tooltip="Turn off symmetry" data-state="on" class="button-on" onclick="toggleSymmetry()">
       <i class="fa fa-balance-scale fa-fw" aria-hidden="true"></i>
     </button>
 
@@ -70,12 +72,10 @@
     </div>
   </div>
 
-  <div id="help-text">
-    <p><b>Tip: </b>Type a period for a black square.</p>
-  </div>
 
   <div id="footer">
-    <!-- <a id="help-link" onclick="toggleHelp();">Help</a> -->
+    <div id="help"><b>Tip: </b>Type a period for a black square.</div>
+    <div id="credits">built by <a href="https://github.com/keiranking/" target="_blank">Keiran King</a></div>
   </div>
 
   <script src="cross.js"></script>

@@ -481,13 +481,13 @@ function toggleSymmetry() {
   }
 }
 
-function toggleHelp() {
-  let helpLink = document.getElementById("help-link");
-  let helpText = document.getElementById("help-text");
-
-  helpLink.innerHTML = (helpLink.innerHTML == "Help") ? "Hide help" : "Help";
-  helpText.style.display = (helpText.style.display == "block") ? "none" : "block";
-}
+// function toggleHelp() {
+//   let helpLinkClass = document.getElementById("help-link").firstChild.className;
+//   let helpTextDisplay = document.getElementById("help-text").style.display;
+//
+//   helpLinkClass = (helpLinkClass == "fa fa-times") ? "fa fa-chevron-right" : "fa fa-times";
+//   helpTextDisplay = (helpTextDisplay == "none") ? "inline" : "none";
+// }
 
 function clearFill() {
   for (let i = 0; i < xw.rows; i++) {
