@@ -1,8 +1,9 @@
 Fill, a crossword maker
 =========================
 
-Fill is a web app for making crosswords. 
+Fill is a web app for making crosswords.
 ![Build your own crossword](screenshot.png "Build your own crossword")
 
-* Reads and writes .xw files, which are just [JSON puzzle](https://www.xwordinfo.com/JSON/) files by another name.
-* Use the built-in Merriam-Webster dictionary, or any other text file.
+* Open and save .xw files ([JSON puzzle files](https://www.xwordinfo.com/JSON/) by another name).
+* Use the built-in Merriam-Webster dictionary, or any text file you want.
+* 100% client-side Javascript.
