@@ -38,13 +38,13 @@ h1 {
 }
 
 #footer a {
-  color: var(--dk-grey);
+  color: var(--med-grey);
   font-weight: 500;
   text-decoration: none;
 }
 
 #footer a:hover {
-  color: var(--med-blue);
+  color: var(--dk-grey);
 }
 
 #footer #credits {
