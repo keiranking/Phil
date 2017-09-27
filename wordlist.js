@@ -4,7 +4,7 @@ let wordlist = [
   [], [], [], [], [], []
 ];
 
-openDefaultWordlist("https://raw.githubusercontent.com/keiranking/kCrossword/master/WL-MirriamWebster9thCollegiate.txt");
+openDefaultWordlist("https://raw.githubusercontent.com/keiranking/Fill/master/WL-MirriamWebster9thCollegiate.txt");
 
 //____________________
 // F U N C T I O N S
