@@ -1,5 +1,5 @@
 Fill, a crossword maker
-=========================
+=======================
 
 Fill is a web app for making crosswords.
 * Open and save .xw files ([JSON puzzle files](https://www.xwordinfo.com/JSON/) by another name).

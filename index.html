@@ -19,14 +19,13 @@
       <i class="fa fa-folder-open-o fa-fw" aria-hidden="true"></i>
     </button>
     <input id="open-puzzle-input" type="file" accept=".json,.txt,.xw"/>
-    <button id="export-JSON" type="button" data-tooltip="Export puzzle" onclick="writeJSONFile()">
+    <button id="export-JSON" type="button" data-tooltip="Download puzzle" onclick="writeJSONFile()">
       <i class="fa fa-download fa-fw" aria-hidden="true"></i>
     </button>
     <a id="download-puzzle-link">Download puzzle</a>
-    <button id="open-wordlist" type="button" data-tooltip="Change dictionary..." onclick="openWordlist()">
-      <i class="fa fa-book fa-fw" aria-hidden="true"></i>
+    <button id="print-puzzle" type="button" data-tooltip="Print to PDF" onclick="printPDF()" class="disabled">
+      <i class="fa fa-print fa-fw" aria-hidden="true"></i>
     </button>
-    <input id="open-wordlist-input" type="file" accept=".txt"/>
 
     <div class="divider"></div>
 
@@ -42,8 +41,15 @@
 
     <div class="divider"></div>
 
-    <button id="auto-fill" type="button" data-tooltip="Auto-fill puzzle" class="disabled" class="disabled">
+    <button id="open-wordlist" type="button" data-tooltip="Change dictionary..." onclick="openWordlist()">
+      <i class="fa fa-book fa-fw" aria-hidden="true"></i>
+    </button>
+    <input id="open-wordlist-input" type="file" accept=".txt"/>
+    <button id="auto-fill" type="button" data-tooltip="Auto-fill puzzle" class="disabled">
       <i class="fa fa-magic fa-fw" aria-hidden="true"></i>
+    </button>
+    <button id="print-NYT-submission" type="button" data-tooltip="Print NYT submission" class="disabled">
+      <i class="fa fa-newspaper-o fa-fw" aria-hidden="true"></i>
     </button>
   </div>
 
@@ -74,10 +80,12 @@
 
 
   <div id="footer">
-    <div id="help">A period creates a black square. 'Enter' changes direction.</div>
-    <div id="credits"><a href="https://github.com/keiranking/Fill" target="_blank">Fill v1.0</a> by Keiran King</div>
+    <div id="credits"><a href="https://github.com/keiranking/Fill" target="_blank">Fill v1.0</a></div>
+    <div id="help" onclick="toggleHelp()">A period creates a black square. 'Enter' changes direction.<span id="hide-help">Dismiss</span></div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.3.2/jspdf.plugin.autotable.js"></script>
   <script src="cross.js"></script>
   <script src="wordlist.js"></script>
   <script src="files.js"></script>

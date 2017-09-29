@@ -11,8 +11,8 @@ function openJSONFile(e) {
   reader.onload = function(e) {
     try {
       const puz = JSON.parse(e.target.result);
-      console.log("Loaded", puz.title, "by", puz.author);
       convertJSONToPuzzle(puz);
+      console.log("Loaded", puz.title, "by", puz.author);
     }
     catch(err) {
       if (err.name == "SyntaxError") {
@@ -26,13 +26,14 @@ function openJSONFile(e) {
 
 function convertJSONToPuzzle(puz) {
   createNewPuzzle();
+  console.log("Created new puzzle");
 
-  if (puz.size.rows != SIZE || puz.size.cols != SIZE) {
-    console.log("Oops. JSON puzzle is the wrong size.");
+  if (puz.size.rows != DEFAULT_SIZE || puz.size.cols != DEFAULT_SIZE) {
+    console.log("Oops. Can only open 15 x 15 puzzles.");
     return;
   }
-  xw.rows = SIZE;
-  xw.cols = SIZE;
+  xw.rows = DEFAULT_SIZE;
+  xw.cols = DEFAULT_SIZE;
 
   // Display puzzle title, author
   xw.title = puz.title;
@@ -47,16 +48,16 @@ function convertJSONToPuzzle(puz) {
       const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
 
       const k = (i * xw.rows) + j;
-      const fill = (puz.grid[k].length > 1) ? puz.grid[k][0] : puz.grid[k];
+      const cellFill = (puz.grid[k].length > 1) ? puz.grid[k][0] : puz.grid[k]; // Strip rebus answers to their first letter
 
-      activeCell.lastChild.innerHTML = fill.toUpperCase();
-      if (fill == BLACK) {
+      xw.fill[i] = xw.fill[i].slice(0, j) + cellFill.toUpperCase() + xw.fill[i].slice(j + 1);
+      activeCell.lastChild.innerHTML = xw.fill[i][j];
+      if (xw.fill[i][j] == BLACK) {
         activeCell.className += " black";
         activeCell.className.trim();
       }
     }
   }
-  // console.log(puz.clues.across, puz.clues.down)
   updateUI();
 
   // Load in clues and display current clues
@@ -80,7 +81,6 @@ function convertJSONToPuzzle(puz) {
       }
     }
   }
-
   updateUI();
 }
 
@@ -129,6 +129,44 @@ function convertPuzzleToJSON() {
   }
 
   return JSON.stringify(puz);  // Convert JS object to JSON text
+}
+
+function printPDF() {
+  let doc = new jsPDF('p', 'pt');
+
+  const pageOrigin = { "x": 50, "y": 50 };
+  const gridOrigin = { "x": pageOrigin.x, "y": pageOrigin.y };
+  const labelOffset = { "x": 1, "y": 3 };
+  const fillOffset = { "x": 20, "y": 20 };
+  const squareSize = 24;
+  const innerLineWidth = .5;
+  const outerLineWidth = 2;
+
+  doc.setFont("helvetica");
+  doc.setFontType("normal");
+
+  // doc.setTextColor(255, 0, 0);
+  // doc.text(xw.title, 20, 20);
+
+  // Draw grid
+  doc.setDrawColor(0);
+  doc.setLineWidth(outerLineWidth);
+  doc.rect(gridOrigin.x, gridOrigin.y, xw.rows * squareSize, xw.cols * squareSize, 'D');
+
+  doc.setLineWidth(innerLineWidth);
+  for (let i = 0; i < xw.rows; i++) {
+    for (let j = 0; j < xw.cols; j++) {
+      const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      doc.setFillColor(square.className.search("black") > -1 ? 0 : 255);
+      doc.rect(gridOrigin.x + (j * squareSize), gridOrigin.y + (i * squareSize), squareSize, squareSize, 'FD');
+    }
+  }
+
+  // Make PDF
+  doc.save(xw.title + ".pdf");
+}
+
+function pdf_drawGridAt(x, y) {
 }
 
 document.getElementById('open-puzzle-input').addEventListener('change', openJSONFile, false);

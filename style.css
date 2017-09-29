@@ -53,8 +53,20 @@ h1 {
 }
 
 #footer #help {
-  color: var(--dk-grey);
+  margin-top: 3px;
+  padding: 12px;
+  border-radius: 6px;
+  background-color: var(--dk-grey);
+  color: var(--lt-grey);
   float: left;
+}
+
+#footer #hide-help {
+  margin-left: 10px;
+  font-weight: 600;
+  text-decoration: underline;
+  color: var(--lt-blue);
+  cursor: pointer;
 }
 
 #grid {

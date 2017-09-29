@@ -17,7 +17,7 @@ const DASH = "-";
 const BLANK = " ";
 const ACROSS = "across";
 const DOWN = "down";
-const SIZE = 15;
+const DEFAULT_SIZE = 15;
 const DEFAULT_TITLE = "Untitled";
 const DEFAULT_AUTHOR = "Anonymous";
 const DEFAULT_CLUE = "(blank clue)";
@@ -37,23 +37,31 @@ function createNewPuzzle(rows, cols) {
   xw["clues"] = {};
   xw["title"] = DEFAULT_TITLE;
   xw["author"] = DEFAULT_AUTHOR;
-  xw["rows"] = rows || SIZE;
+  xw["rows"] = rows || DEFAULT_SIZE;
   xw["cols"] = cols || xw.rows;
+  xw["fill"] = [];
+  for (let i = 0; i < xw.rows; i++) {
+    xw.fill.push("");
+    for (let j = 0; j < xw.cols; j++) {
+      xw.fill[i] += BLANK;
+    }
+  }
+  console.log(xw.fill);
   updateInfoUI();
   document.getElementById("main").innerHTML = "";
   createGrid(xw.rows, xw.cols);
 
   isSymmetrical = true;
   current = {
-    row:        0,
-    col:        0,
-    acrossWord: '',
-    downWord:   '',
-    acrossStartIndex:0,
-    acrossEndIndex:  SIZE,
-    downStartIndex:  0,
-    downEndIndex:    SIZE,
-    direction:  ACROSS
+    "row":        0,
+    "col":        0,
+    "acrossWord": '',
+    "downWord":   '',
+    "acrossStartIndex":0,
+    "acrossEndIndex":  DEFAULT_SIZE,
+    "downStartIndex":  0,
+    "downEndIndex":    DEFAULT_SIZE,
+    "direction":  ACROSS
   };
 
   grid = document.getElementById("grid");
@@ -77,8 +85,8 @@ function mouseHandler() {
   if (activeCell == previousCell) {
     current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
   }
-  current.row = activeCell.parentNode.dataset.row;
-  current.col = activeCell.dataset.col;
+  current.row = Number(activeCell.parentNode.dataset.row);
+  current.col = Number(activeCell.dataset.col);
   console.log("[" + current.row + "," + current.col + "]");
   activeCell.className += " active";
   activeCell.className = activeCell.className.trim();
@@ -88,44 +96,51 @@ function mouseHandler() {
 
 function keyboardHandler(e) {
   let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
-  const symRow = SIZE - 1 - current.row;
-  const symCol = SIZE - 1 - current.col;
+  const symRow = xw.rows - 1 - current.row;
+  const symCol = xw.cols - 1 - current.col;
   const symmetricalCell = grid.querySelector('[data-row="' + symRow + '"]').querySelector('[data-col="' + symCol + '"]');
 
   if ((e.which >= keyboard.a && e.which <= keyboard.z) || e.which == keyboard.space) {
-      activeCell.lastChild.innerHTML = String.fromCharCode(e.which);
-      if (activeCell.className.search("black") > -1) {
-        activeCell.className = activeCell.className.replace("black", "").trim();
-        if (isSymmetrical == true) {
-          symmetricalCell.lastChild.innerHTML = BLANK;
-          symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
-        }
+    xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + String.fromCharCode(e.which) + xw.fill[current.row].slice(current.col + 1); // update model
+    activeCell.lastChild.innerHTML = xw.fill[current.row][current.col]; // update view
+
+    if (activeCell.className.search("black") > -1) {
+      activeCell.className = activeCell.className.replace("black", "").trim();
+      if (isSymmetrical == true) {
+        xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1); // update model
+        symmetricalCell.lastChild.innerHTML = xw.fill[symRow][symCol]; // update view
+        symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
       }
-      // move the cursor
-      e = new Event('keydown');
-      if (current.direction == ACROSS) {
-        e.which = keyboard.right;
-      } else {
-        e.which = keyboard.down;
-      }
-      keyboardHandler(e);
+    }
+    // move the cursor
+    e = new Event('keydown');
+    if (current.direction == ACROSS) {
+      e.which = keyboard.right;
+    } else {
+      e.which = keyboard.down;
+    }
+    keyboardHandler(e);
   } else if (e.which == keyboard.black) {
-      activeCell.lastChild.innerHTML = BLACK;
+      xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK + xw.fill[current.row].slice(current.col + 1); // update model
+      activeCell.lastChild.innerHTML = xw.fill[current.row][current.col]; // update view
       activeCell.className += " black";
       activeCell.className = activeCell.className.trim();
       if (isSymmetrical == true) {
-        symmetricalCell.lastChild.innerHTML = BLACK;
+        xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1); // update model
+        symmetricalCell.lastChild.innerHTML = xw.fill[symRow][symCol]; // update view
         symmetricalCell.className += " black";
         symmetricalCell.className = symmetricalCell.className.trim();
       }
   } else if (e.which == keyboard.enter) {
       current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
   } else if (e.which == keyboard.delete) {
-      activeCell.lastChild.innerHTML = BLANK;
-      if (activeCell.className.search("black") > -1) {
+    xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK + xw.fill[current.row].slice(current.col + 1); // update model
+    activeCell.lastChild.innerHTML = xw.fill[current.row][current.col]; // update view
+      if (activeCell.className.search("black") > -1) { // if it's a black square
         activeCell.className = activeCell.className.replace("black", "").trim();
         if (isSymmetrical == true) {
-          symmetricalCell.lastChild.innerHTML = BLANK;
+          xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1); // update model
+          symmetricalCell.lastChild.innerHTML = xw.fill[symRow][symCol]; // update view
           symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
         }
       }
@@ -157,14 +172,14 @@ function keyboardHandler(e) {
           break;
         case keyboard.right:
           if (current.direction == ACROSS) {
-            current.col = (current.col == SIZE - 1) ? current.col : Number(current.col) + 1;
+            current.col = (current.col == xw.cols - 1) ? current.col : current.col + 1;
           } else {
             current.direction = ACROSS;
           }
           break;
         case keyboard.down:
           if (current.direction == DOWN) {
-            current.row = (current.row == SIZE - 1) ? current.row : Number(current.row) + 1;
+            current.row = (current.row == xw.rows - 1) ? current.row : current.row + 1;
           } else {
             current.direction = DOWN;
           }
@@ -175,7 +190,7 @@ function keyboardHandler(e) {
       activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
       activeCell.className = (activeCell.className + " active").trim();
   }
-  // console.log(activeCell.lastChild.innerHTML);
+  // console.log(xw.fill);
   updateUI();
 }
 
@@ -240,7 +255,7 @@ function createGrid(rows, cols) {
 
         let fill = document.createElement("DIV");
         fill.setAttribute("class", "fill");
-        let fillContent = document.createTextNode(BLANK);
+        let fillContent = document.createTextNode(xw.fill[i][j]);
 
     		// let t = document.createTextNode("[" + i + "," + j + "]");
         label.appendChild(labelContent);
@@ -308,7 +323,7 @@ function updateLabelsAndClues() {
 }
 
 function updateActiveWords() {
-
+  // Rewrite this function using xw.fill instead of reading the HTML
   const activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   if (activeCell.lastChild.innerHTML == BLACK) {
     current.acrossWord = '';
@@ -320,7 +335,7 @@ function updateActiveWords() {
   } else {
     // Across
     let rowText = '';
-    for (let i = 0; i < SIZE; i++) {
+    for (let i = 0; i < xw.rows; i++) {
       let nextAcrossLetter = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]').lastChild.innerHTML;
       nextAcrossLetter = (nextAcrossLetter == BLANK) ? DASH : nextAcrossLetter;
       rowText += nextAcrossLetter;
@@ -330,7 +345,7 @@ function updateActiveWords() {
 
     // Down
     let colText = '';
-    for (let j = 0; j < SIZE; j++) {
+    for (let j = 0; j < xw.cols; j++) {
       let nextDownLetter = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]').lastChild.innerHTML;
       nextDownLetter = (nextDownLetter == BLANK) ? DASH : nextDownLetter;
       colText += nextDownLetter;
@@ -347,8 +362,8 @@ function updateActiveWords() {
 function getWordIndices(text, position) {
   let startIndex = text.slice(0, position).lastIndexOf(BLACK);
   startIndex = (startIndex == -1) ? 0 : startIndex + 1;
-  let endIndex = text.slice(position, SIZE).indexOf(BLACK);
-  endIndex = (endIndex == -1) ? SIZE : Number(position) + Number(endIndex);
+  let endIndex = text.slice(position, DEFAULT_SIZE).indexOf(BLACK);
+  endIndex = (endIndex == -1) ? DEFAULT_SIZE : Number(position) + Number(endIndex);
   return [startIndex, endIndex];
 }
 
@@ -481,13 +496,9 @@ function toggleSymmetry() {
   }
 }
 
-// function toggleHelp() {
-//   let helpLinkClass = document.getElementById("help-link").firstChild.className;
-//   let helpTextDisplay = document.getElementById("help-text").style.display;
-//
-//   helpLinkClass = (helpLinkClass == "fa fa-times") ? "fa fa-chevron-right" : "fa fa-times";
-//   helpTextDisplay = (helpTextDisplay == "none") ? "inline" : "none";
-// }
+function toggleHelp() {
+  document.getElementById("help").style.display = "none";
+}
 
 function clearFill() {
   for (let i = 0; i < xw.rows; i++) {
