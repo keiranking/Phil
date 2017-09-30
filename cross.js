@@ -323,9 +323,7 @@ function updateLabelsAndClues() {
 }
 
 function updateActiveWords() {
-  // Rewrite this function using xw.fill instead of reading the HTML
-  const activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
-  if (activeCell.lastChild.innerHTML == BLACK) {
+  if (xw.fill[current.row][current.col] == BLACK) {
     current.acrossWord = '';
     current.downWord = '';
     current.acrossStartIndex = null;
@@ -333,38 +331,44 @@ function updateActiveWords() {
     current.downStartIndex = null;
     current.downEndIndex = null;
   } else {
-    // Across
-    let rowText = '';
-    for (let i = 0; i < xw.rows; i++) {
-      let nextAcrossLetter = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]').lastChild.innerHTML;
-      nextAcrossLetter = (nextAcrossLetter == BLANK) ? DASH : nextAcrossLetter;
-      rowText += nextAcrossLetter;
-    }
-    [current.acrossStartIndex, current.acrossEndIndex] = getWordIndices(rowText, current.col);
-    current.acrossWord = rowText.slice(current.acrossStartIndex, current.acrossEndIndex);
-
-    // Down
-    let colText = '';
-    for (let j = 0; j < xw.cols; j++) {
-      let nextDownLetter = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]').lastChild.innerHTML;
-      nextDownLetter = (nextDownLetter == BLANK) ? DASH : nextDownLetter;
-      colText += nextDownLetter;
-    }
-    [current.downStartIndex, current.downEndIndex] = getWordIndices(colText, current.row);
-    current.downWord = colText.slice(current.downStartIndex, current.downEndIndex);
+    current.acrossWord = getWordAt(current.row, current.col, ACROSS, true);
+    current.downWord = getWordAt(current.row, current.col, DOWN, true);
   }
   document.getElementById("across-word").innerHTML = current.acrossWord;
   document.getElementById("down-word").innerHTML = current.downWord;
-  console.log("Across:", current.acrossWord, "Down:", current.downWord);
+  // console.log("Across:", current.acrossWord, "Down:", current.downWord);
   // console.log(current.acrossWord.split(DASH).join("*"));
 }
 
+function getWordAt(row, col, direction, setCurrentWordIndices) {
+  let text = "";
+  let [start, end] = [0, 0];
+  if (direction == ACROSS) {
+    text = xw.fill[row];
+  } else {
+    for (let i = 0; i < xw.rows; i++) {
+      text += xw.fill[i][col];
+    }
+  }
+  text = text.split(BLANK).join(DASH);
+  [start, end] = getWordIndices(text, (direction == ACROSS) ? col : row);
+  // Set global word indices if needed
+  if (setCurrentWordIndices) {
+    if (direction == ACROSS) {
+      [current.acrossStartIndex, current.acrossEndIndex] = [start, end];
+    } else {
+      [current.downStartIndex, current.downEndIndex] = [start, end];
+    }
+  }
+  return text.slice(start, end);
+}
+
 function getWordIndices(text, position) {
-  let startIndex = text.slice(0, position).lastIndexOf(BLACK);
-  startIndex = (startIndex == -1) ? 0 : startIndex + 1;
-  let endIndex = text.slice(position, DEFAULT_SIZE).indexOf(BLACK);
-  endIndex = (endIndex == -1) ? DEFAULT_SIZE : Number(position) + Number(endIndex);
-  return [startIndex, endIndex];
+  let start = text.slice(0, position).lastIndexOf(BLACK);
+  start = (start == -1) ? 0 : start + 1;
+  let end = text.slice(position, DEFAULT_SIZE).indexOf(BLACK);
+  end = (end == -1) ? DEFAULT_SIZE : Number(position) + end;
+  return [start, end];
 }
 
 function updateGridHighlights() {
@@ -382,18 +386,18 @@ function updateGridHighlights() {
   }
 
   // Highlight across squares
-  for (let i = current.acrossStartIndex; i < current.acrossEndIndex; i++) {
-    const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + i + '"]');
-    if (i != current.col) {
+  for (let j = current.acrossStartIndex; j < current.acrossEndIndex; j++) {
+    const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + j + '"]');
+    if (j != current.col) {
       square.className += (current.direction == ACROSS) ? " highlight" : " lowlight";
       square.className = square.className.trim();
     }
   }
 
   // Highlight down squares
-  for (let j = current.downStartIndex; j < current.downEndIndex; j++) {
-    const square = grid.querySelector('[data-row="' + j + '"]').querySelector('[data-col="' + current.col + '"]');
-    if (j != current.row) {
+  for (let i = current.downStartIndex; i < current.downEndIndex; i++) {
+    const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + current.col + '"]');
+    if (i != current.row) {
       square.className += (current.direction == DOWN) ? " highlight" : " lowlight";
       square.className = square.className.trim();
     }

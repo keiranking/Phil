@@ -148,6 +148,7 @@ function printPDF() {
   doc.addPage();
   layoutPDFGrid(doc, format);
   doc.addPage();
+  layoutPDFCluesForNYT(doc, format);
 
   doc.save(xw.title + ".pdf"); // Generate PDF and automatically download it
 }
@@ -198,7 +199,8 @@ function layoutPDFClues(doc, format) {
 }
 
 function layoutPDFCluesForNYT(doc, format) {
-  //
+  // let data = [];
+  // doc.autoTable(["","",""], data);
 }
 
 document.getElementById('open-puzzle-input').addEventListener('change', openJSONFile, false);
