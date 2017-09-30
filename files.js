@@ -123,8 +123,7 @@ function convertPuzzleToJSON() {
   puz["grid"] = [];
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
-      const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-      puz.grid.push(square.lastChild.innerHTML);
+      puz.grid.push(xw.fill[i][j]);
     }
   }
 
@@ -133,40 +132,73 @@ function convertPuzzleToJSON() {
 
 function printPDF() {
   let doc = new jsPDF('p', 'pt');
+  let format = {
+    "squareSize":     24,
+    "pageOrigin":     { "x": 50, "y": 50 },
+    "gridOrigin":     { "x": 50, "y": 50 },
+    "labelOffset":    { "x": 1, "y": 6 },
+    "fillOffset":     { "x": 12, "y": 17 },
+    "labelFontSize":  7,
+    "fillFontSize":   14,
+    "innerLineWidth": .5,
+    "outerLineWidth": 2
+  };
 
-  const pageOrigin = { "x": 50, "y": 50 };
-  const gridOrigin = { "x": pageOrigin.x, "y": pageOrigin.y };
-  const labelOffset = { "x": 1, "y": 3 };
-  const fillOffset = { "x": 20, "y": 20 };
-  const squareSize = 24;
-  const innerLineWidth = .5;
-  const outerLineWidth = 2;
+  layoutPDFGrid(doc, format, true);
+  doc.addPage();
+  layoutPDFGrid(doc, format);
+  doc.addPage();
 
-  doc.setFont("helvetica");
-  doc.setFontType("normal");
+  doc.save(xw.title + ".pdf"); // Generate PDF and automatically download it
+}
 
-  // doc.setTextColor(255, 0, 0);
-  // doc.text(xw.title, 20, 20);
-
+function layoutPDFGrid(doc, format, isFilled) {
   // Draw grid
   doc.setDrawColor(0);
-  doc.setLineWidth(outerLineWidth);
-  doc.rect(gridOrigin.x, gridOrigin.y, xw.rows * squareSize, xw.cols * squareSize, 'D');
-
-  doc.setLineWidth(innerLineWidth);
+  doc.setLineWidth(format.outerLineWidth);
+  doc.rect(format.gridOrigin.x, format.gridOrigin.y,
+           xw.rows * format.squareSize, xw.cols * format.squareSize, 'D');
+  doc.setLineWidth(format.innerLineWidth);
+  for (let i = 0; i < xw.rows; i++) {
+    for (let j = 0; j < xw.cols; j++) {
+      doc.setFillColor(xw.fill[i][j] == BLACK ? 0 : 255);
+      doc.rect(format.gridOrigin.x + (j * format.squareSize),
+               format.gridOrigin.y + (i * format.squareSize), format.squareSize, format.squareSize, 'FD');
+    }
+  }
+  // Label grid
+  doc.setFont("helvetica");
+  doc.setFontType("normal");
+  doc.setFontSize(format.labelFontSize);
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
       const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-      doc.setFillColor(square.className.search("black") > -1 ? 0 : 255);
-      doc.rect(gridOrigin.x + (j * squareSize), gridOrigin.y + (i * squareSize), squareSize, squareSize, 'FD');
+      const label = square.firstChild.innerHTML;
+      if (label) {
+        doc.text(format.gridOrigin.x + (j * format.squareSize) + format.labelOffset.x,
+                 format.gridOrigin.y + (i * format.squareSize) + format.labelOffset.y, label);
+      }
     }
   }
-
-  // Make PDF
-  doc.save(xw.title + ".pdf");
+  // Fill grid
+  if (isFilled) {
+    doc.setFontSize(format.fillFontSize);
+    for (let i = 0; i < xw.rows; i++) {
+      for (let j = 0; j < xw.cols; j++) {
+        doc.text(format.gridOrigin.x + (j * format.squareSize) + format.fillOffset.x,
+                 format.gridOrigin.y + (i * format.squareSize) + format.fillOffset.y,
+                 xw.fill[i][j], null, null, "center");
+      }
+    }
+  }
 }
 
-function pdf_drawGridAt(x, y) {
+function layoutPDFClues(doc, format) {
+  //
+}
+
+function layoutPDFCluesForNYT(doc, format) {
+  //
 }
 
 document.getElementById('open-puzzle-input').addEventListener('change', openJSONFile, false);
