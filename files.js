@@ -130,12 +130,64 @@ function convertPuzzleToJSON() {
   return JSON.stringify(puz);  // Convert JS object to JSON text
 }
 
-function printPDF() {
+function printPDF(style) {
   let doc = new jsPDF('p', 'pt');
+  if (style) {
+    style = style.toUpperCase();
+  }
+  switch (style) {
+    case "NYT":
+      layoutPDFGrid(doc, 117, 210, true); // filled
+      doc.addPage();
+      layoutPDFGrid(doc, 117, 210); // unfilled
+      doc.addPage();
+      layoutPDFClues(doc, style);
+      layoutPDFInfo(doc, style);
+      break;
+    default:
+      layoutPDFGrid(doc, 50, 80);
+      layoutPDFClues(doc);
+      layoutPDFInfo(doc);
+      break;
+  }
+  doc.save(xw.title + ".pdf"); // Generate PDF and automatically download it
+}
+
+function generatePDFClues() {
+  let acrossClues = [], downClues = [];
+  let byLabel = // this variable is a whole function...
+    function (a, b) { // that is called when sort() compares values
+      if (a["label"] > b["label"]) {
+        return 1;
+      } else if (a["label"] < b["label"]) {
+        return -1;
+      } else {
+        return 0;
+      }
+    };
+
+  for (const key in xw.clues) {
+    let [i, j, direction] = key.split(",");
+    const cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+    let label = Number(cell.firstChild.innerHTML);
+    if (direction == ACROSS) {
+      // acrossClues.push([label, xw.clues[key], getWordAt(i, j, direction)]);
+      // acrossClues.sort(byLabel);
+      acrossClues.push({ "label": label, "clue": xw.clues[key], "answer": getWordAt(i, j, direction)});
+      acrossClues.sort(byLabel);
+    } else {
+      downClues.push({ "label": label, "clue": xw.clues[key], "answer": getWordAt(i, j, direction)});
+      downClues.sort(byLabel);
+    }
+  }
+  return [acrossClues, downClues];
+}
+
+function layoutPDFGrid(doc, x, y, isFilled) {
   let format = {
     "squareSize":     24,
-    "pageOrigin":     { "x": 50, "y": 50 },
-    "gridOrigin":     { "x": 50, "y": 50 },
+    // "pageOrigin":     { "x": 50, "y": 50 },
+    "gridOrigin":     { "x": x, "y": y },
     "labelOffset":    { "x": 1, "y": 6 },
     "fillOffset":     { "x": 12, "y": 17 },
     "labelFontSize":  7,
@@ -143,17 +195,6 @@ function printPDF() {
     "innerLineWidth": .5,
     "outerLineWidth": 2
   };
-
-  layoutPDFGrid(doc, format, true);
-  doc.addPage();
-  layoutPDFGrid(doc, format);
-  doc.addPage();
-  layoutPDFCluesForNYT(doc, format);
-
-  doc.save(xw.title + ".pdf"); // Generate PDF and automatically download it
-}
-
-function layoutPDFGrid(doc, format, isFilled) {
   // Draw grid
   doc.setDrawColor(0);
   doc.setLineWidth(format.outerLineWidth);
@@ -194,13 +235,96 @@ function layoutPDFGrid(doc, format, isFilled) {
   }
 }
 
-function layoutPDFClues(doc, format) {
-  //
+function layoutPDFInfo(doc, style) {
+  doc.setFont("helvetica");
+  switch (style) {
+    case "NYT":
+      doc.setFontSize(9);
+      let email = prompt("NYT submissions require an email address. \nLeave blank to omit.") || "";
+      let address = prompt("NYT submissions require a home address. \nLeave blank to omit.") || "";
+      for (let i = 1; i <= 5; i++) {
+        doc.setPage(i);
+        doc.text(doc.internal.pageSize.width / 2, 40,
+                 (xw.author + "\n\n" + email + (email ? "      " : "") + address),
+                 null, null, "center");
+        doc.setLineWidth(0.5);
+        doc.line(0 + 150, 48, doc.internal.pageSize.width - 150, 48);
+      }
+      break;
+    default:
+      doc.setFontSize(18);
+      doc.setFontType("normal");
+      doc.text(50, 58, xw.title);
+      doc.setFontSize(9);
+      doc.setFontType("bold");
+      doc.text(50, 70, xw.author.toUpperCase());
+      break;
+  }
 }
 
-function layoutPDFCluesForNYT(doc, format) {
-  // let data = [];
-  // doc.autoTable(["","",""], data);
+function layoutPDFClues(doc, style) {
+  const [acrossClues, downClues] = generatePDFClues();
+
+  switch (style) {
+    case "NYT":
+      let clueFormat =
+        { columnStyles: { label: { columnWidth: 20, halign: "right", overflow: "visible" },
+                          clue: { columnWidth: 320, overflow: "linebreak" },
+                          answer: { columnWidth: 120, font: "courier", overflow: "visible", fontSize: 11 }
+                        },
+          margin: { top: 75, left: 75 }
+        };
+      doc.autoTableSetDefaults({
+        headerStyles: {fillColor: false, textColor: 0, fontSize: 16, fontStyle: "normal", overflow: "visible"},
+        bodyStyles: { fillColor: false, textColor: 0, fontSize: 10, cellPadding: 6 },
+        alternateRowStyles: { fillColor: false }
+        });
+      // Print across clues
+      doc.autoTable([ { title: "Across", dataKey: "label"},
+                      { title: "", dataKey: "clue"},
+                      { title: "", dataKey: "answer"}
+                    ], acrossClues, clueFormat);
+      // Print down clues
+      clueFormat["startY"] = doc.autoTable.previous.finalY + 10;
+      doc.autoTable([ { title: "Down", dataKey: "label"},
+                      { title: "", dataKey: "clue"},
+                      { title: "", dataKey: "answer"}
+                    ], downClues, clueFormat);
+      break;
+    default:
+      const format = {
+        "font": "helvetica",
+        "fontSize": 9,
+        "labelWidth": 13,
+        "clueWidth": 94,
+        "columnSeparator": 18,
+        "marginTop": [465, 465, 465, 85],
+        "marginBottom": doc.internal.pageSize.height - 50,
+        "marginLeft": 50,
+        "marginRight": 0
+      };
+      doc.setFont(format.font);
+      doc.setFontSize(format.fontSize);
+      let currentColumn = 0;
+      let x = format.marginLeft;
+      let y = format.marginTop[currentColumn];
+      const acrossTitle = [{ "label": "ACROSS", "clue": " " }];
+      const downTitle = [{ "label": " ", "clue": " "}, {"label": "DOWN", "clue": " " }];
+      let allClues = acrossTitle.concat(acrossClues).concat(downTitle).concat(downClues);
+      for (let i = 0; i < allClues.length; i++) {
+        const clueText = doc.splitTextToSize(allClues[i].clue, format.clueWidth);
+        let adjustY = clueText.length * (format.fontSize + 2);
+        if (y + adjustY > format.marginBottom) {
+          currentColumn++;
+          x += format.labelWidth + format.clueWidth + format.columnSeparator;
+          y = format.marginTop[currentColumn];
+        }
+        doc.text(x, y, String(allClues[i].label));
+        doc.text(x + format.labelWidth, y, clueText);
+        y += adjustY;
+      }
+      break;
+    }
 }
 
 document.getElementById('open-puzzle-input').addEventListener('change', openJSONFile, false);

@@ -1,9 +1,10 @@
-Fill, a crossword maker
+Phil, a crossword maker
 =======================
 
-Fill is a web app for making crosswords.
+Phil helps you construct crosswords, using 100% client-side JavaScript.
 * Open and save .xw files ([JSON puzzle files](https://www.xwordinfo.com/JSON/) by another name).
 * Use the built-in Merriam-Webster dictionary, or any text file you want.
-* 100% client-side JavaScript.
+* Print to PDF.
+* Create a New York Times submission with one click.
 
 ![Build your own crossword](screenshot.png "Build your own crossword")

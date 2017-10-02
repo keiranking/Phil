@@ -309,14 +309,18 @@ function updateLabelsAndClues() {
 
         if (isAcross) {
           xw.clues[[i, j, ACROSS]] = xw.clues[[i, j, ACROSS]] || DEFAULT_CLUE;
+        } else {
+          delete xw.clues[[i, j, ACROSS]];
         }
         if (isDown) {
           xw.clues[[i, j, DOWN]] = xw.clues[[i, j, DOWN]] || DEFAULT_CLUE;
+        } else {
+          delete xw.clues[[i, j, DOWN]];
         }
       } else {
         currentCell.firstChild.innerHTML = "";
-        xw.clues[[i, j, ACROSS]] = undefined;
-        xw.clues[[i, j, DOWN]] = undefined;
+        delete xw.clues[[i, j, ACROSS]];
+        delete xw.clues[[i, j, DOWN]];
       }
     }
   }
