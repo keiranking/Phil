@@ -254,10 +254,10 @@ function layoutPDFInfo(doc, style) {
     default:
       doc.setFontSize(18);
       doc.setFontType("normal");
-      doc.text(50, 58, xw.title);
+      doc.text(50, 50 + 8, xw.title);
       doc.setFontSize(9);
       doc.setFontType("bold");
-      doc.text(50, 70, xw.author.toUpperCase());
+      doc.text(50, 50 + 20, xw.author.toUpperCase());
       break;
   }
 }
@@ -311,7 +311,7 @@ function layoutPDFClues(doc, style) {
       const acrossTitle = [{ "label": "ACROSS", "clue": " " }];
       const downTitle = [{ "label": " ", "clue": " "}, {"label": "DOWN", "clue": " " }];
       let allClues = acrossTitle.concat(acrossClues).concat(downTitle).concat(downClues);
-      for (let i = 0; i < allClues.length; i++) {
+      for (let i = 0; i < allClues.length; i++) { // Position clue on page
         const clueText = doc.splitTextToSize(allClues[i].clue, format.clueWidth);
         let adjustY = clueText.length * (format.fontSize + 2);
         if (y + adjustY > format.marginBottom) {
@@ -319,7 +319,12 @@ function layoutPDFClues(doc, style) {
           x += format.labelWidth + format.clueWidth + format.columnSeparator;
           y = format.marginTop[currentColumn];
         }
-        doc.text(x, y, String(allClues[i].label));
+        if (["across", "down"].includes(String(allClues[i].label).toLowerCase())) { // Make Across, Down headings bold
+          doc.setFontType("bold");
+        } else {
+          doc.setFontType("normal");
+        }
+        doc.text(x, y, String(allClues[i].label)); // Print clue on page
         doc.text(x + format.labelWidth, y, clueText);
         y += adjustY;
       }

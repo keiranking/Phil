@@ -510,6 +510,7 @@ function toggleHelp() {
 
 function clearFill() {
   for (let i = 0; i < xw.rows; i++) {
+    xw.fill[i] = xw.fill[i].replace(/\w/g, ' '); // replace any letters with spaces
     for (let j = 0; j < xw.cols; j++) {
       const currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       if (currentCell.className.search("black") == -1) {
