@@ -1,8 +1,8 @@
 # Phil, a crossword maker
 
-<img src="images/logo.svg" align="right" width="90" height="90" hspace="10" vspace="6">
+<img src="images/logo.svg" align="right" width="90" height="90">
 
-Phil helps you construct crosswords, using 100% client-side JavaScript.
+Phil helps you make crosswords, using client-side JavaScript.
 * Open and save .xw files ([JSON puzzle files](https://www.xwordinfo.com/JSON/) by another name).
 * Use the built-in Merriam-Webster dictionary, or any text file you want.
 * Print to PDF.
