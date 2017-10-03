@@ -12,11 +12,11 @@ Phil helps you make crosswords, using client-side JavaScript.
 
 ![Build your own crossword](images/screenshot.png "Build your own crossword")
 
-## Related Resources
+## Related repositories
 
 Phil uses [Font Awesome](https://github.com/FortAwesome/Font-Awesome/) icons and [jsPDF](https://github.com/MrRio/jsPDF/) (along with [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable/)) for generating PDFs.
 
-## Crossword Resources
+## Crossword resources
 
 * [Wordlists](http://www.puzzlers.org/dokuwiki/doku.php?id=solving:wordlists:about:start)
 * [Crossword theme categories](http://www.cruciverb.com/index.php?action=ezportal;sa=page;p=70)
