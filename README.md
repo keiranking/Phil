@@ -7,4 +7,4 @@ Phil helps you construct crosswords, using 100% client-side JavaScript.
 * Print to PDF.
 * Create a New York Times submission with one click.
 
-![Build your own crossword](screenshot.png "Build your own crossword")
+![Build your own crossword](images/screenshot.png "Build your own crossword")
