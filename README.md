@@ -1,5 +1,7 @@
 # Phil, a crossword maker
 
+[![Version](images/version.svg)]()
+
 <img src="images/logo.svg" align="right" width="90" height="90">
 
 Phil helps you make crosswords, using client-side JavaScript.

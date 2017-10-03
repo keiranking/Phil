@@ -132,7 +132,7 @@ h1 {
 
 #logo {
   /*fill: var(--med-grey);*/
-  opacity: 0.5;
+  opacity: 0.45;
   width: 26px;
   height: 26px;
 }
@@ -235,8 +235,6 @@ h1 {
 }
 
 #toolbar button.button-on {
-  /*background-color: #cae9ff;*/
-  /*color: var(--med-blue);*/
   color: var(--dk-blue);
 }
 
@@ -246,7 +244,6 @@ h1 {
 
 #toolbar button:hover {
   background-color: var(--lt-blue);
-  /*border-color: var(--dk-grey);*/
 }
 
 #toolbar button:hover:after {
