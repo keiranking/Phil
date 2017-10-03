@@ -241,7 +241,7 @@ function layoutPDFInfo(doc, style) {
     case "NYT":
       doc.setFontSize(9);
       let email = prompt("NYT submissions require an email address. \nLeave blank to omit.") || "";
-      let address = prompt("NYT submissions require a home address. \nLeave blank to omit.") || "";
+      let address = prompt("NYT submissions also require a mailing address. \nLeave blank to omit.") || "";
       for (let i = 1; i <= 5; i++) {
         doc.setPage(i);
         doc.text(doc.internal.pageSize.width / 2, 40,
