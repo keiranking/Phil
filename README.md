@@ -14,12 +14,10 @@ Phil helps you make crosswords, using client-side JavaScript.
 
 ## Related Resources
 
-### Code
-
 Phil uses [Font Awesome](https://github.com/FortAwesome/Font-Awesome/) icons and [jsPDF](https://github.com/MrRio/jsPDF/) (along with [jsPDF-AutoTable](https://github.com/simonbengtsson/jsPDF-AutoTable/)) for generating PDFs.
 
 ### Crosswords
 
 * [Wordlists](http://www.puzzlers.org/dokuwiki/doku.php?id=solving:wordlists:about:start)
-* [A list of crossword theme categories](http://www.cruciverb.com/index.php?action=ezportal;sa=page;p=70)
+* [Crossword theme categories](http://www.cruciverb.com/index.php?action=ezportal;sa=page;p=70)
 * [OneLook dictionary](http://onelook.com/)
