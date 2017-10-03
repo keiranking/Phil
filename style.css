@@ -130,19 +130,16 @@ h1 {
   margin: 2px 0 0 0;
 }
 
-/*#logo {
-  width: 32px;
-  height: 32px;
-}*/
-
 #logo {
-  fill: var(--med-grey);
+  /*fill: var(--med-grey);*/
+  opacity: 0.5;
   width: 26px;
   height: 26px;
 }
 
 #logo:hover {
-  fill: var(--black);
+  opacity: 1;
+  /*fill: var(--black);*/
 }
 
 #main {
