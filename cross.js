@@ -78,10 +78,10 @@ function createNewPuzzle(rows, cols) {
   grid.addEventListener('keydown', keyboardHandler);
 }
 
-function mouseHandler() {
+function mouseHandler(e) {
   const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   previousCell.className = previousCell.className.replace("active", "");
-  const activeCell = event.currentTarget;
+  const activeCell = e.currentTarget;
   if (activeCell == previousCell) {
     current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
   }
