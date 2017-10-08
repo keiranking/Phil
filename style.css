@@ -90,9 +90,12 @@ h1 {
 }
 
 #grid td.active {
+  /*outline: 3px solid var(--med-blue);*/
+  /*outline-offset: -1px;*/
   border: 1px solid var(--med-blue);
   opacity: 0.8;
   font-weight: 400;
+  z-index: 300;
 }
 
 #grid td.black {

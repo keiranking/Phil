@@ -21,3 +21,12 @@ Phil uses [Font Awesome](https://github.com/FortAwesome/Font-Awesome/) icons and
 * [Wordlists](http://www.puzzlers.org/dokuwiki/doku.php?id=solving:wordlists:about:start)
 * [Crossword theme categories](http://www.cruciverb.com/index.php?action=ezportal;sa=page;p=70)
 * [OneLook](http://onelook.com/) and [Crossword Tracker](http://crosswordtracker.com/) search engines
+
+## License
+&copy; Keiran King
+
+Licensed under [the Apache License, v2.0](http://www.apache.org/licenses/LICENSE-2.0) (the 'License').
+
+Unless required by law or agreed in writing, software distributed under the License
+is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS, express or implied.
+See the License for the specific language governing permissions and limitations.
