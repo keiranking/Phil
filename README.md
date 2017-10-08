@@ -28,5 +28,5 @@ Phil uses [Font Awesome](https://github.com/FortAwesome/Font-Awesome/) icons and
 Licensed under [the Apache License, v2.0](http://www.apache.org/licenses/LICENSE-2.0) (the 'License').
 
 Unless required by law or agreed in writing, software distributed under the License
-is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS, express or implied.
+is distributed on an **'as is' basis, without warranties or conditions**, express or implied.
 See the License for the specific language governing permissions and limitations.
