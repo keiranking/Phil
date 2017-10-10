@@ -27,7 +27,6 @@ let current = {};
 let isSymmetrical = true;
 let grid = undefined;
 let squares = undefined;
-
 createNewPuzzle();
 
 //____________________
@@ -451,31 +450,23 @@ function suppressEnterKey(e) {
   }
 }
 
-function generateLayout() {
+function loadPatterns(url) {
+  let p = [];
   let pF = new XMLHttpRequest();
-  pF.open("GET", "https://raw.githubusercontent.com/keiranking/Phil/master/patterns.txt", true);
+  pF.open("GET", url, true);
   pF.onreadystatechange = function() {
     if (pF.readyState === 4 && pF.status === 200) {  // Makes sure the document is ready to parse, and it's found the file.
-      const gridPatterns = JSON.parse(pF.responseText);
-      console.log("Loaded standard patterns.");
-      console.log(gridPatterns);
+      p = JSON.parse(pF.responseText);
+      console.log(p, "Loaded standard patterns.");
+      // console.log(gridPatterns[0]);
     }
+    console.log(p);
   }
   pF.send(null);
+  return p;
+}
 
-  gridPatterns = [
-    [
-      [0,4], [1,4], [2,4], [12,4], [13,4], [14,4],
-      [4,0], [4,1], [4,2], [4,12], [4,13], [4,14],
-      [8,3], [7,4], [6,5], [5,6], [4,7], [3,8]
-    ],
-    [
-      [0,5], [1,5], [2,5], [12,4], [13,4], [14,4],
-      [5,0], [5,1], [5,2], [4,3], [3,13], [3,14],
-      [5,6], [4,7], [4,8], [6,9], [7,10], [5,11]
-    ]
-  ];
-
+function generatePattern() {
   let title = xw.title;
   let author = xw.author;
   createNewPuzzle();
@@ -485,7 +476,7 @@ function generateLayout() {
   const activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   activeCell.className = activeCell.className.replace("active", "").trim();
 
-  const pattern = gridPatterns[randomNumber(0, gridPatterns.length)]; // select random pattern
+  const pattern = patterns[randomNumber(0, patterns.length)]; // select random pattern
   if (!isSymmetrical) {
     toggleSymmetry();
   }
@@ -541,6 +532,3 @@ function randomLetter() {
   let random = randomNumber(0, 100);
   return alphabet.substring(random, random + 1);
 }
-
-// window.alert("This is how you create an alert.")
-// document.write("This is how you write to the HTML document.")
