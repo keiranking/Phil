@@ -453,7 +453,7 @@ function suppressEnterKey(e) {
 
 function generateLayout() {
   let pF = new XMLHttpRequest();
-  pF.open("GET", "https://raw.githubusercontent.com/keiranking/Fill/master/patterns.txt", true);
+  pF.open("GET", "https://raw.githubusercontent.com/keiranking/Phil/master/patterns.txt", true);
   pF.onreadystatechange = function() {
     if (pF.readyState === 4 && pF.status === 200) {  // Makes sure the document is ready to parse, and it's found the file.
       const gridPatterns = JSON.parse(pF.responseText);

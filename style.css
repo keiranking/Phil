@@ -135,19 +135,17 @@ h1 {
   min-height: 36px;
 }
 
-#header-text {
-  float: left;
-  width: 95%;
-}
-
-#header-text h1 {
+#header h1 {
   margin: 0;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
 }
 
-#header-logo {
-  float: right;
-  margin: 2px 0 0 0;
+#footer-logo {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  /*float: right;*/
+  /*margin: 2px 0 0 0;*/
 }
 
 #logo {

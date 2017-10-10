@@ -5,14 +5,10 @@
 </head>
 <body>
   <div id="header">
-    <div id="header-text"><h1><span id="puzzle-title" class="editable" contenteditable="true"
+    <h1><span id="puzzle-title" class="editable" contenteditable="true"
       onkeydown="suppressEnterKey(event)" onfocusout="setTitle()">Untitled</span>
      by <span id="puzzle-author" class="editable" contenteditable="true"
-      onkeydown="suppressEnterKey(event)" onfocusout="setAuthor()">Anonymous</span></h1></div>
-    <div id="header-logo"><a href="https://github.com/keiranking/Phil" target="_blank">
-        <img id="logo" src="images/logo.svg" alt="Phil logo">
-        <!-- <object id="logo" type="image/svg+xml" data="images/logo.svg">Your browser does not support SVGs</object> -->
-      </a></div>
+      onkeydown="suppressEnterKey(event)" onfocusout="setAuthor()">Anonymous</span></h1>
   </div>
 
   <div id="toolbar">
@@ -85,6 +81,10 @@
   <div id="footer">
     <div id="help" onclick="toggleHelp()">A period creates a black square. 'Enter' changes direction.<span id="hide-help">Dismiss</span></div>
   </div>
+  <div id="footer-logo"><a href="https://github.com/keiranking/Phil" target="_blank">
+      <img id="logo" src="images/logo.svg" alt="Phil logo">
+      <!-- <object id="logo" type="image/svg+xml" data="images/logo.svg">Your browser does not support SVGs</object> -->
+    </a></div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.3.2/jspdf.plugin.autotable.js"></script>
