@@ -2,7 +2,7 @@
 
 [![Version](images/version.svg)]()
 
-<img src="images/logo.svg" align="right" width="90" height="90">
+<img src="images/logo.svg" align="right" width="60" height="60">
 
 Phil helps you make crosswords, using client-side JavaScript.
 * Open and save .xw files ([JSON puzzle files](https://www.xwordinfo.com/JSON/) by another name).
