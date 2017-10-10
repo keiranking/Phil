@@ -6,6 +6,8 @@
   --lt-blue: #def1ff;
   --med-blue: #55b8fe;
   --dk-blue: #0181dc;
+  --green: #00ff00;
+  --red: #ff0000;
 }
 
 body {
@@ -81,17 +83,31 @@ h1 {
   outline: 2px solid var(--med-blue);
 }
 
+#grid.sat:focus {
+  outline: 2px solid var(--green);
+}
+
+#grid.unsat:focus {
+  outline: 3px solid var(--red);
+}
+
 #grid td {
   width: 35px;
   height: 36px;
   position: relative;
+  /*border: 1px solid var(--black);*/
   border-left: 1px solid var(--black);
   border-top: 1px solid var(--black);
 }
 
 #grid td.active {
-  /*outline: 3px solid var(--med-blue);*/
-  /*outline-offset: -1px;*/
+  /*outline: 1px solid var(--med-blue);*/
+  /*outline-offset: -2px;*/
+
+  box-shadow: 0 0 12px 0px var(--dk-blue);
+  -moz-box-shadow: 0 0 12px 0px var(--dk-blue);
+  -webkit-box-shadow: 0 0 12px 0px var(--dk-blue);
+  border-style: double;
   border: 1px solid var(--med-blue);
   opacity: 0.8;
   font-weight: 400;
@@ -103,6 +119,7 @@ h1 {
 }
 
 #grid td.highlight {
+  border-style: double;
   border: 1px solid var(--med-blue);
   background-color: var(--lt-blue);
   font-weight: 400;

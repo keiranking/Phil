@@ -452,6 +452,17 @@ function suppressEnterKey(e) {
 }
 
 function generateLayout() {
+  let pF = new XMLHttpRequest();
+  pF.open("GET", "https://raw.githubusercontent.com/keiranking/Fill/master/patterns.txt", true);
+  pF.onreadystatechange = function() {
+    if (pF.readyState === 4 && pF.status === 200) {  // Makes sure the document is ready to parse, and it's found the file.
+      const gridPatterns = JSON.parse(pF.responseText);
+      console.log("Loaded standard patterns.");
+      console.log(gridPatterns);
+    }
+  }
+  pF.send(null);
+
   gridPatterns = [
     [
       [0,4], [1,4], [2,4], [12,4], [13,4], [14,4],
