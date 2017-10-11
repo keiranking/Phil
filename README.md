@@ -27,6 +27,6 @@ Licensed under [the Apache License, v2.0](http://www.apache.org/licenses/LICENSE
 
 Unless required by law or agreed in writing, software distributed under the License
 is distributed on an **'as is' basis, without warranties or conditions**, express or implied.
-See the License for the specific language governing permissions and limitations.
+See the [License](LICENSE) for the specific language governing permissions and limitations.
 
 &copy; Keiran King
