@@ -1,11 +1,15 @@
 :root {
   --black: black;
-  --lt-grey: #f5f7f7;
+  /*--lt-grey: #f5f7f7;*/
+  --lt-grey: #f8f8f8;
   --med-grey: #999;
   --dk-grey: #444;
+  /*--wh-blue: #f2f9ff;*/
   --lt-blue: #def1ff;
+  --lt-blue-mono: #ededed;
   --med-blue: #55b8fe;
   --dk-blue: #0181dc;
+  --dk-blue-mono: #656565;
   --green: #00ff00;
   --red: #ff0000;
 }
@@ -49,11 +53,6 @@ h1 {
   color: var(--dk-grey);
 }
 
-#footer #credits {
-  color: var(--med-grey);
-  float: right;
-}
-
 #footer #help {
   margin-top: 3px;
   padding: 12px;
@@ -69,6 +68,14 @@ h1 {
   text-decoration: underline;
   color: var(--lt-blue);
   cursor: pointer;
+}
+
+#footer-logo {
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  /*float: right;*/
+  /*margin: 2px 0 0 0;*/
 }
 
 #grid {
@@ -101,17 +108,20 @@ h1 {
 }
 
 #grid td.active {
-  /*outline: 1px solid var(--med-blue);*/
-  /*outline-offset: -2px;*/
+  box-shadow: 0 0 12px 0px var(--dk-blue-mono);
+  -moz-box-shadow: 0 0 12px 0px var(--dk-blue-mono);
+  -webkit-box-shadow: 0 0 12px 0px var(--dk-blue-mono);
+  opacity: 0.8;
+  font-weight: 400;
+  z-index: 300;
+}
 
+#grid:focus td.active {
   box-shadow: 0 0 12px 0px var(--dk-blue);
   -moz-box-shadow: 0 0 12px 0px var(--dk-blue);
   -webkit-box-shadow: 0 0 12px 0px var(--dk-blue);
   border-style: double;
   border: 1px solid var(--med-blue);
-  opacity: 0.8;
-  font-weight: 400;
-  z-index: 300;
 }
 
 #grid td.black {
@@ -119,14 +129,22 @@ h1 {
 }
 
 #grid td.highlight {
-  border-style: double;
-  border: 1px solid var(--med-blue);
-  background-color: var(--lt-blue);
+  background-color: var(--lt-blue-mono);
   font-weight: 400;
 }
 
+#grid:focus td.highlight {
+  border-style: double;
+  border: 1px solid var(--med-blue);
+  background-color: var(--lt-blue);
+}
+
 #grid td.lowlight {
-  background-color: var(--lt-grey);
+  /*background-color: var(--lt-grey);*/
+}
+
+#grid:focus td.lowlight {
+  /*background-color: var(--lt-grey);*/
 }
 
 #header {
@@ -138,14 +156,6 @@ h1 {
 #header h1 {
   margin: 0;
   margin-bottom: 2px;
-}
-
-#footer-logo {
-  position: absolute;
-  right: 5px;
-  bottom: 5px;
-  /*float: right;*/
-  /*margin: 2px 0 0 0;*/
 }
 
 #logo {
