@@ -82,3 +82,6 @@ Other/Screenshots/Screen Shot 2017-10-03 at 12.27.48 PM.png
 Other/Screenshots/Screen Shot 2017-10-03 at 12.36.10 PM.png
 Other/Screenshots/Screen Shot 2017-10-03 at 12.42.52 PM.png
 Other/Puzzles/17.10.03.json.txt
+*.o
+depend.mk
+glucose
