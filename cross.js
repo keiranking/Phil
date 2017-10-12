@@ -120,15 +120,21 @@ function keyboardHandler(e) {
     }
     keyboardHandler(e);
   } else if (e.which == keyboard.black) {
-      xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK + xw.fill[current.row].slice(current.col + 1); // update model
-      activeCell.lastChild.innerHTML = xw.fill[current.row][current.col]; // update view
-      activeCell.className += " black";
-      activeCell.className = activeCell.className.trim();
-      if (isSymmetrical == true) {
-        xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1); // update model
-        symmetricalCell.lastChild.innerHTML = xw.fill[symRow][symCol]; // update view
-        symmetricalCell.className += " black";
-        symmetricalCell.className = symmetricalCell.className.trim();
+      if (activeCell.className.search("black") > -1) { // if already black...
+        e = new Event('keydown');
+        e.which = keyboard.delete; // make it a white square
+        keyboardHandler(e);
+      } else {
+        xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK + xw.fill[current.row].slice(current.col + 1); // update model
+        activeCell.lastChild.innerHTML = xw.fill[current.row][current.col]; // update view
+        activeCell.className += " black";
+        activeCell.className = activeCell.className.trim();
+        if (isSymmetrical == true) {
+          xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1); // update model
+          symmetricalCell.lastChild.innerHTML = xw.fill[symRow][symCol]; // update view
+          symmetricalCell.className += " black";
+          symmetricalCell.className = symmetricalCell.className.trim();
+        }
       }
   } else if (e.which == keyboard.enter) {
       current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
