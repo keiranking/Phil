@@ -26,6 +26,23 @@ h1 {
   color: var(--med-grey);
 }
 
+#credits {
+  font-size: 9.5pt;
+  font-weight: 400;
+  color: var(--med-grey);
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  /*float: right;*/
+  /*margin: 2px 0 0 0;*/
+}
+
+#credits a {
+  font-weight: 500;
+  color: var(--med-grey);
+  text-decoration: none;
+}
+
 #download-puzzle-link,
 #open-puzzle-input,
 #open-wordlist-input {
@@ -70,20 +87,16 @@ h1 {
   cursor: pointer;
 }
 
-#footer-logo {
-  position: absolute;
-  right: 5px;
-  bottom: 5px;
-  /*float: right;*/
-  /*margin: 2px 0 0 0;*/
-}
-
 #grid {
   border: 2px solid var(--black);
   border-collapse: collapse;
   text-align: center;
   font-size: 15pt;
   font-weight: 300;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+
 }
 
 #grid:focus {
