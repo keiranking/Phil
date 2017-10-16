@@ -35,29 +35,24 @@ function convertJSONToPuzzle(puz) {
   xw.rows = DEFAULT_SIZE;
   xw.cols = DEFAULT_SIZE;
 
-  // Display puzzle title, author
+  // Update puzzle title, author
   xw.title = puz.title;
   if (puz.title.slice(0,8) == "NY TIMES") {
     xw.title = "NYT Crossword";
   }
   xw.author = puz.author;
 
-  // Display fill in grid
+  // Update fill
+  new_fill = [];
   for (let i = 0; i < xw.rows; i++) {
+    new_fill.push("");
     for (let j = 0; j < xw.cols; j++) {
-      const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-
       const k = (i * xw.rows) + j;
-      const cellFill = (puz.grid[k].length > 1) ? puz.grid[k][0] : puz.grid[k]; // Strip rebus answers to their first letter
-
-      xw.fill[i] = xw.fill[i].slice(0, j) + cellFill.toUpperCase() + xw.fill[i].slice(j + 1);
-      activeCell.lastChild.innerHTML = xw.fill[i][j];
-      if (xw.fill[i][j] == BLACK) {
-        activeCell.className += " black";
-        activeCell.className.trim();
-      }
+      new_fill[i] += (puz.grid[k].length > 1) ? puz.grid[k][0].toUpperCase() : puz.grid[k].toUpperCase(); // Strip rebus answers to their first letter
     }
   }
+  xw.fill = new_fill;
+
   updateUI();
 
   // Load in clues and display current clues

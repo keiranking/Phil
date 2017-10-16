@@ -200,6 +200,7 @@ function keyboardHandler(e) {
 }
 
 function updateUI() {
+  updateGridUI();
   updateLabelsAndClues();
   updateActiveWords();
   updateGridHighlights();
@@ -207,6 +208,19 @@ function updateUI() {
   updateMatchesUI();
   updateCluesUI();
   updateInfoUI();
+}
+
+function updateGridUI() {
+  for (let i = 0; i < xw.rows; i++) {
+    for (let j = 0; j < xw.cols; j++) {
+      const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      activeCell.lastChild.innerHTML = xw.fill[i][j];
+      if (xw.fill[i][j] == BLACK) {
+        activeCell.className += " black";
+        activeCell.className.trim();
+      }
+    }
+  }
 }
 
 function updateCluesUI() {
