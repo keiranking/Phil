@@ -216,8 +216,14 @@ function updateGridUI() {
       const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       activeCell.lastChild.innerHTML = xw.fill[i][j];
       if (xw.fill[i][j] == BLACK) {
-        activeCell.className += " black";
-        activeCell.className.trim();
+        if (activeCell.className.search("black") == -1) {
+          activeCell.className += " black";
+          activeCell.className.trim();
+        }
+      } else {
+        if (activeCell.className.search("black") > -1) {
+          activeCell.className = activeCell.className.replace("black", "").trim();
+        }
       }
     }
   }
