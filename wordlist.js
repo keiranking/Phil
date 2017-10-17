@@ -137,6 +137,7 @@ function fillGridWithMatch(e) {
   }
   isMutated = true;
   console.log("Filled '" + li.innerHTML + "' going " + dir);
-  updateActiveWords();
-  updateMatchesUI();
+  // updateActiveWords();
+  // updateMatchesUI();
+  updateUI();
 }

@@ -100,18 +100,13 @@ function keyboardHandler(e) {
   let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   const symRow = xw.rows - 1 - current.row;
   const symCol = xw.cols - 1 - current.col;
-  const symmetricalCell = grid.querySelector('[data-row="' + symRow + '"]').querySelector('[data-col="' + symCol + '"]');
 
   if ((e.which >= keyboard.a && e.which <= keyboard.z) || e.which == keyboard.space) {
+    let oldContent = xw.fill[current.row][current.col];
     xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + String.fromCharCode(e.which) + xw.fill[current.row].slice(current.col + 1); // update model
-    activeCell.lastChild.innerHTML = xw.fill[current.row][current.col]; // update view
-
-    if (activeCell.className.search("black") > -1) {
-      activeCell.className = activeCell.className.replace("black", "").trim();
+    if (oldContent == BLACK) {
       if (isSymmetrical) {
         xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1); // update model
-        symmetricalCell.lastChild.innerHTML = xw.fill[symRow][symCol]; // update view
-        symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
       }
     }
     // move the cursor
@@ -121,24 +116,16 @@ function keyboardHandler(e) {
     } else {
       e.which = keyboard.down;
     }
-    // keyboardHandler(e);
     isMutated = true;
   }
   if (e.which == keyboard.black) {
-      if (activeCell.className.search("black") > -1) { // if already black...
+      if (xw.fill[current.row][current.col] == BLACK) { // if already black...
         e = new Event('keydown');
         e.which = keyboard.delete; // make it a white square
-        // keyboardHandler(e);
       } else {
         xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK + xw.fill[current.row].slice(current.col + 1); // update model
-        activeCell.lastChild.innerHTML = xw.fill[current.row][current.col]; // update view
-        activeCell.className += " black";
-        activeCell.className = activeCell.className.trim();
         if (isSymmetrical) {
           xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1); // update model
-          symmetricalCell.lastChild.innerHTML = xw.fill[symRow][symCol]; // update view
-          symmetricalCell.className += " black";
-          symmetricalCell.className = symmetricalCell.className.trim();
         }
       }
       isMutated = true;
@@ -147,69 +134,78 @@ function keyboardHandler(e) {
       current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
   }
   if (e.which == keyboard.delete) {
+    let oldContent = xw.fill[current.row][current.col];
     xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK + xw.fill[current.row].slice(current.col + 1); // update model
-    activeCell.lastChild.innerHTML = xw.fill[current.row][current.col]; // update view
-      if (activeCell.className.search("black") > -1) { // if it's a black square
-        activeCell.className = activeCell.className.replace("black", "").trim();
+      if (oldContent == BLACK) {
         if (isSymmetrical) {
           xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1); // update model
-          symmetricalCell.lastChild.innerHTML = xw.fill[symRow][symCol]; // update view
-          symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
+        }
+      } else { // move the cursor
+        console.log(xw.fill[current.row][current.col]);
+        e = new Event('keydown');
+        if (current.direction == ACROSS) {
+          e.which = keyboard.left;
+        } else {
+          e.which = keyboard.up;
         }
       }
-      // move the cursor
-      e = new Event('keydown');
-      if (current.direction == ACROSS) {
-        e.which = keyboard.left;
-      } else {
-        e.which = keyboard.up;
-      }
-      // keyboardHandler(e);
       isMutated = true;
   }
   if (e.which >= keyboard.left && e.which <= keyboard.down) {
       const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
       previousCell.className = previousCell.className.replace("active", "");
+      let content = xw.fill[current.row][current.col];
       switch (e.which) {
         case keyboard.left:
-          if (current.direction == ACROSS) {
+          if (current.direction == ACROSS || content == BLACK) {
             current.col = (current.col == 0) ? current.col : current.col - 1;
+            if (content == BLACK) {
+              current.direction = ACROSS;
+            }
           } else {
             current.direction = ACROSS;
           }
           break;
         case keyboard.up:
-          if (current.direction == DOWN) {
+          if (current.direction == DOWN || content == BLACK) {
             current.row = (current.row == 0) ? current.row : current.row - 1;
+            if (content == BLACK) {
+              current.direction = DOWN;
+            }
           } else {
             current.direction = DOWN;
           }
           break;
         case keyboard.right:
-          if (current.direction == ACROSS) {
+          if (current.direction == ACROSS || content == BLACK) {
             current.col = (current.col == xw.cols - 1) ? current.col : current.col + 1;
+            if (content == BLACK) {
+              current.direction = ACROSS;
+            }
           } else {
             current.direction = ACROSS;
           }
           break;
         case keyboard.down:
-          if (current.direction == DOWN) {
+          if (current.direction == DOWN || content == BLACK) {
             current.row = (current.row == xw.rows - 1) ? current.row : current.row + 1;
+            if (content == BLACK) {
+              current.direction = DOWN;
+            }
           } else {
             current.direction = DOWN;
           }
           break;
       }
       console.log("[" + current.row + "," + current.col + "]");
-      // console.log(current.direction);
       activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
       activeCell.className = (activeCell.className + " active").trim();
   }
-  // console.log(xw.fill);
   updateUI();
 }
 
 function updateUI() {
+  console.log("Fill change:", isMutated);
   updateGridUI();
   updateLabelsAndClues();
   updateActiveWords();
