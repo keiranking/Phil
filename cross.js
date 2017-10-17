@@ -27,6 +27,7 @@ let current = {};
 let isSymmetrical = true;
 let grid = undefined;
 let squares = undefined;
+let isMutated = false;
 createNewPuzzle();
 
 //____________________
@@ -90,10 +91,12 @@ function mouseHandler(e) {
   activeCell.className += " active";
   activeCell.className = activeCell.className.trim();
 
+  isMutated = false;
   updateUI();
 }
 
 function keyboardHandler(e) {
+  isMutated = false;
   let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   const symRow = xw.rows - 1 - current.row;
   const symCol = xw.cols - 1 - current.col;
@@ -105,7 +108,7 @@ function keyboardHandler(e) {
 
     if (activeCell.className.search("black") > -1) {
       activeCell.className = activeCell.className.replace("black", "").trim();
-      if (isSymmetrical == true) {
+      if (isSymmetrical) {
         xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1); // update model
         symmetricalCell.lastChild.innerHTML = xw.fill[symRow][symCol]; // update view
         symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
@@ -118,32 +121,37 @@ function keyboardHandler(e) {
     } else {
       e.which = keyboard.down;
     }
-    keyboardHandler(e);
-  } else if (e.which == keyboard.black) {
+    // keyboardHandler(e);
+    isMutated = true;
+  }
+  if (e.which == keyboard.black) {
       if (activeCell.className.search("black") > -1) { // if already black...
         e = new Event('keydown');
         e.which = keyboard.delete; // make it a white square
-        keyboardHandler(e);
+        // keyboardHandler(e);
       } else {
         xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK + xw.fill[current.row].slice(current.col + 1); // update model
         activeCell.lastChild.innerHTML = xw.fill[current.row][current.col]; // update view
         activeCell.className += " black";
         activeCell.className = activeCell.className.trim();
-        if (isSymmetrical == true) {
+        if (isSymmetrical) {
           xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1); // update model
           symmetricalCell.lastChild.innerHTML = xw.fill[symRow][symCol]; // update view
           symmetricalCell.className += " black";
           symmetricalCell.className = symmetricalCell.className.trim();
         }
       }
-  } else if (e.which == keyboard.enter) {
+      isMutated = true;
+  }
+  if (e.which == keyboard.enter) {
       current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
-  } else if (e.which == keyboard.delete) {
+  }
+  if (e.which == keyboard.delete) {
     xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK + xw.fill[current.row].slice(current.col + 1); // update model
     activeCell.lastChild.innerHTML = xw.fill[current.row][current.col]; // update view
       if (activeCell.className.search("black") > -1) { // if it's a black square
         activeCell.className = activeCell.className.replace("black", "").trim();
-        if (isSymmetrical == true) {
+        if (isSymmetrical) {
           xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1); // update model
           symmetricalCell.lastChild.innerHTML = xw.fill[symRow][symCol]; // update view
           symmetricalCell.className = symmetricalCell.className.replace("black", "").trim();
@@ -156,8 +164,10 @@ function keyboardHandler(e) {
       } else {
         e.which = keyboard.up;
       }
-      keyboardHandler(e);
-  } else if (e.which >= keyboard.left && e.which <= keyboard.down) {
+      // keyboardHandler(e);
+      isMutated = true;
+  }
+  if (e.which >= keyboard.left && e.which <= keyboard.down) {
       const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
       previousCell.className = previousCell.className.replace("active", "");
       switch (e.which) {
@@ -546,6 +556,7 @@ function clearFill() {
       }
     }
   }
+  isMutated = true;
   updateUI();
 }
 

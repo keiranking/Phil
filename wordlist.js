@@ -117,8 +117,8 @@ function updateMatchesUI() {
   }
 }
 
-function fillGridWithMatch() {
-  const li = event.currentTarget;
+function fillGridWithMatch(e) {
+  const li = e.currentTarget;
   const fill = li.innerHTML.toUpperCase();
   const dir = (li.parentNode.id == "across-matches") ? ACROSS : DOWN;
 
@@ -135,6 +135,7 @@ function fillGridWithMatch() {
       square.lastChild.innerHTML = fill[j - current.downStartIndex];
     }
   }
+  isMutated = true;
   console.log("Filled '" + li.innerHTML + "' going " + dir);
   updateActiveWords();
   updateMatchesUI();

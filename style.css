@@ -90,13 +90,13 @@ h1 {
 #grid {
   border: 2px solid var(--black);
   border-collapse: collapse;
+  /*border-spacing: 0;*/
   text-align: center;
   font-size: 15pt;
   font-weight: 300;
   -webkit-user-select: none;
   -moz-user-select: none;
   user-select: none;
-
 }
 
 #grid:focus {

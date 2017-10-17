@@ -52,7 +52,8 @@ function convertJSONToPuzzle(puz) {
     }
   }
   xw.fill = new_fill;
-
+  isMutated = true;
+  
   updateUI();
 
   // Load in clues and display current clues
