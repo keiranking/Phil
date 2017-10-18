@@ -116,7 +116,6 @@ function mouseHandler(e) {
 }
 
 function keyboardHandler(e) {
-  console.log(e);
   isMutated = false;
   let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   const symRow = xw.rows - 1 - current.row;
