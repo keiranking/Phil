@@ -46,7 +46,6 @@ function createNewPuzzle(rows, cols) {
       xw.fill[i] += BLANK;
     }
   }
-  console.log(xw.fill);
   updateInfoUI();
   document.getElementById("main").innerHTML = "";
   createGrid(xw.rows, xw.cols);
@@ -76,6 +75,7 @@ function createNewPuzzle(rows, cols) {
     square.addEventListener('click', mouseHandler);
   }
   grid.addEventListener('keydown', keyboardHandler);
+  console.log("New puzzle created.")
 }
 
 function mouseHandler(e) {
@@ -103,10 +103,10 @@ function keyboardHandler(e) {
 
   if ((e.which >= keyboard.a && e.which <= keyboard.z) || e.which == keyboard.space) {
     let oldContent = xw.fill[current.row][current.col];
-    xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + String.fromCharCode(e.which) + xw.fill[current.row].slice(current.col + 1); // update model
+    xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + String.fromCharCode(e.which) + xw.fill[current.row].slice(current.col + 1);
     if (oldContent == BLACK) {
       if (isSymmetrical) {
-        xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1); // update model
+        xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
       }
     }
     // move the cursor
@@ -123,9 +123,9 @@ function keyboardHandler(e) {
         e = new Event('keydown');
         e.which = keyboard.delete; // make it a white square
       } else {
-        xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK + xw.fill[current.row].slice(current.col + 1); // update model
+        xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK + xw.fill[current.row].slice(current.col + 1);
         if (isSymmetrical) {
-          xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1); // update model
+          xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
         }
       }
       isMutated = true;
@@ -134,14 +134,14 @@ function keyboardHandler(e) {
       current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
   }
   if (e.which == keyboard.delete) {
+    e.preventDefault();
     let oldContent = xw.fill[current.row][current.col];
-    xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK + xw.fill[current.row].slice(current.col + 1); // update model
+    xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK + xw.fill[current.row].slice(current.col + 1);
       if (oldContent == BLACK) {
         if (isSymmetrical) {
-          xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1); // update model
+          xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
         }
       } else { // move the cursor
-        console.log(xw.fill[current.row][current.col]);
         e = new Event('keydown');
         if (current.direction == ACROSS) {
           e.which = keyboard.left;
@@ -152,6 +152,7 @@ function keyboardHandler(e) {
       isMutated = true;
   }
   if (e.which >= keyboard.left && e.which <= keyboard.down) {
+      e.preventDefault();
       const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
       previousCell.className = previousCell.className.replace("active", "");
       let content = xw.fill[current.row][current.col];
@@ -504,20 +505,21 @@ function generatePattern() {
   createNewPuzzle();
   xw.title = title;
   xw.author = author;
-  // "Delete" active square before applying pattern to prevent 2 active squares
-  const activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
-  activeCell.className = activeCell.className.replace("active", "").trim();
 
   const pattern = patterns[randomNumber(0, patterns.length)]; // select random pattern
   if (!isSymmetrical) {
     toggleSymmetry();
   }
   for (let i = 0; i < pattern.length; i++) {
-    [current.row, current.col] = pattern[i];
-    let e = new Event('keydown');
-    e.which = keyboard.black;
-    keyboardHandler(e);
+    const row = pattern[i][0];
+    const col = pattern[i][1];
+    const symRow = xw.rows - 1 - row;
+    const symCol = xw.cols - 1 - col;
+    xw.fill[row] = xw.fill[row].slice(0, col) + BLACK + xw.fill[row].slice(col + 1);
+    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
   }
+  isMutated = true;
+  updateUI();
   console.log("Generated layout.")
 }
 

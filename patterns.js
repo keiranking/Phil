@@ -15,4 +15,4 @@ const patterns = [
       [5,6], [4,7], [4,8], [6,9], [7,10], [5,11]
     ]
 ];
-console.log("Loaded", patterns.length, "patterns");
+console.log("Loaded", patterns.length, "patterns.");
