@@ -1036,7 +1036,10 @@ lbool Solver::search(int nof_conflicts)
     unsigned int nblevels,szWoutSelectors;
     bool blocked=false;
     starts++;
-    for (;;){
+    for (int iter_count = 0;; iter_count++){
+        if ((iter_count & 255) == 0 && checkInterrupt()) {
+          return l_Undef;
+        }
         CRef confl = propagate();
         if (confl != CRef_Undef){
             // CONFLICT

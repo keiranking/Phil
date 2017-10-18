@@ -44,6 +44,11 @@ let grid = undefined;
 let squares = undefined;
 let isMutated = false;
 createNewPuzzle();
+let solveWorker = null;
+let solveWorkerState = null;
+let solveTimeout = null;
+let solveWordlist = null;
+let solvePending = [];
 
 //____________________
 // F U N C T I O N S
@@ -222,6 +227,9 @@ function keyboardHandler(e) {
 
 function updateUI() {
   console.log("Fill change:", isMutated);
+  if (isMutated) {
+    autoFill(true);  // quick fill
+  }
   updateGridUI();
   updateLabelsAndClues();
   updateActiveWords();
@@ -571,6 +579,90 @@ function clearFill() {
   }
   isMutated = true;
   updateUI();
+}
+
+function autoFill(isQuick = false) {
+  grid.className = "";
+  if (!solveWorker) {
+    solveWorker = new Worker('xw_worker.js');
+    solveWorkerState = 'ready';
+  }
+  if (solveWorkerState != 'ready') {
+    cancelSolveWorker();
+  }
+  solvePending = [isQuick];
+  runSolvePending();
+}
+
+function runSolvePending() {
+  if (solveWorkerState != 'ready' || solvePending.length == 0) return;
+  let isQuick = solvePending[0];
+  solvePending = [];
+  solveTimeout = window.setTimeout(cancelSolveWorker, 30000);
+  if (solveWordlist == null) {
+    console.log('rebuilding word list');
+    solveWordlist = '';
+    for (let i = 3; i < wordlist.length; i++) {
+      solveWordlist += wordlist[i].join('\n') + '\n';
+    }
+  }
+  //console.log(wordlist_str);
+  let puz = xw.fill.join('\n') + '\n';
+  solveWorker.postMessage(['run', solveWordlist, puz, isQuick]);
+  solveWorkerState = 'running';
+  solveWorker.onmessage = function(e) {
+    switch (e.data[0]) {
+      case 'done':
+        if (solveWorkerState == 'running') {
+            if (isQuick) {
+                console.log("green");
+                grid.className = "sat";
+            } else {
+                xw.fill = e.data[1].split('\n');
+                xw.fill.pop();  // strip empty last line
+                updateGridUI();
+            }
+        }
+        solveWorkerState = 'ready';
+        runSolvePending();
+        break;
+      case 'unsat':
+        if (solveWorkerState == 'running') {
+            if (isQuick) {
+                console.log("red");
+                grid.className = "unsat";
+            } else {
+                console.log('puzzle could not be satisfied');
+                // TODO: indicate on UI
+            }
+        }
+        solveWorkerState = 'ready';
+        runSolvePending();
+        break;
+      case 'ack_cancel':
+        console.log('cancel acknowledged');
+        solveWorkerState = 'ready';
+        runSolvePending();
+        break;
+      default:
+        console.log('unexpected return from worker', e.data);
+        break;
+    }
+    window.clearTimeout(solveTimeout);
+    solveTimeout = null;
+  }
+}
+
+
+// TODO: rename, maybe "cancelPending"
+function cancelSolveWorker() {
+  if (solveWorkerState == 'running') {
+    solveWorker.postMessage(['cancel']);
+    solveWorkerState = 'cancelwait';
+    console.log("sent cancel");  // TODO: indicate on UI
+    window.clearTimeout(solveTimeout);
+    solveTimeout = null;
+  }
 }
 
 function randomNumber(min, max) {

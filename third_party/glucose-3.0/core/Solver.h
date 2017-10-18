@@ -33,15 +33,23 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 #include "mtl/Heap.h"
 #include "mtl/Alg.h"
 #include "utils/Options.h"
+#include "utils/System.h"
 #include "core/SolverTypes.h"
 #include "core/BoundedQueue.h"
 #include "core/Constants.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 namespace Glucose {
 
 //=================================================================================================
 // Solver -- the main class:
+
+#if defined(__EMSCRIPTEN__)
+static double last_timecheck;
+#endif
 
 class Solver {
 public:
@@ -115,6 +123,7 @@ public:
     void    budgetOff();
     void    interrupt();          // Trigger a (potentially asynchronous) interruption of the solver.
     void    clearInterrupt();     // Clear interrupt indicator flag.
+    bool    checkInterrupt() const;
 
     // Memory managment:
     //
@@ -416,9 +425,19 @@ inline void     Solver::setConfBudget(int64_t x){ conflict_budget    = conflicts
 inline void     Solver::setPropBudget(int64_t x){ propagation_budget = propagations + x; }
 inline void     Solver::interrupt(){ asynch_interrupt = true; }
 inline void     Solver::clearInterrupt(){ asynch_interrupt = false; }
+inline bool     Solver::checkInterrupt() const {
+#if defined(__EMSCRIPTEN__)
+    double now = cpuTime();
+    if (now > last_timecheck + 0.1) {
+        last_timecheck = now;
+        emscripten_sleep(1);
+    }
+#endif
+    return asynch_interrupt;
+}
 inline void     Solver::budgetOff(){ conflict_budget = propagation_budget = -1; }
 inline bool     Solver::withinBudget() const {
-    return !asynch_interrupt &&
+    return !checkInterrupt() &&
            (conflict_budget    < 0 || conflicts < (uint64_t)conflict_budget) &&
            (propagation_budget < 0 || propagations < (uint64_t)propagation_budget); }
 
