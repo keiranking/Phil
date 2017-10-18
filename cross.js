@@ -44,6 +44,8 @@ let grid = undefined;
 let squares = undefined;
 let isMutated = false;
 createNewPuzzle();
+let solveWorker = null;
+let solveTimeout = null;
 
 //____________________
 // F U N C T I O N S
@@ -222,6 +224,9 @@ function keyboardHandler(e) {
 
 function updateUI() {
   console.log("Fill change:", isMutated);
+  if (isMutated) {
+    autoFill(true);  // quick fill
+  }
   updateGridUI();
   updateLabelsAndClues();
   updateActiveWords();
@@ -571,6 +576,60 @@ function clearFill() {
   }
   isMutated = true;
   updateUI();
+}
+
+function autoFill(isQuick = false) {
+  grid.className = "";
+  killSolveWorker();
+  solveWorker = new Worker('xw_worker.js');
+  solveTimeout = window.setTimeout(killSolveWorker, 30000);
+  console.log("autofill!");
+  let wordlist_str = '';
+  for (let i = 3; i < wordlist.length; i++) {
+    wordlist_str += wordlist[i].join('\n') + '\n';
+  }
+  //console.log(wordlist_str);
+  let puz = xw.fill.join('\n') + '\n';
+  solveWorker.postMessage([wordlist_str, puz, isQuick]);
+  solveWorker.onmessage = function(e) {
+    switch (e.data[0]) {
+      case 'done':
+        if (isQuick) {
+            console.log("green");
+            grid.className = "sat";
+        } else {
+            xw.fill = e.data[1].split('\n');
+            xw.fill.pop();  // strip empty last line
+            updateGridUI();
+        }
+        break;
+      case 'unsat':
+        if (isQuick) {
+            console.log("red");
+            grid.className = "unsat";
+        } else {
+            console.log('puzzle could not be satisfied');
+            // TODO: indicate on UI
+        }
+        break;
+      default:
+        console.log('unexpected return from worker', e.data);
+        break;
+    }
+    window.clearTimeout(solveTimeout);
+    solveTimeout = null;
+    solveWorker = null;
+  }
+}
+
+function killSolveWorker() {
+  if (solveWorker) {
+    console.log("solver killed\n");  // TODO: indicate on UI
+    solveWorker.terminate();
+    solveWorker = null;
+    window.clearTimeout(solveTimeout);
+    solveTimeout = null;
+  }
 }
 
 function randomNumber(min, max) {
