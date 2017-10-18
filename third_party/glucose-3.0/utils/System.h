@@ -46,6 +46,20 @@ extern double memUsedPeak();        // Peak-memory in mega bytes (returns 0 for 
 static inline double Glucose::cpuTime(void) { return (double)clock() / CLOCKS_PER_SEC; }
 
 #else
+#if defined(__EMSCRIPTEN__)
+#include <sys/time.h>
+
+static double startTime = 0;
+static inline double Glucose::cpuTime(void) {
+    struct timeval tp;
+    gettimeofday(&tp, nullptr);
+    double now = (double)tp.tv_sec + (double)tp.tv_usec * 1e-6;
+    if (startTime == 0) {
+        startTime = now;
+    }
+    return now - startTime;
+}
+#else
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <unistd.h>
@@ -55,6 +69,7 @@ static inline double Glucose::cpuTime(void) {
     getrusage(RUSAGE_SELF, &ru);
     return (double)ru.ru_utime.tv_sec + (double)ru.ru_utime.tv_usec / 1000000; }
 
+#endif
 #endif
 
 #endif

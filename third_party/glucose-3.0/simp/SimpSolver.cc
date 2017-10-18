@@ -351,7 +351,7 @@ bool SimpSolver::backwardSubsumptionCheck(bool verbose)
     while (subsumption_queue.size() > 0 || bwdsub_assigns < trail.size()){
 
         // Empty subsumption queue and return immediately on user-interrupt:
-        if (asynch_interrupt){
+        if (checkInterrupt()){
             subsumption_queue.clear();
             bwdsub_assigns = trail.size();
             break; }
@@ -448,6 +448,7 @@ bool SimpSolver::asymmVar(Var v)
         if (!asymm(v, cls[i]))
             return false;
 
+    printf("near end of asymmVar\n");
     return backwardSubsumptionCheck();
 }
 
@@ -543,6 +544,7 @@ bool SimpSolver::eliminateVar(Var v)
     if (watches[ mkLit(v)].size() == 0) watches[ mkLit(v)].clear(true);
     if (watches[~mkLit(v)].size() == 0) watches[~mkLit(v)].clear(true);
 
+    printf("near end of eliminateVar\n");
     return backwardSubsumptionCheck();
 }
 
@@ -623,7 +625,7 @@ bool SimpSolver::eliminate(bool turn_off_elim)
             ok = false; goto cleanup; }
 
         // Empty elim_heap and return immediately on user-interrupt:
-        if (asynch_interrupt){
+        if (checkInterrupt()){
             assert(bwdsub_assigns == trail.size());
             assert(subsumption_queue.size() == 0);
             assert(n_touched == 0);
@@ -634,7 +636,7 @@ bool SimpSolver::eliminate(bool turn_off_elim)
         for (int cnt = 0; !elim_heap.empty(); cnt++){
             Var elim = elim_heap.removeMin();
             
-            if (asynch_interrupt) break;
+            if (checkInterrupt()) break;
 
             if (isEliminated(elim) || value(elim) != l_Undef) continue;
 

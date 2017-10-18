@@ -43,7 +43,24 @@ OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWA
 #include "core/Dimacs.h"
 #include "simp/SimpSolver.h"
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 using namespace Glucose;
+
+static Solver* solver;
+static bool cancelled = false;
+
+// Hook for external driver (wasm web worker) to request cancel
+extern "C" {
+void cancel() {
+    if (solver != nullptr) {
+        solver->interrupt();
+    }
+    cancelled = true;
+}
+}
 
 //=================================================================================================
 
@@ -279,10 +296,12 @@ void printStats(Solver& solver);
 int fill_core(Wordlist& wl, char* puz, size_t puz_size, bool pre, int max_dist, int max_recon,
         int thresh1, int thresh2)
 {
+    const bool unique_words = true;  // TODO: make configurable
     Grid g;
     g.load(puz, puz_size);
     g.analyze();
     SimpSolver S;
+    solver = &S;
     S.parsing = 1;
     if (!pre) {
         // Note: this interface changes with glucose 4
@@ -357,6 +376,16 @@ int fill_core(Wordlist& wl, char* puz, size_t puz_size, bool pre, int max_dist, 
         S.addClause_(lits);
     }
 
+    /* add word uniqueness variables and constraints, if requested */
+    if (unique_words) {
+        for (size_t i = 0; i < g.words.size(); i++) {
+            size_t len = g.words[i].locs.size();
+            for (size_t j = i + 1; j < g.words.size(); j++) {
+                if (g.words[j].locs.size() != len) continue;
+            }
+        }
+    }
+
     /* solve and output */
     S.parsing = 0;
     S.verbosity = 0;
@@ -369,6 +398,10 @@ int fill_core(Wordlist& wl, char* puz, size_t puz_size, bool pre, int max_dist, 
     S.eliminate(true);
     vec<Lit> dummy;
     lbool ret = S.solveLimited(dummy);
+    solver = nullptr;
+    if (cancelled) {
+        return -24;
+    }
     if (S.verbosity >= 1) {
         printStats(S);
     }
@@ -402,7 +435,7 @@ int fill_iterative(Wordlist& wl, char* puz, size_t puz_size, bool pre,
     int max_dist = 2;
 
     size_t iter = 0;
-    while (true) {
+    while (!cancelled) {
         size_t i;
         for (i = 0; i < puz_size; i++) {
             if (puz[i] == ' ') break;
@@ -413,7 +446,7 @@ int fill_iterative(Wordlist& wl, char* puz, size_t puz_size, bool pre,
         }
         int status = fill_core(wl, puz, puz_size, pre, max_dist, 1, thresh1, thresh2);
         if (status != 0) {
-            if (iter == 0) return status;
+            if (status < 0 || iter == 0) return status;
             // Got into a dead end, try a deeper initial search
             max_dist++;
             printf("restarting, max_dist = %d\n", max_dist);
@@ -422,7 +455,11 @@ int fill_iterative(Wordlist& wl, char* puz, size_t puz_size, bool pre,
         } else {
             iter++;
         }
+#ifdef __EMSCRIPTEN__
+        emscripten_sleep(1);
+#endif
     }
+    return -24;
 }
 
 int main(int argc, char** argv) {
@@ -430,6 +467,9 @@ int main(int argc, char** argv) {
     BoolOption   pre    ("MAIN", "pre",    "Completely turn on/off any preprocessing.", false);
     IntOption    thresh1("MAIN", "thresh1","Letter frequency threshold for distance 1", 26, IntRange(0, 26));
     IntOption    thresh2("MAIN", "thresh2","Letter frequency threshold for distance >=2", 26, IntRange(0, 26));
+
+    printf("main start\n");
+    cancelled = false;
 
     // this is needed to set the defaults
     parseOptions(argc, argv, true);
@@ -458,12 +498,35 @@ int main(int argc, char** argv) {
     size_t puz_size;
     char* puz = readEntireFile(puz_fn, &puz_size);
     int result = fill_iterative(wl, puz, puz_size, pre, thresh1, thresh2);
+#ifdef __EMSCRIPTEN__
+    emscripten_sleep(1);
+    printf("result=%d, cancelled=%d\n", result, cancelled);
+#endif
+    if (cancelled) {
+#ifdef __EMSCRIPTEN__
+        EM_ASM(
+            postMessage(['ack_cancel']);
+        );
+#endif
+        return -24;
+    }
     if (result == 0) {
         int o_fd = open(puz_fn, O_WRONLY | O_TRUNC);
         if (o_fd >= 0) {
             write(o_fd, puz, puz_size);
         }
     }
+#ifdef __EMSCRIPTEN__
+    if (result == 0) {
+        EM_ASM(
+            postMessage(['done', FS.readFile('/puz', {encoding: 'utf8'})]);
+        );
+    } else if (result > 0) {
+        EM_ASM(
+            postMessage(['unsat']);
+        );
+    }
+#endif
     return result;
 }
 
@@ -493,7 +556,6 @@ void printStats(Solver& solver)
 // Standard main for glucose is #if'ed out, this version is specialized for crosswords
 #if 0
 
-static Solver* solver;
 // Terminate by notifying the solver and back out gracefully. This is mainly to have a test-case
 // for this feature of the Solver as it may take longer than an immediate call to '_exit()'.
 static void SIGINT_interrupt(int signum) { solver->interrupt(); }

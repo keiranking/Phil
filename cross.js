@@ -45,7 +45,10 @@ let squares = undefined;
 let isMutated = false;
 createNewPuzzle();
 let solveWorker = null;
+let solveWorkerState = null;
 let solveTimeout = null;
+let solveWordlist = null;
+let solvePending = [];
 
 //____________________
 // F U N C T I O N S
@@ -113,6 +116,7 @@ function mouseHandler(e) {
 }
 
 function keyboardHandler(e) {
+  console.log(e);
   isMutated = false;
   let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
   const symRow = xw.rows - 1 - current.row;
@@ -580,37 +584,66 @@ function clearFill() {
 
 function autoFill(isQuick = false) {
   grid.className = "";
-  killSolveWorker();
-  solveWorker = new Worker('xw_worker.js');
-  solveTimeout = window.setTimeout(killSolveWorker, 30000);
-  console.log("autofill!");
-  let wordlist_str = '';
-  for (let i = 3; i < wordlist.length; i++) {
-    wordlist_str += wordlist[i].join('\n') + '\n';
+  if (!solveWorker) {
+    solveWorker = new Worker('xw_worker.js');
+    solveWorkerState = 'ready';
+  }
+  if (solveWorkerState != 'ready') {
+    cancelSolveWorker();
+  }
+  solvePending = [isQuick];
+  runSolvePending();
+}
+
+function runSolvePending() {
+  if (solveWorkerState != 'ready' || solvePending.length == 0) return;
+  let isQuick = solvePending[0];
+  solvePending = [];
+  solveTimeout = window.setTimeout(cancelSolveWorker, 30000);
+  if (solveWordlist == null) {
+    console.log('rebuilding word list');
+    solveWordlist = '';
+    for (let i = 3; i < wordlist.length; i++) {
+      solveWordlist += wordlist[i].join('\n') + '\n';
+    }
   }
   //console.log(wordlist_str);
   let puz = xw.fill.join('\n') + '\n';
-  solveWorker.postMessage([wordlist_str, puz, isQuick]);
+  solveWorker.postMessage(['run', solveWordlist, puz, isQuick]);
+  solveWorkerState = 'running';
   solveWorker.onmessage = function(e) {
     switch (e.data[0]) {
       case 'done':
-        if (isQuick) {
-            console.log("green");
-            grid.className = "sat";
-        } else {
-            xw.fill = e.data[1].split('\n');
-            xw.fill.pop();  // strip empty last line
-            updateGridUI();
+        if (solveWorkerState == 'running') {
+            if (isQuick) {
+                console.log("green");
+                grid.className = "sat";
+            } else {
+                xw.fill = e.data[1].split('\n');
+                xw.fill.pop();  // strip empty last line
+                updateGridUI();
+            }
         }
+        solveWorkerState = 'ready';
+        runSolvePending();
         break;
       case 'unsat':
-        if (isQuick) {
-            console.log("red");
-            grid.className = "unsat";
-        } else {
-            console.log('puzzle could not be satisfied');
-            // TODO: indicate on UI
+        if (solveWorkerState == 'running') {
+            if (isQuick) {
+                console.log("red");
+                grid.className = "unsat";
+            } else {
+                console.log('puzzle could not be satisfied');
+                // TODO: indicate on UI
+            }
         }
+        solveWorkerState = 'ready';
+        runSolvePending();
+        break;
+      case 'ack_cancel':
+        console.log('cancel acknowledged');
+        solveWorkerState = 'ready';
+        runSolvePending();
         break;
       default:
         console.log('unexpected return from worker', e.data);
@@ -618,15 +651,16 @@ function autoFill(isQuick = false) {
     }
     window.clearTimeout(solveTimeout);
     solveTimeout = null;
-    solveWorker = null;
   }
 }
 
-function killSolveWorker() {
-  if (solveWorker) {
-    console.log("solver killed\n");  // TODO: indicate on UI
-    solveWorker.terminate();
-    solveWorker = null;
+
+// TODO: rename, maybe "cancelPending"
+function cancelSolveWorker() {
+  if (solveWorkerState == 'running') {
+    solveWorker.postMessage(['cancel']);
+    solveWorkerState = 'cancelwait';
+    console.log("sent cancel");  // TODO: indicate on UI
     window.clearTimeout(solveTimeout);
     solveTimeout = null;
   }
