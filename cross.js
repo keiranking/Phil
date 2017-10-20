@@ -485,22 +485,6 @@ function suppressEnterKey(e) {
   }
 }
 
-// function loadPatterns(url) {
-//   let p = [];
-//   let pF = new XMLHttpRequest();
-//   pF.open("GET", url, true);
-//   pF.onreadystatechange = function() {
-//     if (pF.readyState === 4 && pF.status === 200) {  // Makes sure the document is ready to parse, and it's found the file.
-//       p = JSON.parse(pF.responseText);
-//       console.log(p, "Loaded standard patterns.");
-//       // console.log(gridPatterns[0]);
-//     }
-//     console.log(p);
-//   }
-//   pF.send(null);
-//   return p;
-// }
-
 function generatePattern() {
   let title = xw.title;
   let author = xw.author;
@@ -509,8 +493,8 @@ function generatePattern() {
   xw.author = author;
 
   const pattern = patterns[randomNumber(0, patterns.length)]; // select random pattern
-  if (!isSymmetrical) {
-    toggleSymmetry();
+  if (!isSymmetrical) { // patterns are encoded as only one half of the grid...
+    toggleSymmetry();   // so symmetry needs to be on to populate correctly
   }
   for (let i = 0; i < pattern.length; i++) {
     const row = pattern[i][0];

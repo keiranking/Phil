@@ -27,7 +27,7 @@ function openJSONFile(e) {
     try {
       const puz = JSON.parse(e.target.result);
       convertJSONToPuzzle(puz);
-      console.log("Loaded", puz.title, "by", puz.author);
+      console.log("Loaded puzzle.");
     }
     catch(err) {
       if (err.name == "SyntaxError") {
@@ -41,22 +41,18 @@ function openJSONFile(e) {
 
 function convertJSONToPuzzle(puz) {
   createNewPuzzle();
-  console.log("Created new puzzle");
-
   if (puz.size.rows != DEFAULT_SIZE || puz.size.cols != DEFAULT_SIZE) {
     console.log("Oops. Can only open 15 x 15 puzzles.");
     return;
   }
   xw.rows = DEFAULT_SIZE;
   xw.cols = DEFAULT_SIZE;
-
   // Update puzzle title, author
-  xw.title = puz.title;
+  xw.title = puz.title || DEFAULT_TITLE;
   if (puz.title.slice(0,8) == "NY TIMES") {
     xw.title = "NYT Crossword";
   }
-  xw.author = puz.author;
-
+  xw.author = puz.author || DEFAULT_AUTHOR;
   // Update fill
   new_fill = [];
   for (let i = 0; i < xw.rows; i++) {
@@ -70,7 +66,6 @@ function convertJSONToPuzzle(puz) {
   isMutated = true;
 
   updateUI();
-
   // Load in clues and display current clues
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
@@ -79,13 +74,11 @@ function convertJSONToPuzzle(puz) {
         const label = activeCell.firstChild.innerHTML + ".";
         for (let k = 0; k < puz.clues.across.length; k++) {
           if (label == puz.clues.across[k].slice(0, label.length)) {
-            // clues[[i, j, ACROSS]] = puz.clues.across[k];
             xw.clues[[i, j, ACROSS]] = puz.clues.across[k].slice(label.length).trim();
           }
         }
         for (let l = 0; l < puz.clues.down.length; l++) {
           if (label == puz.clues.down[l].slice(0, label.length)) {
-            // clues[[i, j, DOWN]] = puz.clues.down[l];
             xw.clues[[i, j, DOWN]] = puz.clues.down[l].slice(label.length).trim();
           }
         }
