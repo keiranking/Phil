@@ -100,7 +100,7 @@ function createNewPuzzle(rows, cols) {
 
 function mouseHandler(e) {
   const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
-  previousCell.className = previousCell.className.replace("active", "");
+  previousCell.classList.remove("active");
   const activeCell = e.currentTarget;
   if (activeCell == previousCell) {
     current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
@@ -108,8 +108,7 @@ function mouseHandler(e) {
   current.row = Number(activeCell.parentNode.dataset.row);
   current.col = Number(activeCell.dataset.col);
   console.log("[" + current.row + "," + current.col + "]");
-  activeCell.className += " active";
-  activeCell.className = activeCell.className.trim();
+  activeCell.classList.add("active");
 
   isMutated = false;
   updateUI();
@@ -174,7 +173,7 @@ function keyboardHandler(e) {
   if (e.which >= keyboard.left && e.which <= keyboard.down) {
       e.preventDefault();
       const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
-      previousCell.className = previousCell.className.replace("active", "");
+      previousCell.classList.remove("active");
       let content = xw.fill[current.row][current.col];
       switch (e.which) {
         case keyboard.left:
@@ -220,7 +219,7 @@ function keyboardHandler(e) {
       }
       console.log("[" + current.row + "," + current.col + "]");
       activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
-      activeCell.className = (activeCell.className + " active").trim();
+      activeCell.classList.add("active");
   }
   updateUI();
 }
@@ -246,14 +245,9 @@ function updateGridUI() {
       const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       activeCell.lastChild.innerHTML = xw.fill[i][j];
       if (xw.fill[i][j] == BLACK) {
-        if (activeCell.className.search("black") == -1) {
-          activeCell.className += " black";
-          activeCell.className.trim();
-        }
+        activeCell.classList.add("black");
       } else {
-        if (activeCell.className.search("black") > -1) {
-          activeCell.className = activeCell.className.replace("black", "").trim();
-        }
+        activeCell.classList.remove("black");
       }
     }
   }
@@ -264,10 +258,10 @@ function updateCluesUI() {
   let downClueNumber = document.getElementById("down-clue-number");
   let acrossClueText = document.getElementById("across-clue-text");
   let downClueText = document.getElementById("down-clue-text");
-  const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  // const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
 
   // If the current cell is black, empty interface and get out
-  if (currentCell.className.search("black") != -1) {
+  if (xw.fill[current.row][current.col] == BLACK) {
     acrossClueNumber.innerHTML = "";
     downClueNumber.innerHTML = "";
     acrossClueText.innerHTML = "";
@@ -334,14 +328,12 @@ function updateLabelsAndClues() {
       let isDown = false;
       increment = false;
       // if the cell isn't 'black'
-      let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-      if (currentCell.className.search("black") == -1) {
+      if (xw.fill[i][j] != BLACK) {
         if (i == 0) { // if the row is 0, increment the clue number
           increment = true;
           isDown = true;
         } else {      // else if the square above me is black, increment
-          const upCell = grid.querySelector('[data-row="' + (i - 1) + '"]').querySelector('[data-col="' + j + '"]');
-          if (upCell.className.search("black") > -1) {
+          if (xw.fill[i - 1][j] == BLACK) {
             increment = true;
             isDown = true;
           }
@@ -350,13 +342,13 @@ function updateLabelsAndClues() {
           increment = true;
           isAcross = true;
         } else {      // else if the square to my left is black, increment
-          const leftCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + (j - 1) + '"]');
-          if (leftCell.className.search("black") > -1) {
+          if (xw.fill[i][j - 1] == BLACK) {
             increment = true;
             isAcross = true;
           }
         }
       }
+      let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       if (increment) {
         currentCell.firstChild.innerHTML = count; // Set square's label to the count
         count++;
@@ -435,30 +427,21 @@ function updateGridHighlights() {
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
       const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-      if (square.className.search("highlight") > -1) {
-        square.className = square.className.replace("highlight", "").trim();
-      }
-      if (square.className.search("lowlight") > -1) {
-        square.className = square.className.replace("lowlight", "").trim();
-      }
+      square.classList.remove("highlight", "lowlight");
     }
   }
-
   // Highlight across squares
   for (let j = current.acrossStartIndex; j < current.acrossEndIndex; j++) {
     const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + j + '"]');
     if (j != current.col) {
-      square.className += (current.direction == ACROSS) ? " highlight" : " lowlight";
-      square.className = square.className.trim();
+      square.classList.add((current.direction == ACROSS) ? "highlight" : "lowlight");
     }
   }
-
   // Highlight down squares
   for (let i = current.downStartIndex; i < current.downEndIndex; i++) {
     const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + current.col + '"]');
     if (i != current.row) {
-      square.className += (current.direction == DOWN) ? " highlight" : " lowlight";
-      square.className = square.className.trim();
+      square.classList.add((current.direction == DOWN) ? "highlight" : "lowlight");
     }
   }
 }
@@ -468,18 +451,14 @@ function updateSidebarHighlights() {
   let downHeading = document.getElementById("down-heading");
   const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
 
-  if (acrossHeading.className.search("highlight") > -1) {
-    acrossHeading.className = acrossHeading.className.replace("highlight", "").trim();
-  }
-  if (downHeading.className.search("highlight") > -1) {
-    downHeading.className = downHeading.className.replace("highlight", "").trim();
-  }
+  acrossHeading.classList.remove("highlight");
+  downHeading.classList.remove("highlight");
 
-  if (currentCell.className.search("black") == -1) {
+  if (!currentCell.classList.contains("black")) {
     if (current.direction == ACROSS) {
-      acrossHeading.className += " highlight";
+      acrossHeading.classList.add("highlight");
     } else {
-      downHeading.className += " highlight";
+      downHeading.classList.add("highlight");
     }
   }
 }
@@ -548,19 +527,12 @@ function generatePattern() {
 
 function toggleSymmetry() {
   isSymmetrical = (isSymmetrical) ? false : true;
-
   // Update UI button
   let symButton = document.getElementById("toggle-symmetry");
-  if (symButton.getAttribute("data-state") == "on") {
-    symButton.setAttribute("data-state", "off");
-    symButton.className = symButton.className.replace("button-on", "");
-    symButton.setAttribute("data-tooltip", "Turn on symmetry");
-  } else {
-    symButton.setAttribute("data-state", "on");
-    symButton.className += " button-on";
-    symButton.className = symButton.className.trim();
-    symButton.setAttribute("data-tooltip", "Turn off symmetry");
-  }
+  symButton.classList.toggle("button-on");
+  buttonState = symButton.getAttribute("data-state");
+  symButton.setAttribute("data-state", (buttonState == "on") ? "off" : "on");
+  symButton.setAttribute("data-tooltip", "Turn " + buttonState + " symmetry");
 }
 
 function toggleHelp() {
@@ -569,20 +541,14 @@ function toggleHelp() {
 
 function clearFill() {
   for (let i = 0; i < xw.rows; i++) {
-    xw.fill[i] = xw.fill[i].replace(/\w/g, ' '); // replace any letters with spaces
-    for (let j = 0; j < xw.cols; j++) {
-      const currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-      if (currentCell.className.search("black") == -1) {
-        currentCell.lastChild.innerHTML = BLANK;
-      }
-    }
+    xw.fill[i] = xw.fill[i].replace(/\w/g, ' '); // replace letters with spaces
   }
   isMutated = true;
   updateUI();
 }
 
 function autoFill(isQuick = false) {
-  grid.className = "";
+  grid.classList.remove("sat", "unsat");
   if (!solveWorker) {
     solveWorker = new Worker('xw_worker.js');
     solveWorkerState = 'ready';
@@ -616,7 +582,7 @@ function runSolvePending() {
         if (solveWorkerState == 'running') {
             if (isQuick) {
                 console.log("Autofill: Solution found.");
-                grid.className = "sat";
+                grid.classList.add("sat");
             } else {
                 xw.fill = e.data[1].split('\n');
                 xw.fill.pop();  // strip empty last line
@@ -630,10 +596,10 @@ function runSolvePending() {
       case 'unsat':
         if (solveWorkerState == 'running') {
             if (isQuick) {
-                console.log("Autofill: No solution exists.");
-                grid.className = "unsat";
+                console.log("Autofill: No quick solution found.");
+                grid.classList.add("unsat");
             } else {
-                console.log('Autofill: Unsatisfiable fill.');
+                console.log('Autofill: No solution found.');
                 // TODO: indicate on UI
             }
         }
