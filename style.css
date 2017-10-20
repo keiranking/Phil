@@ -104,7 +104,7 @@ h1 {
 }
 
 #grid.sat:focus {
-  outline: 2px solid var(--green);
+  /*outline: 2px solid var(--green);*/
 }
 
 #grid.unsat:focus {

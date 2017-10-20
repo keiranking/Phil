@@ -155,4 +155,5 @@ function fillGridWithMatch(e) {
   // updateActiveWords();
   // updateMatchesUI();
   updateUI();
+  grid.focus();
 }

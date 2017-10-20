@@ -226,8 +226,8 @@ function keyboardHandler(e) {
 }
 
 function updateUI() {
-  console.log("Fill change:", isMutated);
   if (isMutated) {
+    console.log("Autofilling...")
     autoFill(true);  // quick fill
   }
   updateGridUI();
@@ -506,21 +506,21 @@ function suppressEnterKey(e) {
   }
 }
 
-function loadPatterns(url) {
-  let p = [];
-  let pF = new XMLHttpRequest();
-  pF.open("GET", url, true);
-  pF.onreadystatechange = function() {
-    if (pF.readyState === 4 && pF.status === 200) {  // Makes sure the document is ready to parse, and it's found the file.
-      p = JSON.parse(pF.responseText);
-      console.log(p, "Loaded standard patterns.");
-      // console.log(gridPatterns[0]);
-    }
-    console.log(p);
-  }
-  pF.send(null);
-  return p;
-}
+// function loadPatterns(url) {
+//   let p = [];
+//   let pF = new XMLHttpRequest();
+//   pF.open("GET", url, true);
+//   pF.onreadystatechange = function() {
+//     if (pF.readyState === 4 && pF.status === 200) {  // Makes sure the document is ready to parse, and it's found the file.
+//       p = JSON.parse(pF.responseText);
+//       console.log(p, "Loaded standard patterns.");
+//       // console.log(gridPatterns[0]);
+//     }
+//     console.log(p);
+//   }
+//   pF.send(null);
+//   return p;
+// }
 
 function generatePattern() {
   let title = xw.title;
@@ -600,7 +600,7 @@ function runSolvePending() {
   solvePending = [];
   solveTimeout = window.setTimeout(cancelSolveWorker, 30000);
   if (solveWordlist == null) {
-    console.log('rebuilding word list');
+    console.log('Rebuilding wordlist...');
     solveWordlist = '';
     for (let i = 3; i < wordlist.length; i++) {
       solveWordlist += wordlist[i].join('\n') + '\n';
@@ -615,12 +615,13 @@ function runSolvePending() {
       case 'done':
         if (solveWorkerState == 'running') {
             if (isQuick) {
-                console.log("green");
+                console.log("Autofill: Solution found.");
                 grid.className = "sat";
             } else {
                 xw.fill = e.data[1].split('\n');
                 xw.fill.pop();  // strip empty last line
                 updateGridUI();
+                grid.focus();
             }
         }
         solveWorkerState = 'ready';
@@ -629,10 +630,10 @@ function runSolvePending() {
       case 'unsat':
         if (solveWorkerState == 'running') {
             if (isQuick) {
-                console.log("red");
+                console.log("Autofill: No solution exists.");
                 grid.className = "unsat";
             } else {
-                console.log('puzzle could not be satisfied');
+                console.log('Autofill: Unsatisfiable fill.');
                 // TODO: indicate on UI
             }
         }
@@ -640,12 +641,12 @@ function runSolvePending() {
         runSolvePending();
         break;
       case 'ack_cancel':
-        console.log('cancel acknowledged');
+        console.log('Autofill: Cancel acknowledged.');
         solveWorkerState = 'ready';
         runSolvePending();
         break;
       default:
-        console.log('unexpected return from worker', e.data);
+        console.log('Autofill: Unexpected return,', e.data);
         break;
     }
     window.clearTimeout(solveTimeout);
@@ -654,12 +655,11 @@ function runSolvePending() {
 }
 
 
-// TODO: rename, maybe "cancelPending"
 function cancelSolveWorker() {
   if (solveWorkerState == 'running') {
     solveWorker.postMessage(['cancel']);
     solveWorkerState = 'cancelwait';
-    console.log("sent cancel");  // TODO: indicate on UI
+    console.log("Autofill: Cancel sent.");  // TODO: indicate on UI
     window.clearTimeout(solveTimeout);
     solveTimeout = null;
   }
@@ -671,6 +671,5 @@ function randomNumber(min, max) {
 
 function randomLetter() {
   let alphabet = "AAAAAAAAABBCCDDDDEEEEEEEEEEEEFFGGGHHIIIIIIIIIJKLLLLMMNNNNNNOOOOOOOOPPQRRRRRRSSSSSSTTTTTTUUUUVVWWXYYZ";
-  let random = randomNumber(0, 100);
-  return alphabet.substring(random, random + 1);
+  return alphabet[randomNumber(0, alphabet.length)];
 }

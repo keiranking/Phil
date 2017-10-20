@@ -85,3 +85,7 @@ Other/Puzzles/17.10.03.json.txt
 *.o
 depend.mk
 glucose
+third_party/glucose-3.0/simp/xwsolve.js
+third_party/glucose-3.0/simp/xwsolve.wasm
+xwsolve.js
+xwsolve.wasm
