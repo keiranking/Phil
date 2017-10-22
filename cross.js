@@ -226,7 +226,6 @@ function keyboardHandler(e) {
 
 function updateUI() {
   if (isMutated) {
-    console.log("Autofilling...")
     autoFill(true);  // quick fill
   }
   updateGridUI();
@@ -532,6 +531,7 @@ function clearFill() {
 }
 
 function autoFill(isQuick = false) {
+  console.log("Auto-filling...");  
   grid.classList.remove("sat", "unsat");
   if (!solveWorker) {
     solveWorker = new Worker('xw_worker.js');

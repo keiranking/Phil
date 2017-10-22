@@ -31,7 +31,7 @@ function openJSONFile(e) {
     }
     catch(err) {
       if (err.name == "SyntaxError") {
-        window.alert("Invalid puzzle file.");
+        window.alert("Invalid puzzle file. Try a .xw (or any JSON) puzzle.");
         return;
       }
     }
@@ -130,7 +130,6 @@ function convertPuzzleToJSON() {
       puz.grid.push(xw.fill[i][j]);
     }
   }
-
   return JSON.stringify(puz);  // Convert JS object to JSON text
 }
 
@@ -146,7 +145,9 @@ function printPDF(style) {
       layoutPDFGrid(doc, 117, 210); // unfilled
       doc.addPage();
       layoutPDFClues(doc, style);
-      layoutPDFInfo(doc, style);
+      if (!layoutPDFInfo(doc, style)) {
+        return;
+      }
       break;
     default:
       layoutPDFGrid(doc, 50, 80);
@@ -243,9 +244,15 @@ function layoutPDFInfo(doc, style) {
   doc.setFont("helvetica");
   switch (style) {
     case "NYT":
+      let email = prompt("NYT submissions require an email address. \nLeave blank to omit.");
+      if (email == null) {
+        return null;
+      }
+      let address = prompt("NYT submissions also require a mailing address. \nLeave blank to omit.");
+      if (address == null) {
+        return null;
+      }
       doc.setFontSize(9);
-      let email = prompt("NYT submissions require an email address. \nLeave blank to omit.") || "";
-      let address = prompt("NYT submissions also require a mailing address. \nLeave blank to omit.") || "";
       for (let i = 1; i <= 5; i++) {
         doc.setPage(i);
         doc.text(doc.internal.pageSize.width / 2, 40,
@@ -264,6 +271,7 @@ function layoutPDFInfo(doc, style) {
       doc.text(50, 50 + 20, xw.author.toUpperCase());
       break;
   }
+  return 1;
 }
 
 function layoutPDFClues(doc, style) {
