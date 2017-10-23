@@ -382,6 +382,43 @@ int fill_core(Wordlist& wl, char* puz, size_t puz_size, bool pre, int max_dist, 
             size_t len = g.words[i].locs.size();
             for (size_t j = i + 1; j < g.words.size(); j++) {
                 if (g.words[j].locs.size() != len) continue;
+                if (g.words[i].filled_count == len && g.words[j].filled_count == len) {
+                    // allow duplicate completely filled words
+                    continue;
+                }
+                size_t k;
+                // if any filled cells are unequal, don't need to generate constraint
+                for (k = 0; k < len; k++) {
+                    char c1 = g[g.words[i].locs[k]];
+                    char c2 = g[g.words[j].locs[k]];
+                    if (c1 != ' ' && c2 != ' ' && c1 != c2) {
+                        break;
+                    }
+                }
+                if (k < len) {
+                    continue;
+                }
+                // generate word[i] != word[j] constraint
+                lits.clear();
+                for (size_t k = 0; k < len; k++) {
+                    Coord loc1 = g.words[i].locs[k];
+                    Coord loc2 = g.words[j].locs[k];
+                    int base1 = letter_base[loc1.y * g.cols + loc1.x];
+                    int base2 = letter_base[loc2.y * g.cols + loc2.x];
+                    if (base1 < 0 && base2 >= 0) {
+                        lits.push(~mkLit(base2 + g[loc1] - 'A'));
+                    } else if (base1 >= 0 && base2 < 0) {
+                        lits.push(~mkLit(base1 + g[loc2] - 'A'));
+                    } else if (base1 >= 0 && base2 >= 0) {
+                        S.newVar();  // letter k of word[i] and word[j] are equal
+                        for (int l = 0; l < 26; l++) {
+                            S.addClause(~mkLit(base1 + l), ~mkLit(base2 + l), mkLit(v));
+                        }
+                        lits.push(~mkLit(v));
+                        v++;
+                    }
+                }
+                S.addClause_(lits);
             }
         }
     }
