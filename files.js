@@ -344,5 +344,10 @@ function layoutPDFClues(doc, style) {
     }
 }
 
-document.getElementById('open-puzzle-input').addEventListener('change', openJSONFile, false);
-document.getElementById('open-wordlist-input').addEventListener('change', openWordlistFile, false);
+let openPuzzleInput = document.getElementById('open-puzzle-input');
+let openWordlistInput = document.getElementById('open-wordlist-input');
+openPuzzleInput.addEventListener('change', openJSONFile, false);
+openWordlistInput.addEventListener('change', openWordlistFile, false);
+openPuzzleInput.onclick = function () {
+    this.value = null;
+};
