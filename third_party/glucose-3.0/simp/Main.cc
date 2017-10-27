@@ -289,21 +289,32 @@ class Grid {
     vec<int> down;    // index of down word at each loc
 };
 
+// Parameters to drive constraint generation and solving
+struct FillParams {
+    FillParams(Wordlist& wl, size_t puz_size, int thresh1, int thresh2, bool pre) :
+        wl(wl), puz_size(puz_size), thresh1(thresh1), thresh2(thresh2), pre(pre) {}
+
+    Wordlist& wl;
+    size_t puz_size;
+    int thresh1;
+    int thresh2;
+    bool pre;
+};
+
 void printStats(Solver& solver);
 
 // Core fill algorithm; use 10000 for max_dist and max_recon to solve entire grid
 // Return value is 0 on success, 20 if unsat
-int fill_core(Wordlist& wl, char* puz, size_t puz_size, bool pre, int max_dist, int max_recon,
-        int thresh1, int thresh2)
+int fill_core(FillParams& params, char* puz, int max_dist, int max_recon)
 {
     const bool unique_words = true;  // TODO: make configurable
     Grid g;
-    g.load(puz, puz_size);
+    g.load(puz, params.puz_size);
     g.analyze();
     SimpSolver S;
     solver = &S;
     S.parsing = 1;
-    if (!pre) {
+    if (!params.pre) {
         // Note: this interface changes with glucose 4
         S.eliminate(true);
     }
@@ -356,11 +367,11 @@ int fill_core(Wordlist& wl, char* puz, size_t puz_size, bool pre, int max_dist, 
         for (size_t j = 0; j < len; j++) {
             pattern[j] = g[w.locs[j]];
         }
-        wl.get_matching(pattern, len, &matches);
+        params.wl.get_matching(pattern, len, &matches);
         lits.clear();
         for (size_t j = 0; j < matches.size(); j++) {
             char* match = matches[j];
-            if (!g.check_freq_constraint(w.locs, match, thresh1, thresh2)) continue;
+            if (!g.check_freq_constraint(w.locs, match, params.thresh1, params.thresh2)) continue;
             //printf("%.*s\n", len, matches[j]);
             S.newVar();
             lits.push(mkLit(v));
@@ -464,30 +475,29 @@ int fill_core(Wordlist& wl, char* puz, size_t puz_size, bool pre, int max_dist, 
 }
 
 // Iterate the fill core until grid is filled
-int fill_iterative(Wordlist& wl, char* puz, size_t puz_size, bool pre,
-        int thresh1, int thresh2)
+int fill_iterative(FillParams& params, char* puz)
 {
-    vec<char> save_puz(puz_size);
-    memcpy(save_puz, puz, puz_size);
+    vec<char> save_puz(params.puz_size);
+    memcpy(save_puz, puz, params.puz_size);
     int max_dist = 2;
 
     size_t iter = 0;
     while (!cancelled) {
         size_t i;
-        for (i = 0; i < puz_size; i++) {
+        for (i = 0; i < params.puz_size; i++) {
             if (puz[i] == ' ') break;
         }
-        if (i == puz_size) {
+        if (i == params.puz_size) {
             // successful fill
             return 0;
         }
-        int status = fill_core(wl, puz, puz_size, pre, max_dist, 1, thresh1, thresh2);
+        int status = fill_core(params, puz, max_dist, 1);
         if (status != 0) {
             if (status < 0 || iter == 0) return status;
             // Got into a dead end, try a deeper initial search
             max_dist++;
             printf("restarting, max_dist = %d\n", max_dist);
-            memcpy(puz, save_puz, puz_size);
+            memcpy(puz, save_puz, params.puz_size);
             iter = 0;
         } else {
             iter++;
@@ -528,13 +538,17 @@ int main(int argc, char** argv) {
     char* wl_fn = argv[1];
     char* puz_fn = argv[2];
 
+
     size_t wl_size;
     char* words = readEntireFile(wl_fn, &wl_size);
     Wordlist wl;
     wl.load(words, wl_size);
     size_t puz_size;
     char* puz = readEntireFile(puz_fn, &puz_size);
-    int result = fill_iterative(wl, puz, puz_size, pre, thresh1, thresh2);
+
+    FillParams params(wl, puz_size, thresh1, thresh2, pre);
+
+    int result = fill_iterative(params, puz);
 #ifdef __EMSCRIPTEN__
     emscripten_sleep(1);
     printf("result=%d, cancelled=%d\n", result, cancelled);
