@@ -538,43 +538,34 @@ int fill_iterative(FillParams& params, char* puz, char* forced)
     return -24;
 }
 
-// Compute a fill and also determine which cells are forced.
-int fill_compute_forced(FillParams& params, char* puz) {
-    vec<char> save_puz(params.puz_size);
-    memcpy(save_puz, puz, params.puz_size);
-    vec<char> forced(params.puz_size, ' ');
-
-    int status = fill_iterative(params, puz, nullptr);
-    if (status != 0) return status;
+// Determine which cells are forced after a successful fill. Return value
+// is count of forced cells, and if non-zero, puz is set to the answer.
+int fill_compute_forced(FillParams& params, const char* save_puz, char* puz) {
+    vec<char> forced(params.puz_size);
     memcpy(forced, puz, params.puz_size);
+    int forced_count = -1;
 
     for (size_t iter = 0; ; iter++) {
         params.wl.shuffle();
         memcpy(puz, save_puz, params.puz_size);
-        status = fill_iterative(params, puz, iter >= 2 ? forced : nullptr);
+        int status = fill_iterative(params, puz, iter >= 2 ? forced : nullptr);
         if (status < 0) {
             return status;
         } else if (status > 0) {
-            printf("forced:\n");
-            write(1, forced, params.puz_size);
-            return 0;
+            memcpy(puz, forced, params.puz_size);
+            return forced_count;
         } else {
-            size_t forced_count = 0;
+            forced_count = 0;
             for (size_t i = 0; i < params.puz_size; i++) {
-                if (forced[i] != '\n')
-                    printf("%c%c ", forced[i], puz[i]);
-                else
-                    printf("\n");
                 if (forced[i] == puz[i]) {
                     if (save_puz[i] == ' ') forced_count++;
                 } else {
                     forced[i] = ' ';
                 }
             }
-            //return 42;
             if (forced_count == 0) {
-                printf("no forced letters\n");
-                return 0;
+                //printf("no forced letters\n");
+                return forced_count;
             }
         }
     }
@@ -585,6 +576,7 @@ int main(int argc, char** argv) {
     BoolOption   pre    ("MAIN", "pre",    "Completely turn on/off any preprocessing.", false);
     IntOption    thresh1("MAIN", "thresh1","Letter frequency threshold for distance 1", 26, IntRange(0, 26));
     IntOption    thresh2("MAIN", "thresh2","Letter frequency threshold for distance >=2", 26, IntRange(0, 26));
+    BoolOption   compute_forced("MAIN", "compute-forced", "Compute forced cells", false);
 
     printf("main start\n");
     cancelled = false;
@@ -618,8 +610,10 @@ int main(int argc, char** argv) {
     char* puz = readEntireFile(puz_fn, &puz_size);
 
     FillParams params(wl, puz_size, thresh1, thresh2, pre);
+    vec<char> save_puz(params.puz_size);
+    memcpy(save_puz, puz, puz_size);
 
-    int result = fill_compute_forced(params, puz);
+    int result = fill_iterative(params, puz, nullptr);
 #ifdef __EMSCRIPTEN__
     emscripten_sleep(1);
     printf("result=%d, cancelled=%d\n", result, cancelled);
@@ -636,18 +630,40 @@ int main(int argc, char** argv) {
         int o_fd = open(puz_fn, O_WRONLY | O_TRUNC);
         if (o_fd >= 0) {
             write(o_fd, puz, puz_size);
+            close(o_fd);
         }
     }
 #ifdef __EMSCRIPTEN__
     if (result == 0) {
         EM_ASM(
-            postMessage(['done', FS.readFile('/puz', {encoding: 'utf8'})]);
+            postMessage(['sat', FS.readFile('/puz', {encoding: 'utf8'})]);
         );
     } else if (result > 0) {
         EM_ASM(
             postMessage(['unsat']);
         );
     }
+#endif
+    if (result == 0 && compute_forced) {
+        int forced_count = fill_compute_forced(params, save_puz, puz);
+            if (forced_count) {
+            int o_fd = open(puz_fn, O_WRONLY | O_TRUNC);
+            if (o_fd >= 0) {
+                write(o_fd, puz, puz_size);
+                close(o_fd);
+            }
+#ifdef __EMSCRIPTEN__
+            EM_ASM(
+                postMessage(['forced', FS.readFile('/puz', {encoding: 'utf8'})]);
+            );
+#endif
+        }
+    }
+#ifdef __EMSCRIPTEN__
+    EM_ASM(
+        // TODO: this should probably post ack_cancel if cancelled, but it shouldn't matter now.
+        postMessage(['done']);
+    );
 #endif
     return result;
 }
