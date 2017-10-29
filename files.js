@@ -13,8 +13,71 @@
 // limitations under the License.
 // ------------------------------------------------------------------------
 
+class PuzReader {
+  constructor(buf) {
+    this.buf = buf;
+  }
+
+  readShort(ix) {
+    return this.buf[ix] | (this.buf[ix + 1] << 8);
+  }
+
+  readString() {
+    let result = [];
+    while (true) {
+      let c = this.buf[this.ix++];
+      if (c == 0) break;
+      result.push(String.fromCodePoint(c));
+    }
+    return result.join('');
+  }
+
+  toJson() {
+    let json = {};
+    let w = this.buf[0x2c];
+    let h = this.buf[0x2d];
+    json.size = {cols: w, rows: h};
+    let grid = [];
+    for (var i = 0; i < w * h; i++) {
+      grid.push(String.fromCodePoint(this.buf[0x34 + i]));
+    }
+    json.grid = grid;
+    this.ix = 0x34 + 2 * w * h;
+    json.title = this.readString();
+    json.author = this.readString();
+    json.copyright = this.readString();
+    var across = [];
+    var down = [];
+    var label = 1;
+    for (var i = 0; i < w * h; i++) {
+      if (grid[i] == '.') continue;
+      var inc = 0;
+      if (i % w == 0 || grid[i - 1] == '.') {
+        across.push(label + ". " + this.readString());
+        inc = 1;
+      }
+      if (i < w || grid[i - w] == '.') {
+        down.push(label + ". " + this.readString());
+        inc = 1;
+      }
+      label += inc;
+    }
+    json.clues = {across: across, down: down};
+    console.log(json);
+    return json;
+  }
+}
+
 function openPuzzle() {
   document.getElementById("open-puzzle-input").click();
+}
+
+function isPuz(bytes) {
+  const magic = 'ACROSS&DOWN';
+  for (var i = 0; i < magic.length; i++) {
+    if (bytes[2 + i] != magic.charCodeAt(i)) return false;
+  }
+  return bytes[2 + magic.length] == 0;
 }
 
 function openJSONFile(e) {
@@ -25,7 +88,14 @@ function openJSONFile(e) {
   let reader = new FileReader();
   reader.onload = function(e) {
     try {
-      const puz = JSON.parse(e.target.result);
+      const bytes = new Uint8Array(e.target.result);
+      let puz;
+      if (isPuz(bytes)) {
+        puz = new PuzReader(bytes).toJson();
+      } else {
+        // Note: TextDecoder doesn't work in Edge 16
+        puz = JSON.parse(new TextDecoder().decode(bytes));
+      }
       convertJSONToPuzzle(puz);
       console.log("Loaded puzzle.");
     }
@@ -36,7 +106,7 @@ function openJSONFile(e) {
       }
     }
   };
-  reader.readAsText(file);
+  reader.readAsArrayBuffer(file);
 }
 
 function convertJSONToPuzzle(puz) {
