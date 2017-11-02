@@ -13,6 +13,11 @@
 // limitations under the License.
 // ------------------------------------------------------------------------
 
+function ScrambledError() {
+   this.message = 'Cannot open scrambled Across Lite files';
+   this.name = 'ScrambledError';
+}
+
 class PuzReader {
   constructor(buf) {
     this.buf = buf;
@@ -36,6 +41,10 @@ class PuzReader {
     let json = {};
     let w = this.buf[0x2c];
     let h = this.buf[0x2d];
+    let scrambled = this.readShort(0x32);
+    if (scrambled & 0x0004) {
+      throw new ScrambledError;
+    }
     json.size = {cols: w, rows: h};
     let grid = [];
     for (var i = 0; i < w * h; i++) {
@@ -103,6 +112,10 @@ function openJSONFile(e) {
       if (err.name == "SyntaxError") {
         window.alert("Invalid puzzle file. Try a .xw (or any JSON) puzzle.");
         return;
+      } else if (err.name == "ScrambledError") {
+        window.alert("Cannot open scrambled Across Lite files.")
+      } else {
+        console.log("Unknown error", err);
       }
     }
   };
