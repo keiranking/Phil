@@ -100,6 +100,16 @@ class Wordlist {
         }
     }
 
+    void shuffle() {
+        for (size_t i = 0; i < words.size(); i++) {
+            vec<char*>& wv = words[i];
+            if (!wv.size()) continue;
+            for (size_t j = wv.size() - 1; j > 0; j--) {
+                std::swap(wv[j], wv[rand() % (j + 1)]);
+            }
+        }
+    }
+
     void get_matching(const char* pattern, size_t len, vec<char*>* result) {
         result->clear();
         if (len > words.size()) {
@@ -305,7 +315,7 @@ void printStats(Solver& solver);
 
 // Core fill algorithm; use 10000 for max_dist and max_recon to solve entire grid
 // Return value is 0 on success, 20 if unsat
-int fill_core(FillParams& params, char* puz, int max_dist, int max_recon)
+int fill_core(FillParams& params, char* puz, int max_dist, int max_recon, char* forced)
 {
     const bool unique_words = true;  // TODO: make configurable
     Grid g;
@@ -434,6 +444,25 @@ int fill_core(FillParams& params, char* puz, int max_dist, int max_recon)
         }
     }
 
+    /* add constraint for forced letters */
+    if (forced != nullptr) {
+        lits.clear();
+        for (size_t y = 0; y < g.rows; y++) {
+            for (size_t x = 0; x < g.cols; x++) {
+                char c = forced[y * (g.cols + 1) + x];
+                int base = letter_base[y * g.cols + x];
+                if (c != ' ' && base >= 0) {
+                    //printf("adding force lit ~%d\n", base + c - 'A');
+                    lits.push(~mkLit(base + c - 'A'));
+                }
+            }
+        }
+        printf("added %d force lits\n", (int)lits.size());
+        if (lits.size()) {
+            S.addClause_(lits);
+        }
+    }
+
     /* solve and output */
     S.parsing = 0;
     S.verbosity = 0;
@@ -475,7 +504,7 @@ int fill_core(FillParams& params, char* puz, int max_dist, int max_recon)
 }
 
 // Iterate the fill core until grid is filled
-int fill_iterative(FillParams& params, char* puz)
+int fill_iterative(FillParams& params, char* puz, char* forced)
 {
     vec<char> save_puz(params.puz_size);
     memcpy(save_puz, puz, params.puz_size);
@@ -491,7 +520,7 @@ int fill_iterative(FillParams& params, char* puz)
             // successful fill
             return 0;
         }
-        int status = fill_core(params, puz, max_dist, 1);
+        int status = fill_core(params, puz, max_dist, 1, forced);
         if (status != 0) {
             if (status < 0 || iter == 0) return status;
             // Got into a dead end, try a deeper initial search
@@ -507,6 +536,48 @@ int fill_iterative(FillParams& params, char* puz)
 #endif
     }
     return -24;
+}
+
+// Compute a fill and also determine which cells are forced.
+int fill_compute_forced(FillParams& params, char* puz) {
+    vec<char> save_puz(params.puz_size);
+    memcpy(save_puz, puz, params.puz_size);
+    vec<char> forced(params.puz_size, ' ');
+
+    int status = fill_iterative(params, puz, nullptr);
+    if (status != 0) return status;
+    memcpy(forced, puz, params.puz_size);
+
+    for (size_t iter = 0; ; iter++) {
+        params.wl.shuffle();
+        memcpy(puz, save_puz, params.puz_size);
+        status = fill_iterative(params, puz, iter >= 2 ? forced : nullptr);
+        if (status < 0) {
+            return status;
+        } else if (status > 0) {
+            printf("forced:\n");
+            write(1, forced, params.puz_size);
+            return 0;
+        } else {
+            size_t forced_count = 0;
+            for (size_t i = 0; i < params.puz_size; i++) {
+                if (forced[i] != '\n')
+                    printf("%c%c ", forced[i], puz[i]);
+                else
+                    printf("\n");
+                if (forced[i] == puz[i]) {
+                    if (save_puz[i] == ' ') forced_count++;
+                } else {
+                    forced[i] = ' ';
+                }
+            }
+            //return 42;
+            if (forced_count == 0) {
+                printf("no forced letters\n");
+                return 0;
+            }
+        }
+    }
 }
 
 int main(int argc, char** argv) {
@@ -548,7 +619,7 @@ int main(int argc, char** argv) {
 
     FillParams params(wl, puz_size, thresh1, thresh2, pre);
 
-    int result = fill_iterative(params, puz);
+    int result = fill_compute_forced(params, puz);
 #ifdef __EMSCRIPTEN__
     emscripten_sleep(1);
     printf("result=%d, cancelled=%d\n", result, cancelled);
