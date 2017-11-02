@@ -60,6 +60,7 @@ function openWordlistFile(e) {
     addToWordlist(words);
     sortWordlist();
     removeWordlistDuplicates();
+    invalidateSolverWordlist();
   };
   reader.readAsText(file);
 }

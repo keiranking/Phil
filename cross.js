@@ -615,6 +615,10 @@ function cancelSolveWorker() {
   }
 }
 
+function invalidateSolverWordlist() {
+  solveWordlist = null;
+}
+
 function randomNumber(min, max) {
   return Math.floor(Math.random() * max) + min;
 }
