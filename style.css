@@ -137,6 +137,10 @@ h1 {
   border: 1px solid var(--med-blue);
 }
 
+#grid td.pencil .fill {
+  opacity: 0.3;
+}
+
 #grid td.black {
   background-color: var(--black);
 }

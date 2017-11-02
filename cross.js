@@ -43,6 +43,7 @@ let isSymmetrical = true;
 let grid = undefined;
 let squares = undefined;
 let isMutated = false;
+let forced = null;
 createNewPuzzle();
 let solveWorker = null;
 let solveWorkerState = null;
@@ -226,8 +227,15 @@ function updateGridUI() {
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
       const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-      activeCell.lastChild.innerHTML = xw.fill[i][j];
-      if (xw.fill[i][j] == BLACK) {
+      let fill = xw.fill[i][j];
+      if (fill == BLANK && forced != null) {
+        fill = forced[i][j];
+        activeCell.classList.add("pencil");
+      } else {
+        activeCell.classList.remove("pencil");
+      }
+      activeCell.lastChild.innerHTML = fill;
+      if (fill == BLACK) {
         activeCell.classList.add("black");
       } else {
         activeCell.classList.remove("black");
@@ -490,7 +498,8 @@ function clearFill() {
 }
 
 function autoFill(isQuick = false) {
-  console.log("Auto-filling...");  
+  console.log("Auto-filling...");
+  forced = null;
   grid.classList.remove("sat", "unsat");
   if (!solveWorker) {
     solveWorker = new Worker('xw_worker.js');
@@ -521,48 +530,60 @@ function runSolvePending() {
   solveWorkerState = 'running';
   solveWorker.onmessage = function(e) {
     switch (e.data[0]) {
-      case 'done':
+      case 'sat':
         if (solveWorkerState == 'running') {
-            if (isQuick) {
-                console.log("Autofill: Solution found.");
-                grid.classList.add("sat");
-            } else {
-                xw.fill = e.data[1].split('\n');
-                xw.fill.pop();  // strip empty last line
-                updateGridUI();
-                grid.focus();
-            }
+          if (isQuick) {
+            console.log("Autofill: Solution found.");
+            grid.classList.add("sat");
+          } else {
+            xw.fill = e.data[1].split('\n');
+            xw.fill.pop();  // strip empty last line
+            updateGridUI();
+            grid.focus();
+          }
         }
-        solveWorkerState = 'ready';
-        runSolvePending();
         break;
       case 'unsat':
         if (solveWorkerState == 'running') {
-            if (isQuick) {
-                console.log("Autofill: No quick solution found.");
-                grid.classList.add("unsat");
-            } else {
-                console.log('Autofill: No solution found.');
-                // TODO: indicate on UI
-            }
+          if (isQuick) {
+            console.log("Autofill: No quick solution found.");
+            grid.classList.add("unsat");
+          } else {
+            console.log('Autofill: No solution found.');
+            // TODO: indicate on UI
+          }
         }
-        solveWorkerState = 'ready';
-        runSolvePending();
+        break;
+      case 'forced':
+        if (solveWorkerState == 'running') {
+          forced = e.data[1].split('\n');
+          forced.pop;  // strip empty last line
+          updateGridUI();
+        }
+        break;
+      case 'done':
+        console.log('Autofill: returning to ready, state was ', solveWorkerState);
+        solveWorkerReady();
         break;
       case 'ack_cancel':
         console.log('Autofill: Cancel acknowledged.');
-        solveWorkerState = 'ready';
-        runSolvePending();
+        solveWorkerReady();
         break;
       default:
         console.log('Autofill: Unexpected return,', e.data);
         break;
     }
-    window.clearTimeout(solveTimeout);
-    solveTimeout = null;
   }
 }
 
+function solveWorkerReady() {
+  if (solveTimeout) {
+    window.clearTimeout(solveTimeout);
+    solveTimeout = null;
+  }
+  solveWorkerState = 'ready';
+  runSolvePending();
+}
 
 function cancelSolveWorker() {
   if (solveWorkerState == 'running') {
