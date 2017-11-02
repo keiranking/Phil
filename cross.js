@@ -178,43 +178,27 @@ function keyboardHandler(e) {
       switch (e.which) {
         case keyboard.left:
           if (current.direction == ACROSS || content == BLACK) {
-            current.col = (current.col == 0) ? current.col : current.col - 1;
-            if (content == BLACK) {
-              current.direction = ACROSS;
-            }
-          } else {
-            current.direction = ACROSS;
+            current.col -= (current.col == 0) ? 0 : 1;
           }
+          current.direction = ACROSS;
           break;
         case keyboard.up:
           if (current.direction == DOWN || content == BLACK) {
-            current.row = (current.row == 0) ? current.row : current.row - 1;
-            if (content == BLACK) {
-              current.direction = DOWN;
-            }
-          } else {
-            current.direction = DOWN;
+            current.row -= (current.row == 0) ? 0 : 1;
           }
+          current.direction = DOWN;
           break;
         case keyboard.right:
           if (current.direction == ACROSS || content == BLACK) {
-            current.col = (current.col == xw.cols - 1) ? current.col : current.col + 1;
-            if (content == BLACK) {
-              current.direction = ACROSS;
-            }
-          } else {
-            current.direction = ACROSS;
+            current.col += (current.col == xw.cols - 1) ? 0 : 1;
           }
+          current.direction = ACROSS;
           break;
         case keyboard.down:
           if (current.direction == DOWN || content == BLACK) {
-            current.row = (current.row == xw.rows - 1) ? current.row : current.row + 1;
-            if (content == BLACK) {
-              current.direction = DOWN;
-            }
-          } else {
-            current.direction = DOWN;
+            current.row += (current.row == xw.rows - 1) ? 0 : 1;
           }
+          current.direction = DOWN;
           break;
       }
       console.log("[" + current.row + "," + current.col + "]");
@@ -310,7 +294,7 @@ function createGrid(rows, cols) {
         fill.appendChild(fillContent);
         col.appendChild(label);
         col.appendChild(fill);
-    		document.querySelector('[data-row="' + i + '"]').appendChild(col);
+        row.appendChild(col);
       }
   }
   updateLabelsAndClues();
@@ -323,49 +307,24 @@ function updateLabelsAndClues() {
 
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
-      let isAcross = false;
-      let isDown = false;
-      increment = false;
-      // if the cell isn't 'black'
-      if (xw.fill[i][j] != BLACK) {
-        if (i == 0) { // if the row is 0, increment the clue number
-          increment = true;
-          isDown = true;
-        } else {      // else if the square above me is black, increment
-          if (xw.fill[i - 1][j] == BLACK) {
-            increment = true;
-            isDown = true;
-          }
-        }
-        if (j == 0) { // if the column is 0, increment
-          increment = true;
-          isAcross = true;
-        } else {      // else if the square to my left is black, increment
-          if (xw.fill[i][j - 1] == BLACK) {
-            increment = true;
-            isAcross = true;
-          }
-        }
-      }
+      let isAcross = i == 0 || xw.fill[i - 1][j] == BLACK;
+      let isDown = j == 0 || xw.fill[i][j - 1] == BLACK;
       let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-      if (increment) {
+      if (isAcross || isDown) {
         currentCell.firstChild.innerHTML = count; // Set square's label to the count
         count++;
-        increment = false;
-
-        if (isAcross) {
-          xw.clues[[i, j, ACROSS]] = xw.clues[[i, j, ACROSS]] || DEFAULT_CLUE;
-        } else {
-          delete xw.clues[[i, j, ACROSS]];
-        }
-        if (isDown) {
-          xw.clues[[i, j, DOWN]] = xw.clues[[i, j, DOWN]] || DEFAULT_CLUE;
-        } else {
-          delete xw.clues[[i, j, DOWN]];
-        }
       } else {
         currentCell.firstChild.innerHTML = "";
+      }
+
+      if (isAcross) {
+        xw.clues[[i, j, ACROSS]] = xw.clues[[i, j, ACROSS]] || DEFAULT_CLUE;
+      } else {
         delete xw.clues[[i, j, ACROSS]];
+      }
+      if (isDown) {
+        xw.clues[[i, j, DOWN]] = xw.clues[[i, j, DOWN]] || DEFAULT_CLUE;
+      } else {
         delete xw.clues[[i, j, DOWN]];
       }
     }
