@@ -18,6 +18,41 @@ Phil uses [Font Awesome](https://github.com/FortAwesome/Font-Awesome/) icons and
 
 The Phil solving engine (in progress) uses the [Glucose](http://www.labri.fr/perso/lsimon/glucose/) 3.0 SAT solver. The sources (with our modifications) are in the [third_party](third_party) directory.
 
+## Getting started
+
+To run your own copy of Phil:
+
+1. Install a working [Emscripten](http://kripken.github.io/emscripten-site/) environment. On Mac, using [homebrew](http://braumeister.org/formula/emscripten) is a good choice.
+
+2. From the command line, run:
+
+   ```
+   cd third_party/glucose-3.0/simp
+   make xwsolve.js
+   ```
+
+   At this point, `xwsolve.js` and `xwsolve.wasm` should be generated.
+
+3. Go back to the Phil main directory (`cd ../../..`) and create symbolic links (aliases):
+
+   ```
+   ln -s third_party/glucose-3.0/simp/xwsolve.* .
+   ```
+
+4. Run a local webserver. If you have Python 3 installed, then:
+
+   ```
+   python3 -m http.server 8000
+   ```
+
+   If you have only Python 2 installed, then:
+
+   ```
+   python -m SimpleHTTPServer 8000
+   ```
+
+5. Point your browser to [localhost:8000](http://localhost:8000).
+
 ## Crossword resources
 
 * [Wordlists](http://www.puzzlers.org/dokuwiki/doku.php?id=solving:wordlists:about:start)
