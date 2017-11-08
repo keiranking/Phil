@@ -70,23 +70,6 @@ h1 {
   color: var(--dk-grey);
 }
 
-#footer #help {
-  margin-top: 3px;
-  padding: 12px;
-  border-radius: 6px;
-  background-color: var(--dk-grey);
-  color: var(--lt-grey);
-  float: left;
-}
-
-#footer #hide-help {
-  margin-left: 10px;
-  font-weight: 600;
-  text-decoration: underline;
-  color: var(--lt-blue);
-  cursor: pointer;
-}
-
 #grid {
   border: 2px solid var(--black);
   border-collapse: collapse;
@@ -191,6 +174,28 @@ h1 {
   width: auto;
   height: 550px;
   float: left;
+}
+
+.notification {
+  font-size: 9.5pt;
+  line-height: 11pt;
+  margin-top: 3px;
+  padding: 12px;
+  border-radius: 6px;
+  background-color: var(--dk-grey);
+  color: var(--lt-grey);
+  float: left;
+}
+
+.notification:after {
+  /*content: "Dismiss";*/
+  content: '\f00d';
+  margin-left: 10px;
+  font-family: FontAwesome;
+  font-weight: 600;
+  /*text-decoration: underline;*/
+  color: var(--med-grey);
+  cursor: pointer;
 }
 
 #puzzle-author {

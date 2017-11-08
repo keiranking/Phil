@@ -52,6 +52,31 @@ let solveWordlist = null;
 let solvePending = [];
 
 //____________________
+// C L A S S E S
+class Notification {
+  constructor(message) {
+    this.message = message;
+    this.id = randomNumber(1,10000);
+    this.post();
+  }
+
+  post() {
+    let div = document.createElement("DIV");
+    div.setAttribute("id", String(this.id));
+    div.setAttribute("class", "notification");
+    div.innerHTML = this.message;
+    div.addEventListener('click', this.dismiss);
+    document.getElementById("footer").appendChild(div);
+  }
+
+  dismiss() {
+    document.getElementById(this.id).remove();
+  }
+}
+
+n = new Notification("A period creates a black square. 'Enter' changes direction.");
+
+//____________________
 // F U N C T I O N S
 
 function createNewPuzzle(rows, cols) {
@@ -478,7 +503,7 @@ function generatePattern() {
 }
 
 function toggleSymmetry() {
-  isSymmetrical = (isSymmetrical) ? false : true;
+  isSymmetrical = !isSymmetrical;
   // Update UI button
   let symButton = document.getElementById("toggle-symmetry");
   symButton.classList.toggle("button-on");
