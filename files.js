@@ -77,100 +77,6 @@ class PuzReader {
   }
 }
 
-function openPuzzle() {
-  document.getElementById("open-puzzle-input").click();
-}
-
-function isPuz(bytes) {
-  const magic = 'ACROSS&DOWN';
-  for (var i = 0; i < magic.length; i++) {
-    if (bytes[2 + i] != magic.charCodeAt(i)) return false;
-  }
-  return bytes[2 + magic.length] == 0;
-}
-
-function openJSONFile(e) {
-  const file = e.target.files[0];
-  if (!file) {
-    return;
-  }
-  let reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const bytes = new Uint8Array(e.target.result);
-      let puz;
-      if (isPuz(bytes)) {
-        puz = new PuzReader(bytes).toJson();
-      } else {
-        // Note: TextDecoder doesn't work in Edge 16
-        puz = JSON.parse(new TextDecoder().decode(bytes));
-      }
-      convertJSONToPuzzle(puz);
-      console.log("Loaded puzzle.");
-    }
-    catch(err) {
-      if (err.name == "SyntaxError") {
-        window.alert("Invalid puzzle file. Try a .xw (or any JSON) puzzle.");
-        return;
-      } else if (err.name == "ScrambledError") {
-        window.alert("Cannot open scrambled Across Lite files.")
-      } else {
-        console.log("Unknown error", err);
-      }
-    }
-  };
-  reader.readAsArrayBuffer(file);
-}
-
-function convertJSONToPuzzle(puz) {
-  createNewPuzzle();
-  if (puz.size.rows != DEFAULT_SIZE || puz.size.cols != DEFAULT_SIZE) {
-    console.log("Oops. Can only open 15 x 15 puzzles.");
-    return;
-  }
-  xw.rows = DEFAULT_SIZE;
-  xw.cols = DEFAULT_SIZE;
-  // Update puzzle title, author
-  xw.title = puz.title || DEFAULT_TITLE;
-  if (puz.title.slice(0,8) == "NY TIMES") {
-    xw.title = "NYT Crossword";
-  }
-  xw.author = puz.author || DEFAULT_AUTHOR;
-  // Update fill
-  new_fill = [];
-  for (let i = 0; i < xw.rows; i++) {
-    new_fill.push("");
-    for (let j = 0; j < xw.cols; j++) {
-      const k = (i * xw.rows) + j;
-      new_fill[i] += (puz.grid[k].length > 1) ? puz.grid[k][0].toUpperCase() : puz.grid[k].toUpperCase(); // Strip rebus answers to their first letter
-    }
-  }
-  xw.fill = new_fill;
-  isMutated = true;
-
-  updateUI();
-  // Load in clues and display current clues
-  for (let i = 0; i < xw.rows; i++) {
-    for (let j = 0; j < xw.cols; j++) {
-      const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-      if (activeCell.firstChild.innerHTML) {
-        const label = activeCell.firstChild.innerHTML + ".";
-        for (let k = 0; k < puz.clues.across.length; k++) {
-          if (label == puz.clues.across[k].slice(0, label.length)) {
-            xw.clues[[i, j, ACROSS]] = puz.clues.across[k].slice(label.length).trim();
-          }
-        }
-        for (let l = 0; l < puz.clues.down.length; l++) {
-          if (label == puz.clues.down[l].slice(0, label.length)) {
-            xw.clues[[i, j, DOWN]] = puz.clues.down[l].slice(label.length).trim();
-          }
-        }
-      }
-    }
-  }
-  updateUI();
-}
-
 class PuzWriter {
   constructor() {
     this.buf = []
@@ -331,6 +237,115 @@ class PuzWriter {
     this.computeChecksums();
     return new Uint8Array(this.buf);
   }
+}
+
+function openPuzzle() {
+  document.getElementById("open-puzzle-input").click();
+}
+
+function isPuz(bytes) {
+  const magic = 'ACROSS&DOWN';
+  for (var i = 0; i < magic.length; i++) {
+    if (bytes[2 + i] != magic.charCodeAt(i)) return false;
+  }
+  return bytes[2 + magic.length] == 0;
+}
+
+function openFile(e) {
+  const file = e.target.files[0];
+  if (!file) {
+    return;
+  }
+  let reader = new FileReader();
+  try {
+    switch (file.name.slice(file.name.lastIndexOf("."))) {
+      case ".json":
+      case ".xw":
+      case ".txt":
+        reader.onload = function(e) {
+          convertJSONToPuzzle(JSON.parse(e.target.result));
+        };
+        reader.readAsText(file); // removing this line breaks the JSON import
+        break;
+      case ".puz":
+        reader.onload = function(e) {
+          const bytes = new Uint8Array(e.target.result);
+          let puz;
+          if (isPuz(bytes)) {
+            puz = new PuzReader(bytes).toJson();
+          } else {
+            puz = JSON.parse(new TextDecoder().decode(bytes)); // TextDecoder doesn't work in Edge 16
+          }
+          convertJSONToPuzzle(puz);
+        };
+        reader.readAsArrayBuffer(file);
+        break;
+      default:
+        break;
+    }
+    console.log("Loaded", file.name);
+  }
+  catch (err) {
+    switch (err.name) {
+      case "SyntaxError":
+        window.alert("Invalid file. PUZ and JSON puzzle files only.");
+        break;
+      case "ScrambledError":
+        window.alert("Cannot open scrambled PUZ file.");
+        break;
+      default:
+        console.log("Error:", err);
+    }
+  }
+}
+
+function convertJSONToPuzzle(puz) {
+  createNewPuzzle();
+  if (puz.size.rows != DEFAULT_SIZE || puz.size.cols != DEFAULT_SIZE) {
+    console.log("Oops. Can only open 15 x 15 puzzles.");
+    return;
+  }
+  xw.rows = DEFAULT_SIZE;
+  xw.cols = DEFAULT_SIZE;
+  // Update puzzle title, author
+  xw.title = puz.title || DEFAULT_TITLE;
+  if (puz.title.slice(0,8).toUpperCase() == "NY TIMES") {
+    xw.title = "NYT Crossword";
+  }
+  xw.author = puz.author || DEFAULT_AUTHOR;
+  // Update fill
+  new_fill = [];
+  for (let i = 0; i < xw.rows; i++) {
+    new_fill.push("");
+    for (let j = 0; j < xw.cols; j++) {
+      const k = (i * xw.rows) + j;
+      new_fill[i] += (puz.grid[k].length > 1) ? puz.grid[k][0].toUpperCase() : puz.grid[k].toUpperCase(); // Strip rebus answers to their first letter
+    }
+  }
+  xw.fill = new_fill;
+  isMutated = true;
+
+  // updateUI();
+  // Load in clues and display current clues
+  for (let i = 0; i < xw.rows; i++) {
+    for (let j = 0; j < xw.cols; j++) {
+      const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      if (activeCell.firstChild.innerHTML) {
+        const label = activeCell.firstChild.innerHTML + ".";
+        for (let k = 0; k < puz.clues.across.length; k++) {
+          if (label == puz.clues.across[k].slice(0, label.length)) {
+            xw.clues[[i, j, ACROSS]] = puz.clues.across[k].slice(label.length).trim();
+          }
+        }
+        for (let l = 0; l < puz.clues.down.length; l++) {
+          if (label == puz.clues.down[l].slice(0, label.length)) {
+            xw.clues[[i, j, DOWN]] = puz.clues.down[l].slice(label.length).trim();
+          }
+        }
+      }
+    }
+  }
+  updateUI();
 }
 
 function writeJSONFile() {
@@ -599,7 +614,7 @@ function layoutPDFClues(doc, style) {
 
 let openPuzzleInput = document.getElementById('open-puzzle-input');
 let openWordlistInput = document.getElementById('open-wordlist-input');
-openPuzzleInput.addEventListener('change', openJSONFile, false);
+openPuzzleInput.addEventListener('change', openFile, false);
 openWordlistInput.addEventListener('change', openWordlistFile, false);
 openPuzzleInput.onclick = function () {
     this.value = null;
