@@ -18,7 +18,8 @@ onmessage = function(e) {
                 console.log('calling main');
                 let args = ['-no-pre', '/wordlist', '/puz'];
                 if (isQuick) {
-                    args.splice(0, 0, '-compute-forced', '-thresh1=13', '-thresh2=10');
+                  // args.splice(0, 0, '-compute-forced', '-thresh1=13', '-thresh2=10');
+                  args.splice(0, 0, '-thresh1=13', '-thresh2=10');
                 }
                 Module.callMain(args);
                 break;

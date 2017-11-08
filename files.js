@@ -325,7 +325,8 @@ function convertJSONToPuzzle(puz) {
   xw.fill = new_fill;
   isMutated = true;
 
-  // updateUI();
+  updateGridUI();
+  updateLabelsAndClues();
   // Load in clues and display current clues
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {

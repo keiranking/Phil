@@ -310,13 +310,15 @@ function createGrid(rows, cols) {
 
 function updateLabelsAndClues() {
   let count = 1;
-  let increment = false;
-  const grid = document.getElementById("grid");
-
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
-      let isAcross = i == 0 || xw.fill[i - 1][j] == BLACK;
-      let isDown = j == 0 || xw.fill[i][j - 1] == BLACK;
+      let isAcross = false;
+      let isDown = false;
+      if (xw.fill[i][j] != BLACK) {
+        isDown = i == 0 || xw.fill[i - 1][j] == BLACK;
+        isAcross = j == 0 || xw.fill[i][j - 1] == BLACK;
+      }
+      const grid = document.getElementById("grid");
       let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
       if (isAcross || isDown) {
         currentCell.firstChild.innerHTML = count; // Set square's label to the count
