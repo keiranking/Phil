@@ -38,6 +38,7 @@ const DEFAULT_AUTHOR = "Anonymous";
 const DEFAULT_CLUE = "(blank clue)";
 
 let xw = {};
+let history = [];
 let current = {};
 let isSymmetrical = true;
 let grid = undefined;
@@ -54,10 +55,13 @@ let solvePending = [];
 //____________________
 // C L A S S E S
 class Notification {
-  constructor(message) {
+  constructor(message, lifetime = undefined) {
     this.message = message;
     this.id = String(randomNumber(1,10000));
     this.post();
+    if (lifetime) {
+      this.dismiss(lifetime);
+    }
   }
 
   post() {
@@ -73,20 +77,14 @@ class Notification {
     document.getElementById(this.id).innerHTML = message;
   }
 
-  dismiss() {
-    document.getElementById(this.id).remove();
-  }
-
-  dismissAfter(seconds) {
+  dismiss(seconds = 0) {
     let div = document.getElementById(this.id);
-    setTimeout(function() {
-      div.remove();
-    }, seconds * 1000);
+    setTimeout(function() { div.remove(); }, seconds * 1000);
   }
 }
 
-n = new Notification("A period creates a black square. 'Enter' changes direction.");
-
+new Notification("Tip: <kbd>.</kbd> creates a black square.", 300);
+new Notification("Tip: <kbd>Enter</kbd> changes direction.", 300);
 //____________________
 // F U N C T I O N S
 
@@ -523,9 +521,9 @@ function toggleSymmetry() {
   symButton.setAttribute("data-tooltip", "Turn " + buttonState + " symmetry");
 }
 
-function toggleHelp() {
-  document.getElementById("help").style.display = "none";
-}
+// function toggleHelp() {
+//   document.getElementById("help").style.display = "none";
+// }
 
 function clearFill() {
   for (let i = 0; i < xw.rows; i++) {

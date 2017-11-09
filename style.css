@@ -158,6 +158,20 @@ h1 {
   margin-bottom: 2px;
 }
 
+kbd {
+  /*min-width: 24px;*/
+  /*display: inline-block;*/
+  text-align: center;
+  font-family: inherit;
+  font-size: 9pt;
+  font-weight: 600;
+  color: var(--lt-grey);
+  border: 1px solid var(--med-grey);
+  border-radius: 2px;
+  padding: 2px 8px;
+  margin: -2px 2px;
+}
+
 #logo {
   /*fill: var(--med-grey);*/
   opacity: 0.45;
@@ -180,6 +194,7 @@ h1 {
   font-size: 9.5pt;
   line-height: 11pt;
   margin-top: 3px;
+  margin-right: 12px;
   padding: 12px;
   border-radius: 6px;
   background-color: var(--dk-grey);
