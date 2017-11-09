@@ -56,21 +56,32 @@ let solvePending = [];
 class Notification {
   constructor(message) {
     this.message = message;
-    this.id = randomNumber(1,10000);
+    this.id = String(randomNumber(1,10000));
     this.post();
   }
 
   post() {
     let div = document.createElement("DIV");
-    div.setAttribute("id", String(this.id));
+    div.setAttribute("id", this.id);
     div.setAttribute("class", "notification");
     div.innerHTML = this.message;
     div.addEventListener('click', this.dismiss);
     document.getElementById("footer").appendChild(div);
   }
 
+  update(message) {
+    document.getElementById(this.id).innerHTML = message;
+  }
+
   dismiss() {
     document.getElementById(this.id).remove();
+  }
+
+  dismissAfter(seconds) {
+    let div = document.getElementById(this.id);
+    setTimeout(function() {
+      div.remove();
+    }, seconds * 1000);
   }
 }
 
