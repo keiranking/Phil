@@ -288,10 +288,10 @@ function openFile(e) {
   catch (err) {
     switch (err.name) {
       case "SyntaxError":
-        window.alert("Invalid file. PUZ and JSON puzzle files only.");
+        new Notification("Invalid file. PUZ and JSON puzzle files only.", 10);
         break;
       case "ScrambledError":
-        window.alert("Cannot open scrambled PUZ file.");
+        new Notification("Cannot open scrambled PUZ file.", 10);
         break;
       default:
         console.log("Error:", err);
@@ -302,7 +302,7 @@ function openFile(e) {
 function convertJSONToPuzzle(puz) {
   createNewPuzzle();
   if (puz.size.rows != DEFAULT_SIZE || puz.size.cols != DEFAULT_SIZE) {
-    console.log("Oops. Can only open 15 x 15 puzzles.");
+    new Notification("Oops. Can only open 15 x 15 puzzles.", 10);
     return;
   }
   xw.rows = DEFAULT_SIZE;

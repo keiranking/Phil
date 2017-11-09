@@ -121,7 +121,8 @@ h1 {
 }
 
 #grid td.pencil .fill {
-  opacity: 0.3;
+  /*opacity: 0.3;*/
+  color: var(--med-grey);
 }
 
 #grid td.black {
@@ -159,8 +160,6 @@ h1 {
 }
 
 kbd {
-  /*min-width: 24px;*/
-  /*display: inline-block;*/
   text-align: center;
   font-family: inherit;
   font-size: 9pt;
@@ -170,18 +169,6 @@ kbd {
   border-radius: 2px;
   padding: 2px 8px;
   margin: -2px 2px;
-}
-
-#logo {
-  /*fill: var(--med-grey);*/
-  opacity: 0.45;
-  width: 26px;
-  height: 26px;
-}
-
-#logo:hover {
-  opacity: 1;
-  /*fill: var(--black);*/
 }
 
 #main {
@@ -211,6 +198,10 @@ kbd {
   /*text-decoration: underline;*/
   color: var(--med-grey);
   cursor: pointer;
+}
+
+.notification:hover:after {
+  color: var(--lt-blue);
 }
 
 #puzzle-author {

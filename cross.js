@@ -83,8 +83,8 @@ class Notification {
   }
 }
 
-new Notification("Tip: <kbd>.</kbd> creates a black square.", 300);
-new Notification("Tip: <kbd>Enter</kbd> changes direction.", 300);
+new Notification("Tip: <kbd>.</kbd> makes a black square.", 300);
+new Notification("Tip: <kbd>Enter</kbd> toggles direction.", 300);
 //____________________
 // F U N C T I O N S
 
