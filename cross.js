@@ -36,6 +36,7 @@ const DEFAULT_SIZE = 15;
 const DEFAULT_TITLE = "Untitled";
 const DEFAULT_AUTHOR = "Anonymous";
 const DEFAULT_CLUE = "(blank clue)";
+const DEFAULT_NOTIFICATION_LIFETIME = 10; // in seconds
 
 let xw = {};
 let history = [];
@@ -54,6 +55,78 @@ let solvePending = [];
 
 //____________________
 // C L A S S E S
+class Button {
+  // <button id="toggle-freeze-layout" type="button" data-tooltip="Freeze pattern" data-state="off" class="disabled">
+  //   <i class="fa fa-snowflake-o fa-fw" aria-hidden="true"></i>
+  // </button>
+  constructor(id, icon, tooltip, type = "normal", state = "disabled", menuID = undefined) {
+    this.id = id;
+    this.icon = icon;
+    this.tooltip = tooltip;
+    this.type = type; // "normal", "toggle", "menu", "submenu"
+    this.state = state; // "normal", "on", "open", "disabled"
+    this.menuID = menuID;
+
+    let button = document.createElement("BUTTON");
+    button.setAttribute("id", this.id);
+    button.setAttribute("type", "button");
+    button.setAttribute("data-type", this.type);
+    button.setAttribute("data-tooltip", this.tooltip);
+    icon = document.createElement("I");
+    icon.classList.add("fa", "fa-" + this.icon, "fa-fw");
+    icon.setAttribute("aria-hidden", "true");
+    button.appendChild(icon);
+    button.className = (this.state == "normal") ? "" : this.state;
+    document.getElementById("toolbar").appendChild(button); // but what if the button is part of a menu?
+    console.log("Created button '" + id + "'.");
+  }
+
+  setState(state) {
+    let button = document.getElementById(this.id);
+    this.state = state;
+    button.className = (this.state == "normal") ? "" : this.state;
+  }
+
+  addEvent(e, func) {
+    let button = document.getElementById(this.id);
+    button.addEventListener(e, func);
+    if (this.state == "disabled") {
+      this.setState("normal");
+    }
+  }
+
+  press() {
+    switch (this.type) {
+      case "toggle":
+      case "submenu":
+        this.setState((this.state == "on") ? "normal" : "on");
+        break;
+      case "menu":
+        this.setState((this.state == "open") ? "normal" : "open");
+        break;
+      default:
+        break;
+    }
+  }
+}
+
+// freezeLayout = new Button("freeze-layout", "snowflake-o", "Freeze layout", "toggle");
+// freezeLayout.setState("normal");
+
+class Menu {
+  constructor(id, buttons) {
+    this.id = id;
+    this.buttons = buttons;
+
+    let div = document.createElement("DIV");
+    div.setAttribute("id", this.id);
+    for (var button in buttons) {
+      div.appendChild(button);
+    }
+    document.getElementById("toolbar").appendChild(div);
+  }
+}
+
 class Notification {
   constructor(message, lifetime = undefined) {
     this.message = message;
@@ -79,6 +152,7 @@ class Notification {
 
   dismiss(seconds = 0) {
     let div = document.getElementById(this.id);
+    // seconds = (seconds === true) ? 10 : seconds;
     setTimeout(function() { div.remove(); }, seconds * 1000);
   }
 }
@@ -633,6 +707,22 @@ function cancelSolveWorker() {
 
 function invalidateSolverWordlist() {
   solveWordlist = null;
+}
+
+function showMenu(e) {
+  let menus = document.querySelectorAll("#toolbar .menu");
+  for (let i = 0; i < menus.length; i++) {
+    menus[i].classList.add("hidden");
+  }
+  const id = e.target.getAttribute("id");
+  let menu = document.getElementById(id + "-menu");
+  if (menu) {
+    menu.classList.remove("hidden");
+  }
+}
+
+function hideMenu(e) {
+  e.target.classList.add("hidden");
 }
 
 function randomNumber(min, max) {

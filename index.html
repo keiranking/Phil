@@ -15,27 +15,39 @@
     <button id="new-grid" type="button" data-tooltip="New puzzle" onclick="createNewPuzzle()">
       <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
     </button>
-    <button id="open-JSON" type="button" data-tooltip="Open puzzle..." onclick="openPuzzle()">
+    <button id="open-JSON" type="button" data-tooltip="Open puzzle..." onmouseenter="showMenu(event)" onclick="openPuzzle()">
       <i class="fa fa-folder-open-o fa-fw" aria-hidden="true"></i>
     </button>
-    <input id="open-puzzle-input" type="file" accept=".json,.txt,.xw,.puz"/>
-    <button id="export-JSON" type="button" data-tooltip="Save puzzle" onclick="writeJSONFile()">
+    <input id="open-puzzle-input" class="hidden" type="file" accept=".json,.txt,.xw,.puz"/>
+    <div id="export-menu" class="menu hidden" onmouseleave="hideMenu(event)">
+      <h4>Export as:</h4>
+      <button id="export-JSON" class="default" type="button" data-tooltip="Phil puzzle (.xw)" onclick="writeFile('xw')">
+        <i class="fa fa-download fa-fw" aria-hidden="true"></i>
+      </button>
+      <button id="export-PUZ" type="button" data-tooltip="Across Lite puzzle (.puz)" onclick="writeFile('puz')">
+        <i class="fa fa-download fa-fw" aria-hidden="true"></i>
+      </button>
+      <button id="print-puzzle" type="button" data-tooltip="Printable puzzle (.pdf)" onclick="printPDF()">
+        <i class="fa fa-print fa-fw" aria-hidden="true"></i>
+      </button>
+      <button id="print-NYT-submission" type="button" data-tooltip="NYT submission (.pdf)" onclick="printPDF('nyt')">
+        <i class="fa fa-newspaper-o fa-fw" aria-hidden="true"></i>
+      </button>
+    </div>
+    <button id="export" type="button" data-tooltip="Save puzzle" onmouseenter="showMenu(event)" onclick="writeFile('xw')">
       <i class="fa fa-download fa-fw" aria-hidden="true"></i>
     </button>
-    <a id="download-puzzle-link">Download puzzle</a>
-    <button id="print-puzzle" type="button" data-tooltip="Print puzzle" onclick="printPDF()">
-      <i class="fa fa-print fa-fw" aria-hidden="true"></i>
-    </button>
+    <a id="download-puzzle-link" class="hidden">Download puzzle</a>
 
     <div class="divider"></div>
 
-    <button id="quick-layout" type="button" data-tooltip="Generate pattern" onclick="generatePattern()">
+    <button id="quick-layout" type="button" data-tooltip="Generate pattern" onmouseenter="showMenu(event)" onclick="generatePattern()">
       <i class="fa fa-delicious fa-fw" aria-hidden="true"></i>
     </button>
     <button id="toggle-freeze-layout" type="button" data-tooltip="Freeze pattern" data-state="off" class="disabled">
       <i class="fa fa-snowflake-o fa-fw" aria-hidden="true"></i>
     </button>
-    <button id="clear-fill" type="button" data-tooltip="Erase all words" onclick="clearFill()">
+    <button id="clear-fill" type="button" data-tooltip="Clear white squares" onclick="clearFill()">
       <i class="fa fa-eraser fa-fw" aria-hidden="true"></i>
     </button>
     <button id="toggle-symmetry" type="button" data-tooltip="Turn off symmetry" data-state="on" class="button-on" onclick="toggleSymmetry()">
@@ -47,12 +59,9 @@
     <button id="open-wordlist" type="button" data-tooltip="Change dictionary..." onclick="openWordlist()">
       <i class="fa fa-book fa-fw" aria-hidden="true"></i>
     </button>
-    <input id="open-wordlist-input" type="file" accept=".txt"/>
+    <input id="open-wordlist-input" class="hidden" type="file" accept=".txt"/>
     <button id="auto-fill" type="button" data-tooltip="Auto-fill puzzle" onclick="autoFill()">
       <i class="fa fa-magic fa-fw" aria-hidden="true"></i>
-    </button>
-    <button id="print-NYT-submission" type="button" data-tooltip="Print NYT submission" onclick="printPDF('nyt')">
-      <i class="fa fa-newspaper-o fa-fw" aria-hidden="true"></i>
     </button>
   </div>
 

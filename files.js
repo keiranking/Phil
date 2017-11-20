@@ -72,7 +72,7 @@ class PuzReader {
       label += inc;
     }
     json.clues = {across: across, down: down};
-    console.log(json);
+    // console.log(json);
     return json;
   }
 }
@@ -349,15 +349,20 @@ function convertJSONToPuzzle(puz) {
   updateUI();
 }
 
-function writeJSONFile() {
+function writeFile(format) {
   let isPuz = false; // TODO: make configurable, expose choice to UI
-  let filename = xw.title + (isPuz ? ".puz" : ".xw");
+  let filename = xw.title + "." + format;
   let serialized = convertPuzzleToJSON();
   let fileContents;
-  if (isPuz) {
-    fileContents = new PuzWriter().toPuz(serialized);
-  } else {
-    fileContents = JSON.stringify(serialized);  // Convert JS object to JSON text
+  switch (format) {
+    case "puz":
+      fileContents = new PuzWriter().toPuz(serialized);
+      break;
+    case "xw":
+    case "json":
+    default:
+      fileContents = JSON.stringify(serialized);  // Convert JS object to JSON text
+      break;
   }
   let file = new File([fileContents], filename);
   let puzzleURL = window.URL.createObjectURL(file);
