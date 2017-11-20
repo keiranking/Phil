@@ -21,20 +21,20 @@
     <input id="open-puzzle-input" class="hidden" type="file" accept=".json,.txt,.xw,.puz"/>
     <div id="export-menu" class="menu hidden" onmouseleave="hideMenu(event)">
       <h4>Export as:</h4>
-      <button id="export-JSON" class="default" type="button" data-tooltip="Phil puzzle (.xw)" onclick="writeFile('xw')">
+      <button id="export-JSON" class="default" type="button" data-tooltip="Phil puzzle (.xw)" onmouseup="setDefault(event)" onclick="writeFile('xw')">
         <i class="fa fa-download fa-fw" aria-hidden="true"></i>
       </button>
-      <button id="export-PUZ" type="button" data-tooltip="Across Lite puzzle (.puz)" onclick="writeFile('puz')">
+      <button id="export-PUZ" type="button" data-tooltip="Across Lite puzzle (.puz)" onmouseup="setDefault(event)" onclick="writeFile('puz')">
         <i class="fa fa-download fa-fw" aria-hidden="true"></i>
       </button>
-      <button id="print-puzzle" type="button" data-tooltip="Printable puzzle (.pdf)" onclick="printPDF()">
+      <button id="print-puzzle" type="button" data-tooltip="Printable puzzle (.pdf)" onmouseup="setDefault(event)" onclick="printPDF()">
         <i class="fa fa-print fa-fw" aria-hidden="true"></i>
       </button>
-      <button id="print-NYT-submission" type="button" data-tooltip="NYT submission (.pdf)" onclick="printPDF('nyt')">
+      <button id="print-NYT-submission" type="button" data-tooltip="NYT submission (.pdf)" onmouseup="setDefault(event)" onclick="printPDF('nyt')">
         <i class="fa fa-newspaper-o fa-fw" aria-hidden="true"></i>
       </button>
     </div>
-    <button id="export" type="button" data-tooltip="Save puzzle" onmouseenter="showMenu(event)" onclick="writeFile('xw')">
+    <button id="export" type="button" data-tooltip="Save puzzle" onmouseenter="showMenu(event)" onclick="doDefault(event)">
       <i class="fa fa-download fa-fw" aria-hidden="true"></i>
     </button>
     <a id="download-puzzle-link" class="hidden">Download puzzle</a>

@@ -725,6 +725,23 @@ function hideMenu(e) {
   e.target.classList.add("hidden");
 }
 
+function setDefault(e) {
+  let d = e.target.parentNode.querySelector(".default");
+  d.classList.remove("default");
+  e.target.classList.add("default");
+  menuButton = document.getElementById(e.target.parentNode.getAttribute("id").replace("-menu", ""));
+  menuButton.innerHTML = e.target.innerHTML;
+}
+
+function doDefault(e) {
+  const id = e.target.parentNode.getAttribute("id");
+  let menu = document.getElementById(id + "-menu");
+  if (menu) {
+    let d = menu.querySelector(".default");
+    d.click();
+  }
+}
+
 function randomNumber(min, max) {
   return Math.floor(Math.random() * max) + min;
 }

@@ -287,6 +287,10 @@ kbd {
   margin: 2px 0;
 }
 
+#toolbar button:focus {
+  outline: none;
+}
+
 #toolbar button.button-on {
   color: var(--dk-blue);
 }
