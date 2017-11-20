@@ -5,7 +5,7 @@
 <img src="images/logo.svg" align="right" width="60" height="60">
 
 Phil helps you make crosswords, using client-side JavaScript.
-* Open and save .xw files ([JSON puzzle files](https://www.xwordinfo.com/JSON/) by another name).
+* Import & export .xw ([JSON](https://www.xwordinfo.com/JSON/)) or .puz files.
 * Use the built-in dictionary, or any text file you want.
 * Print to PDF.
 * Create a New York Times submission in seconds.
@@ -19,6 +19,10 @@ Phil uses [Font Awesome](https://github.com/FortAwesome/Font-Awesome/) icons and
 The Phil solving engine (in progress) uses the [Glucose](http://www.labri.fr/perso/lsimon/glucose/) 3.0 SAT solver. The sources (with our modifications) are in the [third_party](third_party) directory.
 
 ## Getting started
+
+To use Phil:
+
+1. Go to [keiranking.com/phil](http://www.keiranking.com/phil).
 
 To run your own copy of Phil:
 
