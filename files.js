@@ -350,7 +350,6 @@ function convertJSONToPuzzle(puz) {
 }
 
 function writeFile(format) {
-  let isPuz = false; // TODO: make configurable, expose choice to UI
   let filename = xw.title + "." + format;
   let serialized = convertPuzzleToJSON();
   let fileContents;
