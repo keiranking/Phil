@@ -55,7 +55,92 @@ let solvePending = [];
 
 //____________________
 // C L A S S E S
-class Button {
+class Crossword { // in dev
+  constructor(rows = DEFAULT_SIZE, cols = DEFAULT_SIZE) {
+    this.clues = {};
+    this.title = DEFAULT_TITLE;
+    this.author = DEFAULT_AUTHOR;
+    this.rows = rows;
+    this.cols = cols;
+    this.fill = [];
+    //
+    for (let i = 0; i < this.rows; i++) {
+      this.fill.push("");
+      for (let j = 0; j < this.cols; j++) {
+        this.fill[i] += BLANK;
+      }
+    }
+  }
+}
+
+class UIGrid { // in dev
+  constructor(rows, cols) {
+    document.getElementById("main").innerHTML = "";
+    let table = document.createElement("TABLE");
+    table.setAttribute("id", "grid");
+    table.setAttribute("tabindex", "1");
+    document.getElementById("main").appendChild(table);
+
+    for (let i = 0; i < rows; i++) {
+        let row = document.createElement("TR");
+        row.setAttribute("data-row", i);
+        document.getElementById("grid").appendChild(row);
+
+      for (let j = 0; j < cols; j++) {
+          let col = document.createElement("TD");
+          col.setAttribute("data-col", j);
+
+          let label = document.createElement("DIV");
+          label.setAttribute("class", "label");
+          let labelContent = document.createTextNode("");
+
+          let fill = document.createElement("DIV");
+          fill.setAttribute("class", "fill");
+          let fillContent = document.createTextNode(xw.fill[i][j]);
+
+          label.appendChild(labelContent);
+          fill.appendChild(fillContent);
+          col.appendChild(label);
+          col.appendChild(fill);
+          row.appendChild(col);
+        }
+    }
+    grid = document.getElementById("grid");
+    squares = grid.querySelectorAll('td');
+    for (const square of squares) {
+      square.addEventListener('click', mouseHandler);
+    }
+    grid.addEventListener('keydown', keyboardHandler);
+
+    this.isSymmetrical = true;
+    this.current = {
+      "row":        0,
+      "col":        0,
+      "acrossWord": '',
+      "downWord":   '',
+      "acrossStartIndex":0,
+      "acrossEndIndex":  cols,
+      "downStartIndex":  0,
+      "downEndIndex":    rows,
+      "direction":  ACROSS
+    };
+
+    updateInfoUI();
+    updateLabelsAndClues();
+    updateActiveWords();
+    updateGridHighlights();
+    updateSidebarHighlights();
+    updateCluesUI();
+
+    console.log("Grid UI created.")
+  }
+
+  update() {
+
+  }
+}
+
+class UIButton { // in dev
   // <button id="toggle-freeze-layout" type="button" data-tooltip="Freeze pattern" data-state="off" class="disabled">
   //   <i class="fa fa-snowflake-o fa-fw" aria-hidden="true"></i>
   // </button>
@@ -110,10 +195,10 @@ class Button {
   }
 }
 
-// freezeLayout = new Button("freeze-layout", "snowflake-o", "Freeze layout", "toggle");
+// freezeLayout = new UIButton("freeze-layout", "snowflake-o", "Freeze layout", "toggle");
 // freezeLayout.setState("normal");
 
-class Menu {
+class UIMenu { // in dev
   constructor(id, buttons) {
     this.id = id;
     this.buttons = buttons;
@@ -127,7 +212,7 @@ class Menu {
   }
 }
 
-class Notification {
+class UINotification {
   constructor(message, lifetime = undefined) {
     this.message = message;
     this.id = String(randomNumber(1,10000));
@@ -157,8 +242,8 @@ class Notification {
   }
 }
 
-new Notification("Tip: <kbd>.</kbd> makes a black square.", 300);
-new Notification("Tip: <kbd>Enter</kbd> toggles direction.", 300);
+new UINotification("Tip: <kbd>.</kbd> makes a black square.", 300);
+new UINotification("Tip: <kbd>Enter</kbd> toggles direction.", 300);
 //____________________
 // F U N C T I O N S
 
