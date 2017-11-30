@@ -38,15 +38,13 @@ const DEFAULT_AUTHOR = "Anonymous";
 const DEFAULT_CLUE = "(blank clue)";
 const DEFAULT_NOTIFICATION_LIFETIME = 10; // in seconds
 
-let xw = {};
 let history = [];
-let current = {};
 let isSymmetrical = true;
 let grid = undefined;
 let squares = undefined;
 let isMutated = false;
 let forced = null;
-createNewPuzzle();
+// createNewPuzzle();
 let solveWorker = null;
 let solveWorkerState = null;
 let solveTimeout = null;
@@ -55,7 +53,7 @@ let solvePending = [];
 
 //____________________
 // C L A S S E S
-class Crossword { // in dev
+class Crossword {
   constructor(rows = DEFAULT_SIZE, cols = DEFAULT_SIZE) {
     this.clues = {};
     this.title = DEFAULT_TITLE;
@@ -73,7 +71,7 @@ class Crossword { // in dev
   }
 }
 
-class UIGrid { // in dev
+class Grid {
   constructor(rows, cols) {
     document.getElementById("main").innerHTML = "";
     let table = document.createElement("TABLE");
@@ -111,28 +109,6 @@ class UIGrid { // in dev
       square.addEventListener('click', mouseHandler);
     }
     grid.addEventListener('keydown', keyboardHandler);
-
-    this.isSymmetrical = true;
-    this.current = {
-      "row":        0,
-      "col":        0,
-      "acrossWord": '',
-      "downWord":   '',
-      "acrossStartIndex":0,
-      "acrossEndIndex":  cols,
-      "downStartIndex":  0,
-      "downEndIndex":    rows,
-      "direction":  ACROSS
-    };
-
-    updateInfoUI();
-    updateLabelsAndClues();
-    updateActiveWords();
-    updateGridHighlights();
-    updateSidebarHighlights();
-    updateCluesUI();
-
-    console.log("Grid UI created.")
   }
 
   update() {
@@ -140,65 +116,42 @@ class UIGrid { // in dev
   }
 }
 
-class UIButton { // in dev
-  // <button id="toggle-freeze-layout" type="button" data-tooltip="Freeze pattern" data-state="off" class="disabled">
-  //   <i class="fa fa-snowflake-o fa-fw" aria-hidden="true"></i>
-  // </button>
-  constructor(id, icon, tooltip, type = "normal", state = "disabled", menuID = undefined) {
+class Button {
+  constructor(id) {
     this.id = id;
-    this.icon = icon;
-    this.tooltip = tooltip;
-    this.type = type; // "normal", "toggle", "menu", "submenu"
-    this.state = state; // "normal", "on", "open", "disabled"
-    this.menuID = menuID;
-
-    let button = document.createElement("BUTTON");
-    button.setAttribute("id", this.id);
-    button.setAttribute("type", "button");
-    button.setAttribute("data-type", this.type);
-    button.setAttribute("data-tooltip", this.tooltip);
-    icon = document.createElement("I");
-    icon.classList.add("fa", "fa-" + this.icon, "fa-fw");
-    icon.setAttribute("aria-hidden", "true");
-    button.appendChild(icon);
-    button.className = (this.state == "normal") ? "" : this.state;
-    document.getElementById("toolbar").appendChild(button); // but what if the button is part of a menu?
-    console.log("Created button '" + id + "'.");
+    this.dom = document.getElementById(id);
+    this.tooltip = this.dom.getAttribute("data-tooltip");
+    // this.type = type; // "normal", "toggle", "menu", "submenu"
+    this.state = this.dom.className; // "normal", "on", "open", "disabled"
   }
 
   setState(state) {
-    let button = document.getElementById(this.id);
     this.state = state;
-    button.className = (this.state == "normal") ? "" : this.state;
+    this.dom.className = (this.state == "normal") ? "" : this.state;
   }
 
   addEvent(e, func) {
-    let button = document.getElementById(this.id);
-    button.addEventListener(e, func);
+    this.dom.addEventListener(e, func);
     if (this.state == "disabled") {
       this.setState("normal");
     }
   }
 
   press() {
-    switch (this.type) {
-      case "toggle":
-      case "submenu":
-        this.setState((this.state == "on") ? "normal" : "on");
-        break;
-      case "menu":
-        this.setState((this.state == "open") ? "normal" : "open");
-        break;
-      default:
-        break;
-    }
+    // switch (this.type) {
+    //   case "toggle":
+    //   case "submenu":
+    //     this.setState((this.state == "on") ? "normal" : "on");
+    //     break;
+    //   case "menu":
+    //     this.setState((this.state == "open") ? "normal" : "open");
+    //     break;
+    //   default:
+    //     break;
   }
 }
 
-// freezeLayout = new UIButton("freeze-layout", "snowflake-o", "Freeze layout", "toggle");
-// freezeLayout.setState("normal");
-
-class UIMenu { // in dev
+class Menu { // in dev
   constructor(id, buttons) {
     this.id = id;
     this.buttons = buttons;
@@ -212,7 +165,28 @@ class UIMenu { // in dev
   }
 }
 
-class UINotification {
+class Toolbar {
+  constructor(id) {
+    this.id = id;
+    this.buttons = { // rewrite this programmatically
+      "newPuzzle": new Button("new-grid"),
+      "openPuzzle": new Button("open-JSON"),
+      "exportJSON": new Button("export-JSON"),
+      "exportPUZ": new Button("export-PUZ"),
+      "exportPDF": new Button("print-puzzle"),
+      "exportNYT": new Button("print-NYT-submission"),
+      "export": new Button("export"),
+      "quickLayout": new Button("quick-layout"),
+      "freezeLayout": new Button("toggle-freeze-layout"),
+      "clearFill": new Button("clear-fill"),
+      "toggleSymmetry": new Button("toggle-symmetry"),
+      "openWordlist": new Button("open-wordlist"),
+      "autoFill": new Button("auto-fill")
+    }
+  }
+}
+
+class Notification {
   constructor(message, lifetime = undefined) {
     this.message = message;
     this.id = String(randomNumber(1,10000));
@@ -242,8 +216,48 @@ class UINotification {
   }
 }
 
-new UINotification("Tip: <kbd>.</kbd> makes a black square.", 300);
-new UINotification("Tip: <kbd>Enter</kbd> toggles direction.", 300);
+class Interface {
+  constructor(rows, cols) {
+    this.grid = new Grid(rows, cols);
+    this.sidebar;
+    this.toolbar = new Toolbar("toolbar");
+
+    this.isSymmetrical = true;
+    this.row = 0;
+    this.col = 0;
+    this.acrossWord = '';
+    this.downWord = '';
+    this.acrossStartIndex = 0;
+    this.acrossEndIndex = cols;
+    this.downStartIndex = 0;
+    this.downEndIndex = rows;
+    this.direction = ACROSS;
+
+    console.log("Grid UI created.")
+  }
+
+  toggleDirection() {
+    this.direction = (this.direction == ACROSS) ? DOWN : ACROSS;
+  }
+
+  update() {
+    updateInfoUI();
+    updateLabelsAndClues();
+    updateActiveWords();
+    updateGridHighlights();
+    updateSidebarHighlights();
+    updateCluesUI();
+  }
+}
+
+new Notification(document.getElementById("shortcuts").innerHTML, 300);
+// new Notification("Tip: <kbd>.</kbd> makes a black square.", 300);
+// new Notification("Tip: <kbd>Enter</kbd> toggles direction.", 300);
+
+let xw = new Crossword(); // model
+let current = new Interface(xw.rows, xw.cols); // view-controller
+current.update();
+
 //____________________
 // F U N C T I O N S
 
