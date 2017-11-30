@@ -112,7 +112,24 @@ class Grid {
   }
 
   update() {
-
+    for (let i = 0; i < xw.rows; i++) {
+      for (let j = 0; j < xw.cols; j++) {
+        const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+        let fill = xw.fill[i][j];
+        if (fill == BLANK && forced != null) {
+          fill = forced[i][j];
+          activeCell.classList.add("pencil");
+        } else {
+          activeCell.classList.remove("pencil");
+        }
+        activeCell.lastChild.innerHTML = fill;
+        if (fill == BLACK) {
+          activeCell.classList.add("black");
+        } else {
+          activeCell.classList.remove("black");
+        }
+      }
+    }
   }
 }
 
