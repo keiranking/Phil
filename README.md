@@ -2,7 +2,7 @@
 
 [![Version](images/version.svg)]()
 
-<img src="images/screenshot.png" align="right" width="600" height="400">
+<img src="images/screenshot.png" align="right" width="400" height="380">
 
 Phil helps you make crosswords, using client-side JavaScript.
 * Import & export .xw ([JSON](https://www.xwordinfo.com/JSON/)) or .puz files.
