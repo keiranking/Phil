@@ -2,15 +2,13 @@
 
 [![Version](images/version.svg)]()
 
-<img src="images/logo.svg" align="right" width="60" height="60">
+<img src="images/screenshot.png" align="right" width="600" height="400">
 
 Phil helps you make crosswords, using client-side JavaScript.
 * Import & export .xw ([JSON](https://www.xwordinfo.com/JSON/)) or .puz files.
 * Use the built-in dictionary, or any text file you want.
 * Print to PDF.
 * Create a New York Times submission in seconds.
-
-![Build your own crossword](images/screenshot.png "Build your own crossword")
 
 ## Related repositories
 
