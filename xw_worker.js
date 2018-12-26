@@ -1,31 +1,29 @@
-let onRuntimeInitialized;
-let emscriptenPromise = new Promise((resolve, reject) => {
-    onRuntimeInitialized = resolve;
-});
-var Module = {
-    wasmBinaryFile: "third_party/glucose-3.0/simp/xwsolve.wasm",
-    onRuntimeInitialized: onRuntimeInitialized,
-};
-importScripts('third_party/glucose-3.0/simp/xwsolve.js');
+module = {};
+importScripts('fill.js');
 onmessage = function(e) {
-    emscriptenPromise.then((dummy) => {
-        let cmd = e.data;
-        switch (cmd[0]) {
-            case 'run':
-                FS.writeFile('/wordlist', cmd[1]);
-                FS.writeFile('/puz', cmd[2]);
-                let isQuick = cmd[3];
-                console.log('calling main');
-                let args = ['-no-pre', '/wordlist', '/puz'];
-                if (isQuick) {
-                  // args.splice(0, 0, '-compute-forced', '-thresh1=13', '-thresh2=10');
-                  args.splice(0, 0, '-thresh1=13', '-thresh2=10');
-                }
-                Module.callMain(args);
-                break;
-            case 'cancel':
-                Module.ccall('cancel', 'void', [], []);
-                break;
-        }
-    });
+    let cmd = e.data;
+    switch (cmd[0]) {
+        case 'run':
+            let words = cmd[1].split(/\n/);
+            let grid = cmd[2];
+            grid = grid.replace(/\./g, "#");
+            grid = grid.replace(/ /g, ".");
+
+            console.log("fill " + grid);
+            let wordlist = new module.exports.wordlist(words);
+            let filler = new module.exports.filler(grid, wordlist);
+            let result = filler.fill();
+            console.log("result: " + result);
+            if (result.indexOf(".") == -1) {
+              result = result.replace(/\./g, " ");
+              result = result.replace(/#/g, ".");
+              postMessage(["sat", result + "\n"]);
+            } else {
+              postMessage(["unsat"]);
+            }
+            break;
+        case 'cancel':
+            postMessage(["ack_cancel"]);
+            break;
+    }
 }
