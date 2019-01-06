@@ -684,7 +684,7 @@ function generatePattern() {
   xw.title = title;
   xw.author = author;
 
-  const pattern = patterns[randomNumber(0, patterns.length)]; // select random pattern
+  const pattern = createRandomPattern(xw.rows, xw.cols); // create random pattern
   if (!isSymmetrical) { // patterns are encoded as only one half of the grid...
     toggleSymmetry();   // so symmetry needs to be on to populate correctly
   }

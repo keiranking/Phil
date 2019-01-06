@@ -13,21 +13,62 @@
 // limitations under the License.
 // ------------------------------------------------------------------------
 
-const patterns = [
-    [
-      [0,4], [1,4], [2,4], [12,4], [13,4], [14,4],
-      [4,0], [4,1], [4,2], [4,12], [4,13], [4,14],
-      [8,3], [7,4], [6,5], [5,6], [4,7], [3,8]
-    ],
-    [
-      [0,4], [1,4], [2,4], [12,4], [13,4], [14,4],
-      [6,0], [10,0], [6,1], [10,1], [10,2], [8,4],
-      [5,3], [9,3], [4,5], [11,5], [6,6], [7,7]
-    ],
-    [
-      [0,5], [1,5], [2,5], [12,4], [13,4], [14,4],
-      [5,0], [5,1], [5,2], [4,3], [3,13], [3,14],
-      [5,6], [4,7], [4,8], [6,9], [7,10], [5,11]
-    ]
-];
-console.log("Loaded", patterns.length, "patterns.");
+function createRandomPattern(numRows, numColumns) {
+  pattern = []
+  for (let i = 0; i < numRows; i++){
+    for (let j = 0; j < numColumns/2 ; j++){
+      let canFillSquare = canSquareBeFilled(pattern, i, j);
+      let shouldFillSquare = Math.random() < 0.75;
+      if (shouldFillSquare && canFillSquare) {
+        pattern.push([i, j]);
+      }
+    }
+  }
+  console.log("Generated pattern.");
+  return pattern;
+}
+
+function isFilled(pattern, row, column){
+  return pattern.some(function(square) {
+    return (square[0] === row && square[1] === column)
+      || (square[0] === 14 - row && square[1] === 14 - column);
+  });
+}
+
+function canSquareBeFilled(pattern, i, j){
+  let leftClear = sideIsClear(pattern, i, j, 0, j, 0, -1)
+  let rightClear = sideIsClear(pattern, i, j, 7, j, 0 , 1)
+  let upClear = sideIsClear(pattern, i, j, 0, i, -1, 0)
+  let downClear = sideIsClear(pattern, i, j, 14, i, 1, 0)
+  if (leftClear && rightClear && upClear && downClear) {
+    return true;
+  }
+  return false;
+}
+
+function sideIsClear(pattern, i, j, bound, pivot, imultiplier, jmultiplier){
+  if (pivot === 0) {
+    return true
+  } else if (pivot + ((imultiplier + jmultiplier) * 1) === bound || pivot + ((imultiplier + jmultiplier) * 2) === bound) {
+    if (isFilled(pattern, i + (imultiplier * 1), j + (jmultiplier * 1))){
+      return true;
+    }
+    return false;
+  } else if (pivot + (imultiplier + jmultiplier) * 3 === bound) {
+    if ((!isFilled(pattern, i + (imultiplier * 1), j + (jmultiplier * 1)) &&
+      !isFilled(pattern, i + (imultiplier * 2), j + (jmultiplier * 2)) &&
+      !isFilled(pattern, i + (imultiplier * 3), j + (jmultiplier * 3)) )
+    ) {
+      return true;
+    }
+    return false;
+  } else {
+    if (
+      isFilled(pattern, i + (imultiplier * 2), j + (jmultiplier * 2)) ||
+      isFilled(pattern, i + (imultiplier * 3), j + (jmultiplier * 3))
+      ){
+      return false;
+    }
+    return true;
+  }
+}
