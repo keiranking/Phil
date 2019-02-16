@@ -619,8 +619,10 @@ function layoutPDFClues(doc, style) {
 
 let openPuzzleInput = document.getElementById('open-puzzle-input');
 let openWordlistInput = document.getElementById('open-wordlist-input');
+let addWordlistInput = document.getElementById('add-wordlist-input');
 openPuzzleInput.addEventListener('change', openFile, false);
 openWordlistInput.addEventListener('change', openWordlistFile, false);
+addWordlistInput.addEventListener('change', addWordlistFile, false);
 openPuzzleInput.onclick = function () {
     this.value = null;
 };

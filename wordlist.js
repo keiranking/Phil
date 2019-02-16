@@ -33,23 +33,11 @@ function addToWordlist(newWords) {
   }
 }
 
-function sortWordlist() {
-  for (let i = 3; i < wordlist.length; i++) {
-    wordlist[i].sort();
-  }
+function addWordlist(){
+  document.getElementById("add-wordlist-input").click();
 }
 
-function openWordlist() {
-  document.getElementById("open-wordlist-input").click();
-}
-
-function openWordlistFile(e) {
-  wordlist = [
-    [], [], [], [], [],
-    [], [], [], [], [],
-    [], [], [], [], [], []
-  ];
-
+function addWordlistFile(e){
   const file = e.target.files[0];
   if (!file) {
     return;
@@ -63,6 +51,29 @@ function openWordlistFile(e) {
     invalidateSolverWordlist();
   };
   reader.readAsText(file);
+}
+
+function clearWordlist(){
+  wordlist = [
+    [], [], [], [], [],
+    [], [], [], [], [],
+    [], [], [], [], [], []
+  ];
+}
+
+function sortWordlist() {
+  for (let i = 3; i < wordlist.length; i++) {
+    wordlist[i].sort();
+  }
+}
+
+function openWordlist() {
+  document.getElementById("open-wordlist-input").click();
+}
+
+function openWordlistFile(e) {
+  clearWordlist();
+  addWordlistFile(e);
 }
 
 function openDefaultWordlist(url) {
