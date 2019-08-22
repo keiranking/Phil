@@ -1,7 +1,7 @@
 :root {
   --black: black;
-  /*--lt-grey: #f5f7f7;*/
-  --lt-grey: #f8f8f8;
+  --lt-grey: #f5f7f7;
+  /*--lt-grey: #f8f8f8;*/
   --med-grey: #999;
   --dk-grey: #444;
   /*--wh-blue: #f2f9ff;*/
@@ -135,11 +135,11 @@ h1 {
 }
 
 #grid td.lowlight {
-  /*background-color: var(--lt-grey);*/
+  background-color: var(--lt-grey);
 }
 
 #grid:focus td.lowlight {
-  /*background-color: var(--lt-grey);*/
+  background-color: var(--lt-grey);
 }
 
 #header {
@@ -451,4 +451,10 @@ kbd {
   position: absolute;
   left: 2px;
   top: 0px;
+}
+
+li.recommended {
+  font-weight: bold;
+  font-size: larger;
+  color: blue;
 }
