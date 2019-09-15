@@ -277,7 +277,7 @@ new Notification(document.getElementById("shortcuts").innerHTML, 300);
 // new Notification("Tip: <kbd>.</kbd> makes a black square.", 300);
 // new Notification("Tip: <kbd>Enter</kbd> toggles direction.", 300);
 
-let xw = new Crossword(); // model
+let xw = new Crossword( ); // model
 let current = new Interface(xw.rows, xw.cols); // view-controller
 let undoStack = [];
 current.update();
@@ -546,16 +546,23 @@ function createGrid(rows, cols) {
 }
 
 function updateLabelsAndClues() {
-    console.log("in updateLabelsAndClues()");
-    console.log("xw.rows=" + xw.rows + "  xw.cols=" + xw.cols);
+    console.log("updateLabelsAndClues: xw.rows=" + xw.rows + "  xw.cols=" + xw.cols);
     let count = 1;
     for (let i = 0; i < xw.rows; i++) {
 	for (let j = 0; j < xw.cols; j++) {
+//	    console.log( "["+i+","+j+"]");
 	    let isAcross = false;
 	    let isDown = false;
 	    if (xw.fill[i][j] != BLACK) {
-		isDown = (i == 0) || ( (xw.fill[i - 1][j] == BLACK)  && (i < xw.rows-2) && (xw.fill[i + 1][j] != BLACK) );
-		isAcross = (j == 0) || ( (xw.fill[i][j - 1] == BLACK) && (j < xw.cols-2) && (xw.fill[i][j + 1] != BLACK) );
+//		console.log( "  xw.fill["+(i + 1)+"]["+j+"]=[" + xw.fill[i + 1][j] + "]" );
+//		console.log( "  xw.fill["+i+"]["+(j+1)+"]=[" + xw.fill[i][j+1] + "]");
+//		isDown = (i == 0) || ( (xw.fill[i - 1][j] == BLACK)  && (i < xw.rows-2) && (xw.fill[i + 1][j] != BLACK) );
+//		isAcross = (j == 0) || ( (xw.fill[i][j - 1] == BLACK) && (j < xw.cols-2) && (xw.fill[i][j + 1] != BLACK) );
+
+
+		isDown = (i == 0 && i < xw.rows && xw.fill[i + 1][j] != BLACK) || ( (i > 0 ) && (xw.fill[i - 1][j] == BLACK)  && (i < xw.rows-2) && (xw.fill[i + 1][j] != BLACK) );
+		isAcross = (j == 0 && j < xw.cols && xw.fill[i][j+1] != BLACK) || ( (j > 0 ) && (xw.fill[i][j - 1] == BLACK) && (j < xw.cols-2) && (xw.fill[i][j + 1] != BLACK) );
+//		console.log( "updateLabelsAndClues: ("+i+","+j+") isAcross="+isAcross+" isDown="+isDown );
 	    }
 	    const grid = document.getElementById("grid");
 	    let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');

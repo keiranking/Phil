@@ -111,7 +111,7 @@ h1 {
   -moz-box-shadow: 0 0 12px 0px var(--dk-blue);
   -webkit-box-shadow: 0 0 12px 0px var(--dk-blue);
   border-style: double;
-  border: 1px solid var(--med-blue);
+  border: 1px solid var(--dk-blue);
 }
 
 #grid td.pencil .fill {
@@ -454,6 +454,12 @@ kbd {
 }
 
 li.recommended {
+  font-weight: bold;
+  color: black;
+}
+
+
+li.highly-recommended {
   font-weight: bold;
   font-size: larger;
   color: blue;
