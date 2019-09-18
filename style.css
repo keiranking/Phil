@@ -464,3 +464,11 @@ li.highly-recommended {
   font-size: larger;
   color: blue;
 }
+
+#grid:focus td.lowlight-symmetric {
+  background-color: white;
+}
+
+#grid:focus td.highlight-symmetric {
+  background-color: black;
+}
