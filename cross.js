@@ -19,6 +19,7 @@ const keyboard = {
     "q":      81, "r": 82, "s": 83, "t": 84, "u": 85, "v": 86, "w": 87, "x": 88, "y": 89,
     "z":      90,
     "black":  190, ".": 190,
+    "showSymmetricBlack":  188, ",": 188,
     "delete": 8,
     "enter":  13,
     "ctrlZ":  26,
@@ -375,6 +376,23 @@ function keyboardHandler(e) {
 	}
 	isMutated = true;
     }
+    if (e.which == keyboard.showSymmetricBlack) {
+	//alert( "currently at [" + current.row + ", " + current.col + "]  sym at [" + symRow + ", " + symCol + "]" );
+	const symCell = grid.querySelector('[data-row="' + symRow + '"]').querySelector('[data-col="' + symCol + '"]');
+
+	const maxTime = 3000;
+	const stepTime = 1000;
+	const highlightSym = "highlight-symmetric";
+	const lowlightSym = "lowlight-symmetric";
+	
+	for( var i = 0; i < maxTime; i+=stepTime ) {
+	    setTimeout(function() { symCell.classList.remove(lowlightSym); symCell.classList.add(highlightSym); }, i );
+	    setTimeout(function() { symCell.classList.remove(highlightSym); symCell.classList.add(lowlightSym); }, i+(stepTime/2) );
+	}
+	setTimeout(function() { symCell.classList.remove(highlightSym); symCell.classList.remove(lowlightSym); }, maxTime );
+	isMutated = false;
+    }
+
     if (e.which == keyboard.black) {
 	if (xw.fill[current.row][current.col] == BLACK) { // if already black...
             e = new Event('keydown');
@@ -387,6 +405,7 @@ function keyboardHandler(e) {
 	}
 	isMutated = true;
     }
+
     if (e.which == keyboard.enter) {
 	current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
     }
