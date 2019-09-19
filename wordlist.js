@@ -186,7 +186,6 @@ function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vp
 		for( let dm1 in otherWayMatches ) {
 		    let cache = new Set();
 		    if( traceWordListSuggestions ) console.log( "\t\t\tchecking otherWayMatches='"+ otherWayMatches[dm1] +"'");
-		    //		    if( !wordIsHarmonious( am, hpos, otherWayMatches[dm1], vpos, cache ) ) {
 		    // At this point, if otherWayMatches[dm1] is undefined, that means that the word is complete
 		    // and we ought to consider that the word is harmonious
 		    if( otherWayMatches[dm1] !== undefined && !wordIsHarmonious( am, parseInt(dm1, 10), otherWayMatches[dm1], vpos, cache ) ) {
@@ -208,7 +207,6 @@ function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vp
 			li.setAttribute("class", "recommended");
 		    }
 		}
-//		if( nHarmonious || !showOnlyRecommendations ) {
 		if( !showOnlyRecommendations || ( nHarmonious == otherWayMatches.length )) {
 		    matchList.appendChild(li);
 		}
@@ -314,21 +312,6 @@ function updateMatchesUI() {
     console.log("Checking downMatches...");
     checkHarmoniousness( document, [matchFromWordlist( current.downWord ) ], acrossMatches, vpos, hpos, downMatchList, current.row );
 
-
-    //    let cache2 = new Set();
-    //    for (let i = 0; i < downMatches.length; i++) {
-    //	let li = document.createElement("LI");
-    //	li.innerHTML = downMatches[i].toLowerCase();
-    //	li.className = "";
-    //	li.addEventListener('dblclick', fillGridWithMatch);
-    //	let h = wordIsHarmonious( downMatches[ i ], vpos, acrossMatches, hpos, cache2 );
-    //	if( h ) {
-    //	    li.setAttribute("class", "recommended");
-    //	}
-    //	if( h || !showOnlyRecommendations ) {
-    //	    downMatchList.appendChild(li);
-    //	}
-    //    }
 }
 // Set Undo button's state to STATE
 function setUndoButton( state, tooltip ) {
@@ -344,10 +327,10 @@ function setUndoButton( state, tooltip ) {
     undoButton.setAttribute( "data-tooltip", tooltip );
 }
 
-// Undo the latest action done by fillGridWithMatch()
+// Undo the latest action
 function undo() {
     if( undoStack.length > 0 ) {
-	console.log("undo: undoing puzzle to before last grid fill...");
+	console.log("undo: undoing puzzle to before last grid change...");
 	const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
 	previousCell.classList.remove("active");
 
@@ -359,7 +342,7 @@ function undo() {
 	    setUndoButton( "off", "No further undo information available" );
 	} else {
 	    let undoContext = undoStack[ undoStack.length-1 ];
-	    setUndoButton( "on", "Undo latest grid fill for \"" + undoContext.fill + "\"");
+	    setUndoButton( "on", "Undo latest grid change for \"" + undoContext.label + "\"");
 	}
 
 	isMutated = true;
@@ -373,17 +356,22 @@ function undo() {
     }
 }
 
+// Take a snapshot of the current state and push it onto the (global) undoStack
+function saveStateForUndo( label ) {
+    let undoContext = {};
+    undoContext.xw = cloneObject( xw );
+    undoContext.current = cloneObject( current );
+    undoContext.label = label;
+    undoStack.push( undoContext );
+    setUndoButton( "on", "Undo latest grid change for \"" + label + "\"" );
+}    
+
 function fillGridWithMatch(e) {
     const li = e.currentTarget;
     const fill = li.innerHTML.toUpperCase();
     const dir = (li.parentNode.id == "across-matches") ? ACROSS : DOWN;
 
-    let undoContext = {};
-    undoContext.xw = cloneObject( xw );
-    undoContext.current = cloneObject( current );
-    undoContext.fill = fill;
-    undoStack.push( undoContext );
-    setUndoButton( "on", "Undo latest grid fill for \"" + fill + "\"" );
+    saveStateForUndo( fill );
 
     if (dir == ACROSS) {
 	xw.fill[current.row] = xw.fill[current.row].slice(0, current.acrossStartIndex) + fill + xw.fill[current.row].slice(current.acrossEndIndex);
