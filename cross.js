@@ -22,7 +22,6 @@ const keyboard = {
     "showSymmetricBlack":  188, ",": 188,
     "delete": 8,
     "enter":  13,
-    "ctrlZ":  26,
     "space":  32,
     "left":   37,
     "up":     38,
@@ -354,7 +353,7 @@ function keyboardHandler(e) {
     const symRow = xw.rows - 1 - current.row;
     const symCol = xw.cols - 1 - current.col;
 
-    if (event.ctrlKey && event.key === 'z') {
+    if (e.ctrlKey && e.which === keyboard.z ) {
 	undo();
 	return;
     }
@@ -394,6 +393,7 @@ function keyboardHandler(e) {
     }
 
     if (e.which == keyboard.black) {
+	saveStateForUndo( "toggling black/nonblack" );
 	if (xw.fill[current.row][current.col] == BLACK) { // if already black...
             e = new Event('keydown');
             e.which = keyboard.delete; // make it a white square
@@ -776,6 +776,7 @@ function toggleRecommend() {
 // }
 
 function clearFill() {
+    saveStateForUndo( "clear the puzzle" );
     for (let i = 0; i < xw.rows; i++) {
 	xw.fill[i] = xw.fill[i].replace(/\w/g, ' '); // replace letters with spaces
     }
