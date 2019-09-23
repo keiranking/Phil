@@ -353,7 +353,7 @@ function keyboardHandler(e) {
     const symRow = xw.rows - 1 - current.row;
     const symCol = xw.cols - 1 - current.col;
 
-    if (e.ctrlKey && e.which === keyboard.z ) {
+    if ( (e.ctrlKey || e.metaKey) && e.which === keyboard.z ) {
 	undo();
 	return;
     }
