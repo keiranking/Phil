@@ -164,9 +164,10 @@ function displayDefintion() {
 // Annotate those clues as "recommended" if they are harmonious with at least one downMatch.
 // Annotate those clues as "highly-recommended" if they are harmonious with *all* downMatches.
 // (Optimization: Once we miss a downMatch for an acrossMatch, we need look no further for highly-recommended for that acrossMatch.)
-function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vpos, matchList, pos ) {
+function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vpos, matchList ) {
     if( traceWordListSuggestions ) console.log( "oneWayMatches=" + oneWayMatches);
     if( traceWordListSuggestions ) console.log( "otherWayMatches=" + otherWayMatches);
+    if( traceWordListSuggestions ) console.log( "hpos=" + hpos + ", vpos=" + vpos );
     for (let am1 in oneWayMatches ) {
 	if( traceWordListSuggestions ) console.log( "checking oneWayMatches[" + am1 + "] for " + oneWayMatches[am1] );
 	for( let am2 in oneWayMatches[am1] ) {
@@ -193,7 +194,7 @@ function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vp
 			// break HARMONIOUSNESS_CHECK;
 		    } else {
 			nHarmonious++;
-			if( dm1 == pos ) {
+			if( dm1 == hpos ) {
 			    if( traceWordListSuggestions ) console.log( "Setting harmoniousAtIntersection to true" );
 			    harmoniousAtIntersection = true;
 			}
@@ -214,8 +215,6 @@ function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vp
 	}
     }
 }
-
-// TODO: only add word if in same pos (row or col)
 
 // 1. Mark suggested words with the "recommended" class when the word forms a valid word
 //    both across and down for words that intersect at the current square.
@@ -308,9 +307,9 @@ function updateMatchesUI() {
     let vpos = current.row - current.downStartIndex;
 
     console.log("Checking acrossMatches...");
-    checkHarmoniousness( document, [matchFromWordlist( current.acrossWord ) ], downMatches, hpos, vpos, acrossMatchList, current.col );
+    checkHarmoniousness( document, [matchFromWordlist( current.acrossWord ) ], downMatches, hpos, vpos, acrossMatchList );
     console.log("Checking downMatches...");
-    checkHarmoniousness( document, [matchFromWordlist( current.downWord ) ], acrossMatches, vpos, hpos, downMatchList, current.row );
+    checkHarmoniousness( document, [matchFromWordlist( current.downWord ) ], acrossMatches, vpos, hpos, downMatchList );
 
 }
 // Set Undo button's state to STATE
