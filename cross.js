@@ -347,6 +347,106 @@ function mouseHandler(e) {
     updateUI();
 }
 
+// Determine whether the single square at (I, J) is blocked to the North, East, South or West.
+function cellBlocked1( i, j ) {
+    let blocked = new Object();
+    blocked.north = blocked.east = blocked.south = blocked.south = false;
+
+    if( i-1 < 0 ) {
+	blocked.north = true;
+    } else {
+	blocked.north = ( xw.fill[i-1][j] == BLACK );
+    }
+    if( i+1 >= xw.rows ) {
+	blocked.south = true;
+    } else {
+	blocked.south = ( xw.fill[i+1][j] == BLACK );
+    }
+    
+    if( j-1 < 0 ) {
+	blocked.west = true;
+    } else {
+	blocked.west = ( xw.fill[i][j-1] == BLACK );
+    }
+    if( j+1 >= xw.cols ) {
+	blocked.east = true;
+    } else {
+	blocked.east = ( xw.fill[i][j+1] == BLACK );
+    }
+
+    // console.log( "cellBlocked1: square[" + i + ", " + j + "] = " + blocked.north + blocked.south + blocked.east + blocked.west );
+
+    return( blocked );
+}
+
+
+// Determine whether the the square is immediately blocked by OR
+// if it is part of a run of 2 squares that include (I, J) that is blocked to the North, East, South or West.
+function cellBlocked2( i, j ) {
+    let blocked1 = cellBlocked1( i, j ); // are we immediately blocked on any side?
+    if( (blocked1.north && blocked1.south) || (blocked1.east && blocked1.west ) ) {
+	return( true );
+    }
+
+    let blocked2 = new Object();
+    blocked2.north = blocked2.east = blocked2.south = blocked2.south = false;
+
+    if( i-2 < 0 ) {
+	blocked2.north = true;
+    } else {
+	blocked2.north = ( xw.fill[i-2][j] == BLACK );
+    }
+    if( i+2 >= xw.rows ) {
+	blocked2.south = true;
+    } else {
+	blocked2.south = ( xw.fill[i+2][j] == BLACK );
+    }
+    
+    if( j-2 < 0 ) {
+	blocked2.west = true;
+    } else {
+	blocked2.west = ( xw.fill[i][j-2] == BLACK );
+    }
+    if( j+2 >= xw.cols ) {
+	blocked2.east = true;
+    } else {
+	blocked2.east = ( xw.fill[i][j+2] == BLACK );
+    }
+
+    // console.log( "cellBlocked2: square[" + i + ", " + j + "] = " + blocked2.north + blocked2.south + blocked2.east + blocked2.west );
+
+    if( (blocked1.north && blocked2.south) || (blocked2.north && blocked1.south) || (blocked1.east && blocked2.west ) || (blocked2.east && blocked1.west ) ) {
+	return( blocked2 );
+    } else {
+	return( null );
+    }
+}
+
+// Visit the entire grid, checking for legality.
+// If any squares are illegal, mark them with the attribute "illegal-square".
+//
+// An illegal square would be one where it is blocked by either its
+// (East and West) or (North and South) neighbors.
+//
+// Another way a square is illegal is if it is part of a two-square run (that is blocked on either end).
+//
+// In this context, "blocked" means either a black square or off the grid.
+function checkGridLegality() {
+    let illegalSquare = "illegal-square";
+    for (let i = 0; i < xw.rows; i++) {
+	for (let j = 0; j < xw.cols; j++) {
+	    let cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+	    if( xw.fill[i][j] != BLACK ) {
+		if ( cellBlocked2( i, j ) ) {
+		    cell.classList.add(illegalSquare);
+		} else {
+		    cell.classList.remove(illegalSquare);
+		}
+	    }
+	}
+    }
+}
+
 function keyboardHandler(e) {
     isMutated = false;
     let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
@@ -402,6 +502,7 @@ function keyboardHandler(e) {
             if (isSymmetrical) {
 		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
             }
+	    checkGridLegality();
 	}
 	isMutated = true;
     }
@@ -417,6 +518,7 @@ function keyboardHandler(e) {
             if (isSymmetrical) {
 		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
             }
+	    checkGridLegality();
 	} else { // move the cursor
             e = new Event('keydown');
             if (current.direction == ACROSS) {

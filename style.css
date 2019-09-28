@@ -472,3 +472,7 @@ li.highly-recommended {
 #grid:focus td.highlight-symmetric {
   background-color: black;
 }
+
+#grid:focus td.illegal-square {
+  background-color: red;
+}
