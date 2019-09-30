@@ -383,6 +383,11 @@ function cellBlocked1( i, j ) {
 // Determine whether the the square is immediately blocked by OR
 // if it is part of a run of 2 squares that include (I, J) that is blocked to the North, East, South or West.
 function cellBlocked2( i, j ) {
+    if( xw.fill[i][j] == BLACK ) {
+	console.log( i + ", " + j + " is BLACK; returning null" );
+	return( null );
+    }
+
     let blocked1 = cellBlocked1( i, j ); // are we immediately blocked on any side?
     if( (blocked1.north && blocked1.south) || (blocked1.east && blocked1.west ) ) {
 	return( true );
@@ -415,7 +420,12 @@ function cellBlocked2( i, j ) {
 
     // console.log( "cellBlocked2: square[" + i + ", " + j + "] = " + blocked2.north + blocked2.south + blocked2.east + blocked2.west );
 
-    if( (blocked1.north && blocked2.south) || (blocked2.north && blocked1.south) || (blocked1.east && blocked2.west ) || (blocked2.east && blocked1.west ) ) {
+    if( 
+	((blocked1.north && blocked2.south) ||
+	 (blocked2.north && blocked1.south) ||
+	 (blocked1.east && blocked2.west ) ||
+	 (blocked2.east && blocked1.west ) )
+    ) {
 	return( blocked2 );
     } else {
 	return( null );
@@ -436,7 +446,9 @@ function checkGridLegality() {
     for (let i = 0; i < xw.rows; i++) {
 	for (let j = 0; j < xw.cols; j++) {
 	    let cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
-	    if( xw.fill[i][j] != BLACK ) {
+	    if( xw.fill[i][j] == BLACK ) {
+		    cell.classList.remove(illegalSquare);
+	    } else {
 		if ( cellBlocked2( i, j ) ) {
 		    cell.classList.add(illegalSquare);
 		} else {
@@ -502,7 +514,6 @@ function keyboardHandler(e) {
             if (isSymmetrical) {
 		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
             }
-	    checkGridLegality();
 	}
 	isMutated = true;
     }
@@ -518,7 +529,6 @@ function keyboardHandler(e) {
             if (isSymmetrical) {
 		xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
             }
-	    checkGridLegality();
 	} else { // move the cursor
             e = new Event('keydown');
             if (current.direction == ACROSS) {
@@ -570,6 +580,7 @@ function keyboardHandler(e) {
 function updateUI() {
     if (isMutated) {
 	autoFill(true);  // quick fill
+	checkGridLegality();
     }
     updateGridUI();
     updateLabelsAndClues();
@@ -671,19 +682,11 @@ function updateLabelsAndClues() {
     let count = 1;
     for (let i = 0; i < xw.rows; i++) {
 	for (let j = 0; j < xw.cols; j++) {
-//	    console.log( "["+i+","+j+"]");
 	    let isAcross = false;
 	    let isDown = false;
 	    if (xw.fill[i][j] != BLACK) {
-//		console.log( "  xw.fill["+(i + 1)+"]["+j+"]=[" + xw.fill[i + 1][j] + "]" );
-//		console.log( "  xw.fill["+i+"]["+(j+1)+"]=[" + xw.fill[i][j+1] + "]");
-//		isDown = (i == 0) || ( (xw.fill[i - 1][j] == BLACK)  && (i < xw.rows-2) && (xw.fill[i + 1][j] != BLACK) );
-//		isAcross = (j == 0) || ( (xw.fill[i][j - 1] == BLACK) && (j < xw.cols-2) && (xw.fill[i][j + 1] != BLACK) );
-
-
 		isDown = (i == 0 && i < xw.rows && xw.fill[i + 1][j] != BLACK) || ( (i > 0 ) && (xw.fill[i - 1][j] == BLACK)  && (i < xw.rows-2) && (xw.fill[i + 1][j] != BLACK) );
 		isAcross = (j == 0 && j < xw.cols && xw.fill[i][j+1] != BLACK) || ( (j > 0 ) && (xw.fill[i][j - 1] == BLACK) && (j < xw.cols-2) && (xw.fill[i][j + 1] != BLACK) );
-//		console.log( "updateLabelsAndClues: ("+i+","+j+") isAcross="+isAcross+" isDown="+isDown );
 	    }
 	    const grid = document.getElementById("grid");
 	    let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
