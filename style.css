@@ -473,6 +473,6 @@ li.highly-recommended {
   background-color: black;
 }
 
-#grid:focus td.illegal-square {
-  background-color: red;
+#grid .illegal-square {
+  background-image: repeating-radial-gradient(orange, red, grey);
 }
