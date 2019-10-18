@@ -7,5 +7,5 @@
 5. [X] Allow black/unblack square operations to be undone. (Also clear tiles?)
 6. [ ] Support regular expressions in the puzzle. Suggestion: allow digits 0-9 in the puzzle, which refer to one of ten regular expressions. For instance, regex 1 might be any vowel (i.e., /[aeiou]/) and regex 3 might refer to whatever matched in regex 1 (i.e., /\1/). So we could specify something like "B 1 3 K" which would match "book" but not "beak".
 7. [ ] Show a dictionary lookup of a clue on hover.
-8. [ ] If we are showing only "highly-recommended" words yet there are none, show all (including recommended and non recommended)
-9. [ ] Experiment: include suggests even if there are no letters filled in (void). Is it a performance thing?
+8. [X] If we are showing only "highly-recommended" words yet there are none, show all (including recommended and non recommended)
+9. [X] Experiment: include suggests even if there are no letters filled in (void). Is it a performance thing? Yes; I tried it and there are *way* too many matches; the UI takes forever to update.
