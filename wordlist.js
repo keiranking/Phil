@@ -41,11 +41,12 @@ function sortWordlist() {
     }
 }
 
-// source: https://github.com/jashkenas/underscore/blob/master/underscore.js#L1320
 function isObject(obj) {
+    // source: https://github.com/jashkenas/underscore/blob/master/underscore.js#L1320
     var type = typeof obj;
     return type === 'function' || type === 'object' && !!obj;
 };
+
 function cloneObject(src) {
     let target = {};
     for (let prop in src) {
@@ -131,10 +132,11 @@ function matchFromWordlist(word) {
     }
 }
 
-// Determines whether the given letter in WORD at POS1 appears in
-// at least one word in the given WORDS at letter position POS2.
-// CACHE is a set of previously determined harmonious letters.
 function wordIsHarmonious( word, pos1, words, pos2, cache ) {
+    // Determines whether the given letter in WORD at POS1 appears in
+    // at least one word in the given WORDS at letter position POS2.
+    // CACHE is a set of previously determined harmonious letters.
+
     if( traceWordListSuggestions ) console.log( "wordIsHarmonious(word=" + word + ", pos1=" + pos1 + ", words="+words + ", pos2=" + pos2 + ")");
     if( words === undefined ) return( false );
     letter = word.substring( pos1, pos1+1 ).toLowerCase();
@@ -160,14 +162,19 @@ function displayDefintion() {
     alert("displayDefintion");
 }
 
-// Add *all* clues for acrossMatches.
-// Annotate those clues as "recommended" if they are harmonious with at least one downMatch.
-// Annotate those clues as "highly-recommended" if they are harmonious with *all* downMatches.
-// (Optimization: Once we miss a downMatch for an acrossMatch, we need look no further for highly-recommended for that acrossMatch.)
 function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vpos, matchList ) {
+// Add *all* clues for oneWayMatches.
+// Annotate those clues as "recommended" if they are harmonious with at least one otherWayMatch.
+// Annotate those clues as "highly-recommended" if they are harmonious with *all* otherWayMatches.
+// (Optimization: Once we miss an otherWayMatch for an oneWayMatch, we need look no further for highly-recommended for that oneWayMatch.)
+
+    // TODO: Why is oneWayMatches an array of one element (which is an array of elements)?
     if( traceWordListSuggestions ) console.log( "oneWayMatches=" + oneWayMatches);
     if( traceWordListSuggestions ) console.log( "otherWayMatches=" + otherWayMatches);
     if( traceWordListSuggestions ) console.log( "hpos=" + hpos + ", vpos=" + vpos );
+
+    let matchesDisplayed = 0;
+    
     for (let am1 in oneWayMatches ) {
 	if( traceWordListSuggestions ) console.log( "checking oneWayMatches[" + am1 + "] for " + oneWayMatches[am1] );
 	for( let am2 in oneWayMatches[am1] ) {
@@ -190,8 +197,7 @@ function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vp
 		    // At this point, if otherWayMatches[dm1] is undefined, that means that the word is complete
 		    // and we ought to consider that the word is harmonious
 		    if( otherWayMatches[dm1] !== undefined && !wordIsHarmonious( am, parseInt(dm1, 10), otherWayMatches[dm1], vpos, cache ) ) {
-			if( traceWordListSuggestions ) console.log( "breaking from HARMONIOUSNESS_CHECK")
-			// break HARMONIOUSNESS_CHECK;
+			if( traceWordListSuggestions ) console.log( "HARMONIOUSNESS_CHECK")
 		    } else {
 			nHarmonious++;
 			if( dm1 == hpos ) {
@@ -210,12 +216,25 @@ function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vp
 		}
 		if( !showOnlyRecommendations || ( nHarmonious == otherWayMatches.length )) {
 		    matchList.appendChild(li);
+		    matchesDisplayed++;
 		}
 	    }
 	}
     }
+    if( !matchesDisplayed ) {  // We haven't display any matches so display them all
+	oneWayMatches[0].forEach(
+	    function(element) {
+		let li = document.createElement("LI");
+		li.innerHTML = element.toLowerCase();
+		li.className = "";
+		li.addEventListener('dblclick', fillGridWithMatch);
+		matchList.appendChild(li)
+	    }
+	);
+    }
 }
 
+function updateMatchesUI() {
 // 1. Mark suggested words with the "recommended" class when the word forms a valid word
 //    both across and down for words that intersect at the current square.
 // 2. Mark suggested words with the "highly-recommended" class when the word forms a valid word
@@ -249,10 +268,10 @@ function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vp
 // Suggested words for the first column (-X--) that match the cross character in the list of suggested words
 // for *all* intersecting rows (A---, BX--, C-Y- and D---) are annotated with the class name "highly-recommended".
 //
-
 // Only consider words that are neither completely empty nor completely full.
+//
+// If showOnlyRecommendations is true, then show only highly-recommended matches. Unless there aren't any, then show all.
 
-function updateMatchesUI() {
     let acrossMatchList = document.getElementById("across-matches");
     let downMatchList = document.getElementById("down-matches");
     acrossMatchList.innerHTML = "";
@@ -310,10 +329,10 @@ function updateMatchesUI() {
     checkHarmoniousness( document, [matchFromWordlist( current.acrossWord ) ], downMatches, hpos, vpos, acrossMatchList );
     console.log("Checking downMatches...");
     checkHarmoniousness( document, [matchFromWordlist( current.downWord ) ], acrossMatches, vpos, hpos, downMatchList );
-
 }
-// Set Undo button's state to STATE
+
 function setUndoButton( state, tooltip ) {
+// Set Undo button's state to STATE
     console.log( "setUndoButton: setting state = " + state + ", tooltip=\"" + tooltip + "\"" );
     let undoButton = document.getElementById("undo");
 
@@ -326,8 +345,8 @@ function setUndoButton( state, tooltip ) {
     undoButton.setAttribute( "data-tooltip", tooltip );
 }
 
-// Undo the latest action
 function undo() {
+// Undo the latest action
     if( undoStack.length > 0 ) {
 	console.log("undo: undoing puzzle to before last grid change...");
 	const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
@@ -355,8 +374,8 @@ function undo() {
     }
 }
 
-// Take a snapshot of the current state and push it onto the (global) undoStack
 function saveStateForUndo( label ) {
+// Take a snapshot of the current state and push it onto the (global) undoStack
     let undoContext = {};
     undoContext.xw = cloneObject( xw );
     undoContext.current = cloneObject( current );
