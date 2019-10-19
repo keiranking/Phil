@@ -163,26 +163,29 @@ function displayDefintion() {
 }
 
 function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vpos, matchList ) {
-// Add *all* clues for oneWayMatches.
-// Annotate those clues as "recommended" if they are harmonious with at least one otherWayMatch.
-// Annotate those clues as "highly-recommended" if they are harmonious with *all* otherWayMatches.
-// (Optimization: Once we miss an otherWayMatch for an oneWayMatch, we need look no further for highly-recommended for that oneWayMatch.)
+    // For the given DOCUMENT, add clues for ONEWAYMATCHES (and array of candidates) considering their
+    // relation to OTHERWAYMATCHES (an array of array of candidates) and the fact that the cursor is
+    // currently at row HPOS and column VPOS. Add the clues to MATCHLIST.
+    
+    // Annotate those clues as "recommended" if they are harmonious with at least one otherWayMatch.
+    // Annotate those clues as "highly-recommended" if they are harmonious with *all* otherWayMatches.
 
-    // TODO: Why is oneWayMatches an array of one element (which is an array of elements)?
+    // If showOnlyRecommendations, then only add highly-recommended clues. Unless there aren't any,
+    // in which case add them all.
+
     if( traceWordListSuggestions ) console.log( "oneWayMatches=" + oneWayMatches);
     if( traceWordListSuggestions ) console.log( "otherWayMatches=" + otherWayMatches);
     if( traceWordListSuggestions ) console.log( "hpos=" + hpos + ", vpos=" + vpos );
 
     let matchesDisplayed = 0;
-    
-    for (let am1 in oneWayMatches ) {
-	if( traceWordListSuggestions ) console.log( "checking oneWayMatches[" + am1 + "] for " + oneWayMatches[am1] );
-	for( let am2 in oneWayMatches[am1] ) {
-	    if( traceWordListSuggestions ) console.log( "\t\t[" + am1 + "][" + am2 + "]=" + oneWayMatches[am1][am2] );
-	    let am = oneWayMatches[am1][am2];
-	    if( am !== undefined ) {
+    let runnersUp = [];  // The list of suggestions we'll make if we are asked to showOnlyRecommendations and there are none
+
+	for( let owmi in oneWayMatches ) {
+	    if( traceWordListSuggestions ) console.log( "\t\t[" + owmi + "]=" + oneWayMatches[owmi] );
+	    let owm = oneWayMatches[owmi];
+	    if( owm !== undefined ) {
 		let li = document.createElement("LI");
-		li.innerHTML = am.toLowerCase();
+		li.innerHTML = owm.toLowerCase();
 		li.className = "";
 		// li.addEventListener('click', printScore);
 		// li.addEventListener('mouseover', displayDefintion);
@@ -191,16 +194,16 @@ function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vp
 		let harmoniousAtIntersection = false;
 
 		// HARMONIOUSNESS_CHECK:
-		for( let dm1 in otherWayMatches ) {
+		for( let owmj in otherWayMatches ) {
 		    let cache = new Set();
-		    if( traceWordListSuggestions ) console.log( "\t\t\tchecking otherWayMatches='"+ otherWayMatches[dm1] +"'");
-		    // At this point, if otherWayMatches[dm1] is undefined, that means that the word is complete
+		    if( traceWordListSuggestions ) console.log( "\t\t\tchecking otherWayMatches='"+ otherWayMatches[owmj] +"'");
+		    // At this point, if otherWayMatches[owmj] is undefined, that means that the word is complete
 		    // and we ought to consider that the word is harmonious
-		    if( otherWayMatches[dm1] !== undefined && !wordIsHarmonious( am, parseInt(dm1, 10), otherWayMatches[dm1], vpos, cache ) ) {
+		    if( otherWayMatches[owmj] !== undefined && !wordIsHarmonious( owm, parseInt(owmj, 10), otherWayMatches[owmj], vpos, cache ) ) {
 			if( traceWordListSuggestions ) console.log( "HARMONIOUSNESS_CHECK")
 		    } else {
 			nHarmonious++;
-			if( dm1 == hpos ) {
+			if( owmj == hpos ) {
 			    if( traceWordListSuggestions ) console.log( "Setting harmoniousAtIntersection to true" );
 			    harmoniousAtIntersection = true;
 			}
@@ -217,17 +220,15 @@ function checkHarmoniousness( document, oneWayMatches, otherWayMatches, hpos, vp
 		if( !showOnlyRecommendations || ( nHarmonious == otherWayMatches.length )) {
 		    matchList.appendChild(li);
 		    matchesDisplayed++;
+		} else {
+		    runnersUp.push( li );
 		}
 	    }
 	}
-    }
+
     if( !matchesDisplayed ) {  // We haven't display any matches so display them all
-	oneWayMatches[0].forEach(
-	    function(element) {
-		let li = document.createElement("LI");
-		li.innerHTML = element.toLowerCase();
-		li.className = "";
-		li.addEventListener('dblclick', fillGridWithMatch);
+	runnersUp.forEach(
+	    function(li) {
 		matchList.appendChild(li)
 	    }
 	);
@@ -326,9 +327,9 @@ function updateMatchesUI() {
     let vpos = current.row - current.downStartIndex;
 
     console.log("Checking acrossMatches...");
-    checkHarmoniousness( document, [matchFromWordlist( current.acrossWord ) ], downMatches, hpos, vpos, acrossMatchList );
+    checkHarmoniousness( document, matchFromWordlist( current.acrossWord ) , downMatches, hpos, vpos, acrossMatchList );
     console.log("Checking downMatches...");
-    checkHarmoniousness( document, [matchFromWordlist( current.downWord ) ], acrossMatches, vpos, hpos, downMatchList );
+    checkHarmoniousness( document, matchFromWordlist( current.downWord ) , acrossMatches, vpos, hpos, downMatchList );
 }
 
 function setUndoButton( state, tooltip ) {
