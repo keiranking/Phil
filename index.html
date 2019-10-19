@@ -1,116 +1,131 @@
 <html>
-<head>
-  <link rel="stylesheet" type="text/css" href="style.css" />
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
-  <title>Phil - a free crossword maker</title>
-</head>
-<body>
-  <div id="header">
-    <h1><span id="puzzle-title" class="editable" contenteditable="true"
-      onkeydown="suppressEnterKey(event)" onfocusout="setTitle()">Untitled</span>
-     by <span id="puzzle-author" class="editable" contenteditable="true"
-      onkeydown="suppressEnterKey(event)" onfocusout="setAuthor()">Anonymous</span></h1>
-  </div>
-
-  <div id="toolbar">
-    <button id="new-grid" type="button" data-tooltip="New puzzle" onclick="createNewPuzzle()">
-      <i class="fa fa-plus fa-fw" aria-hidden="true"></i>
-    </button>
-    <button id="open-JSON" type="button" data-tooltip="Open puzzle..." onmouseenter="showMenu(event)" onclick="openPuzzle()">
-      <i class="fa fa-folder-open-o fa-fw" aria-hidden="true"></i>
-    </button>
-    <input id="open-puzzle-input" class="hidden" type="file" accept=".json,.txt,.xw,.puz"/>
-    <div id="export-menu" class="menu hidden" onmouseleave="hideMenu(event)">
-      <h4>Export as:</h4>
-      <button id="export-JSON" class="default" type="button" data-tooltip="Phil puzzle (.xw)" onmouseup="setDefault(event)" onclick="writeFile('xw')">
-        <i class="fa fa-download fa-fw" aria-hidden="true"></i>
-      </button>
-      <button id="export-PUZ" type="button" data-tooltip="Across Lite puzzle (.puz)" onmouseup="setDefault(event)" onclick="writeFile('puz')">
-        <i class="fa fa-download fa-fw" aria-hidden="true"></i>
-      </button>
-      <button id="print-puzzle" type="button" data-tooltip="Printable puzzle (.pdf)" onmouseup="setDefault(event)" onclick="printPDF()">
-        <i class="fa fa-print fa-fw" aria-hidden="true"></i>
-      </button>
-      <button id="print-NYT-submission" type="button" data-tooltip="NYT submission (.pdf)" onmouseup="setDefault(event)" onclick="printPDF('nyt')">
-        <i class="fa fa-newspaper-o fa-fw" aria-hidden="true"></i>
-      </button>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <title>Phil - a free crossword maker</title>
+  </head>
+  <body>
+    <div id="header">
+      <h1><span id="puzzle-title" class="editable" contenteditable="true"
+		onkeydown="suppressEnterKey(event)" onfocusout="setTitle()">Untitled</span>
+	by <span id="puzzle-author" class="editable" contenteditable="true"
+		 onkeydown="suppressEnterKey(event)" onfocusout="setAuthor()">Anonymous</span></h1>
     </div>
-    <button id="export" type="button" data-tooltip="Save puzzle" onmouseenter="showMenu(event)" onclick="doDefault(event)">
-      <i class="fa fa-download fa-fw" aria-hidden="true"></i>
-    </button>
-    <a id="download-puzzle-link" class="hidden">Download puzzle</a>
 
-    <div class="divider"></div>
-
-    <button id="quick-layout" type="button" data-tooltip="Generate pattern" onmouseenter="showMenu(event)" onclick="generatePattern()">
-      <i class="fa fa-delicious fa-fw" aria-hidden="true"></i>
-    </button>
-    <button id="toggle-freeze-layout" type="button" data-tooltip="Freeze pattern" data-state="off" class="disabled">
-      <i class="fa fa-snowflake-o fa-fw" aria-hidden="true"></i>
-    </button>
-    <button id="clear-fill" type="button" data-tooltip="Clear white squares" onclick="clearFill()">
-      <i class="fa fa-eraser fa-fw" aria-hidden="true"></i>
-    </button>
-    <button id="toggle-symmetry" type="button" data-tooltip="Turn off symmetry" data-state="on" class="button-on" onclick="toggleSymmetry()">
-      <i class="fa fa-balance-scale fa-fw" aria-hidden="true"></i>
-    </button>
-
-    <div class="divider"></div>
-
-    <button id="open-wordlist" type="button" data-tooltip="Change dictionary..." onclick="openWordlist()">
-      <i class="fa fa-book fa-fw" aria-hidden="true"></i>
-    </button>
-    <input id="open-wordlist-input" class="hidden" type="file" accept=".txt"/>
-    <button id="auto-fill" type="button" data-tooltip="Auto-fill puzzle" onclick="autoFill()">
-      <i class="fa fa-magic fa-fw" aria-hidden="true"></i>
-    </button>
-  </div>
-
-  <div id="main"></div>
-
-  <div id="sidebar">
-    <div class="half-sidebar">
-      <div id="across-heading" class="direction-heading">
-        <div class="clue">
-          <span id="across-clue-number" class="clue-number"></span>
-          <span id="across-clue-text" class="editable" contenteditable="true" onkeydown="suppressEnterKey(event)" onfocusout="setClues()"></span>
-        </div>
-        <div id="across-word" class="current-word"></div>
+    <div id="toolbar">
+      <button id="new-grid" type="button" data-tooltip="New puzzle" onclick="createNewPuzzle()">
+	<i class="fa fa-plus fa-fw" aria-hidden="true"></i>
+      </button>
+      <button id="open-JSON" type="button" data-tooltip="Open puzzle..." onmouseenter="showMenu(event)" onclick="openPuzzle()">
+	<i class="fa fa-folder-open-o fa-fw" aria-hidden="true"></i>
+      </button>
+      <input id="open-puzzle-input" class="hidden" type="file" accept=".json,.txt,.xw,.puz"/>
+      <div id="export-menu" class="menu hidden" onmouseleave="hideMenu(event)">
+	<h4>Export as:</h4>
+	<button id="export-JSON" class="default" type="button" data-tooltip="Phil puzzle (.xw)" onmouseup="setDefault(event)" onclick="writeFile('xw')">
+          <i class="fa fa-download fa-fw" aria-hidden="true"></i>
+	</button>
+	<button id="export-PUZ" type="button" data-tooltip="Across Lite puzzle (.puz)" onmouseup="setDefault(event)" onclick="writeFile('puz')">
+          <i class="fa fa-download fa-fw" aria-hidden="true"></i>
+	</button>
+	<button id="print-puzzle" type="button" data-tooltip="Printable puzzle (.pdf)" onmouseup="setDefault(event)" onclick="printPDF()">
+          <i class="fa fa-print fa-fw" aria-hidden="true"></i>
+	</button>
+	<button id="print-NYT-submission" type="button" data-tooltip="NYT submission (.pdf)" onmouseup="setDefault(event)" onclick="printPDF('nyt')">
+          <i class="fa fa-newspaper-o fa-fw" aria-hidden="true"></i>
+	</button>
       </div>
-      <ul id="across-matches" class="matches"></ul>
+      <button id="export" type="button" data-tooltip="Save puzzle" onmouseenter="showMenu(event)" onclick="doDefault(event)">
+	<i class="fa fa-download fa-fw" aria-hidden="true"></i>
+      </button>
+      <a id="download-puzzle-link" class="hidden">Download puzzle</a>
+
+      <div class="divider"></div>
+
+      <button id="quick-layout" type="button" data-tooltip="Generate pattern" onmouseenter="showMenu(event)" onclick="generatePattern()">
+	<i class="fa fa-delicious fa-fw" aria-hidden="true"></i>
+      </button>
+      <button id="toggle-freeze-layout" type="button" data-tooltip="Freeze pattern" data-state="off" class="disabled">
+	<i class="fa fa-snowflake-o fa-fw" aria-hidden="true"></i>
+      </button>
+      <button id="clear-fill" type="button" data-tooltip="Clear white squares" onclick="clearFill()">
+	<i class="fa fa-eraser fa-fw" aria-hidden="true"></i>
+      </button>
+
+      <button id="toggle-symmetry" type="button" data-tooltip="Turn off symmetry" data-state="on" class="button-on" onclick="toggleSymmetry()">
+	<i class="fa fa-balance-scale fa-fw" aria-hidden="true"></i>
+      </button>
+
+      <button id="toggle-recommend" type="button" data-tooltip="Show only recommendations that satisfy both across and down" data-state="off" class="button-off" onclick="toggleRecommend()">
+	<i class="fa fa-arrows" aria-hidden="true"></i>
+      </button>
+
+      <button id="auto-fill" type="button" data-tooltip="Auto-fill puzzle" onclick="autoFill()">
+	<i class="fa fa-magic fa-fw" aria-hidden="true"></i>
+      </button>
+
+      <div class="divider"></div>
+
+      <button id="open-wordlist" type="button" data-tooltip="Change dictionary..." onclick="openWordlist()">
+	<i class="fa fa-book fa-fw" aria-hidden="true"></i>
+      </button>
+      <input id="open-wordlist-input" class="hidden" type="file" accept=".txt"/>
+
+      <div class="divider"></div>
+
+      <button id="undo" type="button" data-tooltip="No further undo information available" data-state="off" class="button-off" onclick="undo()">
+	<i class="fa fa-undo fa-fw" aria-hidden="true"></i>
+      </button>
+
     </div>
-    <div class="half-sidebar">
-      <div id="down-heading" class="direction-heading">
-        <div class="clue">
-          <span id="down-clue-number" class="clue-number"></span>
-          <span id="down-clue-text" class="editable" contenteditable="true" onkeydown="suppressEnterKey(event)" onfocusout="setClues()"></span>
-        </div>
-        <div id="down-word" class="current-word"></div>
+
+    <div id="main"></div>
+
+    <div id="sidebar">
+      <div class="half-sidebar">
+	<div id="across-heading" class="direction-heading">
+          <div class="clue">
+            <span id="across-clue-number" class="clue-number"></span>
+            <span id="across-clue-text" class="editable" contenteditable="true" onkeydown="suppressEnterKey(event)" onfocusout="setClues()"></span>
+          </div>
+          <div id="across-word" class="current-word"></div>
+	</div>
+	<ul id="across-matches" class="matches"></ul>
       </div>
-      <ul id="down-matches" class="matches"></ul>
+      <div class="half-sidebar">
+	<div id="down-heading" class="direction-heading">
+          <div class="clue">
+            <span id="down-clue-number" class="clue-number"></span>
+            <span id="down-clue-text" class="editable" contenteditable="true" onkeydown="suppressEnterKey(event)" onfocusout="setClues()"></span>
+          </div>
+          <div id="down-word" class="current-word"></div>
+	</div>
+	<ul id="down-matches" class="matches"></ul>
+      </div>
     </div>
-  </div>
 
-  <div id="footer">
-  </div>
-  <div id="shortcuts" class="hidden">
-    <h3>Keyboard Shortcuts</h3>
-    <table>
-      <!-- <tr> <td>Undo</td> <td><kbd>Ctrl</kbd><kbd>Z</kbd></td> </tr> -->
-      <tr> <td>Switch direction</td> <td><kbd>Enter</kbd></td> </tr>
-      <tr> <td>Toggle black square</td> <td><kbd>.</kbd></td> </tr>
-    </table>
-  </div>
-  <div id="credits">
-    <a href="mailto:me@keiranking.com?Subject=Phil" target="_top">Contact</a> &middot;
-    <a href="http://www.keiranking.com/" target="_blank">keiranking.com</a> &middot;
-    <a href="https://github.com/keiranking/Phil" target="_blank">GitHub</a></div>
+    <div id="footer">
+    </div>
+    <div id="shortcuts" class="hidden">
+      <h3>Keyboard Shortcuts</h3>
+      <table>
+	<tr> <td>Undo</td> <td><kbd>Ctrl</kbd>or<kbd>Meta</kbd><kbd>Z</kbd></td> </tr>
+	<tr> <td>Switch direction</td> <td><kbd>Enter</kbd></td> </tr>
+	<tr> <td>Toggle black square</td> <td><kbd>.</kbd></td> </tr>
+	<tr> <td>Indicate where symmetric square is</td> <td><kbd>,</kbd></td> </tr>
+      </table>
+    </div>
+    <div id="credits">
+      Phil version 3.2 &nbsp;&nbsp;&nbsp;
+      <a href="mailto:me@keiranking.com?Subject=Phil" target="_top">Contact</a> &middot;
+      <a href="http://www.keiranking.com/" target="_blank">keiranking.com</a> &middot;
+      <a href="https://github.com/keiranking/Phil" target="_blank">GitHub</a></div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.3.2/jspdf.plugin.autotable.js"></script>
-  <script src="patterns.js"></script>
-  <script src="cross.js"></script>
-  <script src="wordlist.js"></script>
-  <script src="files.js"></script>
-</body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.3.2/jspdf.plugin.autotable.js"></script>
+    <script src="patterns.js"></script>
+    <script src="cross.js"></script>
+    <script src="wordlist.js"></script>
+    <script src="files.js"></script>
+  </body>
 </html>

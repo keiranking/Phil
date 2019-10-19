@@ -1,7 +1,7 @@
 :root {
   --black: black;
-  /*--lt-grey: #f5f7f7;*/
-  --lt-grey: #f8f8f8;
+  --lt-grey: #f5f7f7;
+  /*--lt-grey: #f8f8f8;*/
   --med-grey: #999;
   --dk-grey: #444;
   /*--wh-blue: #f2f9ff;*/
@@ -111,7 +111,7 @@ h1 {
   -moz-box-shadow: 0 0 12px 0px var(--dk-blue);
   -webkit-box-shadow: 0 0 12px 0px var(--dk-blue);
   border-style: double;
-  border: 1px solid var(--med-blue);
+  border: 1px solid var(--dk-blue);
 }
 
 #grid td.pencil .fill {
@@ -135,11 +135,11 @@ h1 {
 }
 
 #grid td.lowlight {
-  /*background-color: var(--lt-grey);*/
+  background-color: var(--lt-grey);
 }
 
 #grid:focus td.lowlight {
-  /*background-color: var(--lt-grey);*/
+  background-color: var(--lt-grey);
 }
 
 #header {
@@ -451,4 +451,28 @@ kbd {
   position: absolute;
   left: 2px;
   top: 0px;
+}
+
+li.recommended {
+  font-weight: bold;
+  color: black;
+}
+
+
+li.highly-recommended {
+  font-weight: bold;
+  font-size: larger;
+  color: blue;
+}
+
+#grid:focus td.lowlight-symmetric {
+  background-color: white;
+}
+
+#grid:focus td.highlight-symmetric {
+  background-color: black;
+}
+
+#grid .illegal-square {
+  background-image: repeating-radial-gradient(orange, red, grey);
 }
