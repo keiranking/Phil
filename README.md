@@ -22,7 +22,7 @@ To use Phil:
 
 To run your own copy of Phil:
 
-1. Install a working [Emscripten](http://kripken.github.io/emscripten-site/) environment. On Mac, using [homebrew](http://braumeister.org/formula/emscripten) is a good choice.
+1. Install a working [Emscripten](https://emscripten.org/) environment. On Mac, using [homebrew](https://formulae.brew.sh/formula/emscripten) is a good choice.
 
 2. From the command line, run:
 
