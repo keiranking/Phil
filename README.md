@@ -55,7 +55,7 @@ To run your own copy of Phil:
 
 ## Crossword resources
 
-* [Wordlists](http://www.puzzlers.org/dokuwiki/doku.php?id=solving:wordlists:about:start)
+* [Wordlists](http://wiki.puzzlers.org/dokuwiki/doku.php?id=solving:wordlists:about:start)
 * [Crossword theme categories](http://www.cruciverb.com/index.php?action=ezportal;sa=page;p=70)
 * [OneLook](http://onelook.com/) and [Crossword Tracker](http://crosswordtracker.com/) search engines
 
