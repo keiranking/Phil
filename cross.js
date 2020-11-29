@@ -14,18 +14,19 @@
 // ------------------------------------------------------------------------
 
 const keyboard = {
-  "a":      65, "b": 66, "c": 67, "d": 68, "e": 69, "f": 70, "g": 71, "h": 72,
-  "i":      73, "j": 74, "k": 75, "l": 76, "m": 77, "n": 78, "o": 79, "p": 80,
-  "q":      81, "r": 82, "s": 83, "t": 84, "u": 85, "v": 86, "w": 87, "x": 88, "y": 89,
-  "z":      90,
-  "black":  190, ".": 190,
-  "delete": 8,
-  "enter":  13,
-  "space":  32,
-  "left":   37,
-  "up":     38,
-  "right":  39,
-  "down":   40
+  "a":             65, "b": 66, "c": 67, "d": 68, "e": 69, "f": 70, "g": 71, "h": 72,
+  "i":             73, "j": 74, "k": 75, "l": 76, "m": 77, "n": 78, "o": 79, "p": 80,
+  "q":             81, "r": 82, "s": 83, "t": 84, "u": 85, "v": 86, "w": 87, "x": 88, "y": 89,
+  "z":             90,
+  "black":         190, ".": 190,
+  "delete":        8,
+  "deleteForward": 46,
+  "enter":         13,
+  "space":         32,
+  "left":          37,
+  "up":            38,
+  "right":         39,
+  "down":          40
 };
 const BLACK = ".";
 const DASH = "-";
@@ -377,7 +378,7 @@ function keyboardHandler(e) {
   if (e.which == keyboard.enter) {
       current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
   }
-  if (e.which == keyboard.delete) {
+  if (e.which == keyboard.delete || e.which == keyboard.deleteForward) {
     e.preventDefault();
     let oldContent = xw.fill[current.row][current.col];
     xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK + xw.fill[current.row].slice(current.col + 1);
@@ -385,7 +386,7 @@ function keyboardHandler(e) {
         if (isSymmetrical) {
           xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
         }
-      } else { // move the cursor
+      } else if (e.which == keyboard.delete) { // move the cursor
         e = new Event('keydown');
         if (current.direction == ACROSS) {
           e.which = keyboard.left;
