@@ -1,0 +1,4 @@
+#!/bin/bash
+
+docker build . -t phil
+docker image prune -f 

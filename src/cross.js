@@ -14,25 +14,48 @@
 // ------------------------------------------------------------------------
 
 const keyboard = {
-  "a":      65, "b": 66, "c": 67, "d": 68, "e": 69, "f": 70, "g": 71, "h": 72,
-  "i":      73, "j": 74, "k": 75, "l": 76, "m": 77, "n": 78, "o": 79, "p": 80,
-  "q":      81, "r": 82, "s": 83, "t": 84, "u": 85, "v": 86, "w": 87, "x": 88, "y": 89,
-  "z":      90,
-  "black":  190, ".": 190,
-  "delete": 8,
-  "enter":  13,
-  "space":  32,
-  "left":   37,
-  "up":     38,
-  "right":  39,
-  "down":   40
+  a: 65,
+  b: 66,
+  c: 67,
+  d: 68,
+  e: 69,
+  f: 70,
+  g: 71,
+  h: 72,
+  i: 73,
+  j: 74,
+  k: 75,
+  l: 76,
+  m: 77,
+  n: 78,
+  o: 79,
+  p: 80,
+  q: 81,
+  r: 82,
+  s: 83,
+  t: 84,
+  u: 85,
+  v: 86,
+  w: 87,
+  x: 88,
+  y: 89,
+  z: 90,
+  black: 190,
+  ".": 190,
+  delete: 8,
+  enter: 13,
+  space: 32,
+  left: 37,
+  up: 38,
+  right: 39,
+  down: 40,
 };
 const BLACK = ".";
 const DASH = "-";
 const BLANK = " ";
 const ACROSS = "across";
 const DOWN = "down";
-const DEFAULT_SIZE = 15;
+const DEFAULT_SIZE = 21;
 const DEFAULT_TITLE = "Untitled";
 const DEFAULT_AUTHOR = "Anonymous";
 const DEFAULT_CLUE = "(blank clue)";
@@ -80,41 +103,43 @@ class Grid {
     document.getElementById("main").appendChild(table);
 
     for (let i = 0; i < rows; i++) {
-        let row = document.createElement("TR");
-        row.setAttribute("data-row", i);
-        document.getElementById("grid").appendChild(row);
+      let row = document.createElement("TR");
+      row.setAttribute("data-row", i);
+      document.getElementById("grid").appendChild(row);
 
       for (let j = 0; j < cols; j++) {
-          let col = document.createElement("TD");
-          col.setAttribute("data-col", j);
+        let col = document.createElement("TD");
+        col.setAttribute("data-col", j);
 
-          let label = document.createElement("DIV");
-          label.setAttribute("class", "label");
-          let labelContent = document.createTextNode("");
+        let label = document.createElement("DIV");
+        label.setAttribute("class", "label");
+        let labelContent = document.createTextNode("");
 
-          let fill = document.createElement("DIV");
-          fill.setAttribute("class", "fill");
-          let fillContent = document.createTextNode(xw.fill[i][j]);
+        let fill = document.createElement("DIV");
+        fill.setAttribute("class", "fill");
+        let fillContent = document.createTextNode(xw.fill[i][j]);
 
-          label.appendChild(labelContent);
-          fill.appendChild(fillContent);
-          col.appendChild(label);
-          col.appendChild(fill);
-          row.appendChild(col);
-        }
+        label.appendChild(labelContent);
+        fill.appendChild(fillContent);
+        col.appendChild(label);
+        col.appendChild(fill);
+        row.appendChild(col);
+      }
     }
     grid = document.getElementById("grid");
-    squares = grid.querySelectorAll('td');
+    squares = grid.querySelectorAll("td");
     for (const square of squares) {
-      square.addEventListener('click', mouseHandler);
+      square.addEventListener("click", mouseHandler);
     }
-    grid.addEventListener('keydown', keyboardHandler);
+    grid.addEventListener("keydown", keyboardHandler);
   }
 
   update() {
     for (let i = 0; i < xw.rows; i++) {
       for (let j = 0; j < xw.cols; j++) {
-        const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+        const activeCell = grid
+          .querySelector('[data-row="' + i + '"]')
+          .querySelector('[data-col="' + j + '"]');
         let fill = xw.fill[i][j];
         if (fill == BLANK && forced != null) {
           fill = forced[i][j];
@@ -144,7 +169,7 @@ class Button {
 
   setState(state) {
     this.state = state;
-    this.dom.className = (this.state == "normal") ? "" : this.state;
+    this.dom.className = this.state == "normal" ? "" : this.state;
   }
 
   addEvent(e, func) {
@@ -168,7 +193,8 @@ class Button {
   }
 }
 
-class Menu { // in dev
+class Menu {
+  // in dev
   constructor(id, buttons) {
     this.id = id;
     this.buttons = buttons;
@@ -185,28 +211,29 @@ class Menu { // in dev
 class Toolbar {
   constructor(id) {
     this.id = id;
-    this.buttons = { // rewrite this programmatically
-      "newPuzzle": new Button("new-grid"),
-      "openPuzzle": new Button("open-JSON"),
-      "exportJSON": new Button("export-JSON"),
-      "exportPUZ": new Button("export-PUZ"),
-      "exportPDF": new Button("print-puzzle"),
-      "exportNYT": new Button("print-NYT-submission"),
-      "export": new Button("export"),
-      "quickLayout": new Button("quick-layout"),
-      "freezeLayout": new Button("toggle-freeze-layout"),
-      "clearFill": new Button("clear-fill"),
-      "toggleSymmetry": new Button("toggle-symmetry"),
-      "openWordlist": new Button("open-wordlist"),
-      "autoFill": new Button("auto-fill")
-    }
+    this.buttons = {
+      // rewrite this programmatically
+      newPuzzle: new Button("new-grid"),
+      openPuzzle: new Button("open-JSON"),
+      exportJSON: new Button("export-JSON"),
+      exportPUZ: new Button("export-PUZ"),
+      exportPDF: new Button("print-puzzle"),
+      exportNYT: new Button("print-NYT-submission"),
+      export: new Button("export"),
+      quickLayout: new Button("quick-layout"),
+      freezeLayout: new Button("toggle-freeze-layout"),
+      clearFill: new Button("clear-fill"),
+      toggleSymmetry: new Button("toggle-symmetry"),
+      openWordlist: new Button("open-wordlist"),
+      autoFill: new Button("auto-fill"),
+    };
   }
 }
 
 class Notification {
   constructor(message, lifetime = undefined) {
     this.message = message;
-    this.id = String(randomNumber(1,10000));
+    this.id = String(randomNumber(1, 10000));
     this.post();
     if (lifetime) {
       this.dismiss(lifetime);
@@ -218,7 +245,7 @@ class Notification {
     div.setAttribute("id", this.id);
     div.setAttribute("class", "notification");
     div.innerHTML = this.message;
-    div.addEventListener('click', this.dismiss);
+    div.addEventListener("click", this.dismiss);
     document.getElementById("footer").appendChild(div);
   }
 
@@ -229,7 +256,9 @@ class Notification {
   dismiss(seconds = 0) {
     let div = document.getElementById(this.id);
     // seconds = (seconds === true) ? 10 : seconds;
-    setTimeout(function() { div.remove(); }, seconds * 1000);
+    setTimeout(function () {
+      div.remove();
+    }, seconds * 1000);
   }
 }
 
@@ -242,19 +271,19 @@ class Interface {
     this.isSymmetrical = true;
     this.row = 0;
     this.col = 0;
-    this.acrossWord = '';
-    this.downWord = '';
+    this.acrossWord = "";
+    this.downWord = "";
     this.acrossStartIndex = 0;
     this.acrossEndIndex = cols;
     this.downStartIndex = 0;
     this.downEndIndex = rows;
     this.direction = ACROSS;
 
-    console.log("Grid UI created.")
+    console.log("Grid UI created.");
   }
 
   toggleDirection() {
-    this.direction = (this.direction == ACROSS) ? DOWN : ACROSS;
+    this.direction = this.direction == ACROSS ? DOWN : ACROSS;
   }
 
   update() {
@@ -297,19 +326,19 @@ function createNewPuzzle(rows, cols) {
 
   isSymmetrical = true;
   current = {
-    "row":        0,
-    "col":        0,
-    "acrossWord": '',
-    "downWord":   '',
-    "acrossStartIndex":0,
-    "acrossEndIndex":  DEFAULT_SIZE,
-    "downStartIndex":  0,
-    "downEndIndex":    DEFAULT_SIZE,
-    "direction":  ACROSS
+    row: 0,
+    col: 0,
+    acrossWord: "",
+    downWord: "",
+    acrossStartIndex: 0,
+    acrossEndIndex: DEFAULT_SIZE,
+    downStartIndex: 0,
+    downEndIndex: DEFAULT_SIZE,
+    direction: ACROSS,
   };
 
   grid = document.getElementById("grid");
-  squares = grid.querySelectorAll('td');
+  squares = grid.querySelectorAll("td");
 
   updateActiveWords();
   updateGridHighlights();
@@ -317,18 +346,20 @@ function createNewPuzzle(rows, cols) {
   updateCluesUI();
 
   for (const square of squares) {
-    square.addEventListener('click', mouseHandler);
+    square.addEventListener("click", mouseHandler);
   }
-  grid.addEventListener('keydown', keyboardHandler);
-  console.log("New puzzle created.")
+  grid.addEventListener("keydown", keyboardHandler);
+  console.log("New puzzle created.");
 }
 
 function mouseHandler(e) {
-  const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  const previousCell = grid
+    .querySelector('[data-row="' + current.row + '"]')
+    .querySelector('[data-col="' + current.col + '"]');
   previousCell.classList.remove("active");
   const activeCell = e.currentTarget;
   if (activeCell == previousCell) {
-    current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
+    current.direction = current.direction == ACROSS ? DOWN : ACROSS;
   }
   current.row = Number(activeCell.parentNode.dataset.row);
   current.col = Number(activeCell.dataset.col);
@@ -341,20 +372,31 @@ function mouseHandler(e) {
 
 function keyboardHandler(e) {
   isMutated = false;
-  let activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  let activeCell = grid
+    .querySelector('[data-row="' + current.row + '"]')
+    .querySelector('[data-col="' + current.col + '"]');
   const symRow = xw.rows - 1 - current.row;
   const symCol = xw.cols - 1 - current.col;
 
-  if ((e.which >= keyboard.a && e.which <= keyboard.z) || e.which == keyboard.space) {
+  if (
+    (e.which >= keyboard.a && e.which <= keyboard.z) ||
+    e.which == keyboard.space
+  ) {
     let oldContent = xw.fill[current.row][current.col];
-    xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + String.fromCharCode(e.which) + xw.fill[current.row].slice(current.col + 1);
+    xw.fill[current.row] =
+      xw.fill[current.row].slice(0, current.col) +
+      String.fromCharCode(e.which) +
+      xw.fill[current.row].slice(current.col + 1);
     if (oldContent == BLACK) {
       if (isSymmetrical) {
-        xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
+        xw.fill[symRow] =
+          xw.fill[symRow].slice(0, symCol) +
+          BLANK +
+          xw.fill[symRow].slice(symCol + 1);
       }
     }
     // move the cursor
-    e = new Event('keydown');
+    e = new Event("keydown");
     if (current.direction == ACROSS) {
       e.which = keyboard.right;
     } else {
@@ -363,79 +405,97 @@ function keyboardHandler(e) {
     isMutated = true;
   }
   if (e.which == keyboard.black) {
-      if (xw.fill[current.row][current.col] == BLACK) { // if already black...
-        e = new Event('keydown');
-        e.which = keyboard.delete; // make it a white square
-      } else {
-        xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLACK + xw.fill[current.row].slice(current.col + 1);
-        if (isSymmetrical) {
-          xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
-        }
+    if (xw.fill[current.row][current.col] == BLACK) {
+      // if already black...
+      e = new Event("keydown");
+      e.which = keyboard.delete; // make it a white square
+    } else {
+      xw.fill[current.row] =
+        xw.fill[current.row].slice(0, current.col) +
+        BLACK +
+        xw.fill[current.row].slice(current.col + 1);
+      if (isSymmetrical) {
+        xw.fill[symRow] =
+          xw.fill[symRow].slice(0, symCol) +
+          BLACK +
+          xw.fill[symRow].slice(symCol + 1);
       }
-      isMutated = true;
+    }
+    isMutated = true;
   }
   if (e.which == keyboard.enter) {
-      current.direction = (current.direction == ACROSS) ? DOWN : ACROSS;
+    current.direction = current.direction == ACROSS ? DOWN : ACROSS;
   }
   if (e.which == keyboard.delete) {
     e.preventDefault();
     let oldContent = xw.fill[current.row][current.col];
-    xw.fill[current.row] = xw.fill[current.row].slice(0, current.col) + BLANK + xw.fill[current.row].slice(current.col + 1);
-      if (oldContent == BLACK) {
-        if (isSymmetrical) {
-          xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLANK + xw.fill[symRow].slice(symCol + 1);
-        }
-      } else { // move the cursor
-        e = new Event('keydown');
-        if (current.direction == ACROSS) {
-          e.which = keyboard.left;
-        } else {
-          e.which = keyboard.up;
-        }
+    xw.fill[current.row] =
+      xw.fill[current.row].slice(0, current.col) +
+      BLANK +
+      xw.fill[current.row].slice(current.col + 1);
+    if (oldContent == BLACK) {
+      if (isSymmetrical) {
+        xw.fill[symRow] =
+          xw.fill[symRow].slice(0, symCol) +
+          BLANK +
+          xw.fill[symRow].slice(symCol + 1);
       }
-      isMutated = true;
+    } else {
+      // move the cursor
+      e = new Event("keydown");
+      if (current.direction == ACROSS) {
+        e.which = keyboard.left;
+      } else {
+        e.which = keyboard.up;
+      }
+    }
+    isMutated = true;
   }
   if (e.which >= keyboard.left && e.which <= keyboard.down) {
-      e.preventDefault();
-      const previousCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
-      previousCell.classList.remove("active");
-      let content = xw.fill[current.row][current.col];
-      switch (e.which) {
-        case keyboard.left:
-          if (current.direction == ACROSS || content == BLACK) {
-            current.col -= (current.col == 0) ? 0 : 1;
-          }
-          current.direction = ACROSS;
-          break;
-        case keyboard.up:
-          if (current.direction == DOWN || content == BLACK) {
-            current.row -= (current.row == 0) ? 0 : 1;
-          }
-          current.direction = DOWN;
-          break;
-        case keyboard.right:
-          if (current.direction == ACROSS || content == BLACK) {
-            current.col += (current.col == xw.cols - 1) ? 0 : 1;
-          }
-          current.direction = ACROSS;
-          break;
-        case keyboard.down:
-          if (current.direction == DOWN || content == BLACK) {
-            current.row += (current.row == xw.rows - 1) ? 0 : 1;
-          }
-          current.direction = DOWN;
-          break;
-      }
-      console.log("[" + current.row + "," + current.col + "]");
-      activeCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
-      activeCell.classList.add("active");
+    e.preventDefault();
+    const previousCell = grid
+      .querySelector('[data-row="' + current.row + '"]')
+      .querySelector('[data-col="' + current.col + '"]');
+    previousCell.classList.remove("active");
+    let content = xw.fill[current.row][current.col];
+    switch (e.which) {
+      case keyboard.left:
+        if (current.direction == ACROSS || content == BLACK) {
+          current.col -= current.col == 0 ? 0 : 1;
+        }
+        current.direction = ACROSS;
+        break;
+      case keyboard.up:
+        if (current.direction == DOWN || content == BLACK) {
+          current.row -= current.row == 0 ? 0 : 1;
+        }
+        current.direction = DOWN;
+        break;
+      case keyboard.right:
+        if (current.direction == ACROSS || content == BLACK) {
+          current.col += current.col == xw.cols - 1 ? 0 : 1;
+        }
+        current.direction = ACROSS;
+        break;
+      case keyboard.down:
+        if (current.direction == DOWN || content == BLACK) {
+          current.row += current.row == xw.rows - 1 ? 0 : 1;
+        }
+        current.direction = DOWN;
+        break;
+    }
+    console.log("[" + current.row + "," + current.col + "]");
+    activeCell = grid
+      .querySelector('[data-row="' + current.row + '"]')
+      .querySelector('[data-col="' + current.col + '"]');
+    activeCell.classList.add("active");
   }
   updateUI();
 }
 
 function updateUI() {
   if (isMutated) {
-    autoFill(true);  // quick fill
+    autoFill(true); // quick fill
   }
   updateGridUI();
   updateLabelsAndClues();
@@ -450,7 +510,9 @@ function updateUI() {
 function updateGridUI() {
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
-      const activeCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      const activeCell = grid
+        .querySelector('[data-row="' + i + '"]')
+        .querySelector('[data-col="' + j + '"]');
       let fill = xw.fill[i][j];
       if (fill == BLANK && forced != null) {
         fill = forced[i][j];
@@ -484,12 +546,18 @@ function updateCluesUI() {
     return;
   }
   // Otherwise, assign values
-  const acrossCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.acrossStartIndex + '"]');
-  const downCell = grid.querySelector('[data-row="' + current.downStartIndex + '"]').querySelector('[data-col="' + current.col + '"]');
+  const acrossCell = grid
+    .querySelector('[data-row="' + current.row + '"]')
+    .querySelector('[data-col="' + current.acrossStartIndex + '"]');
+  const downCell = grid
+    .querySelector('[data-row="' + current.downStartIndex + '"]')
+    .querySelector('[data-col="' + current.col + '"]');
   acrossClueNumber.innerHTML = acrossCell.firstChild.innerHTML + "a.";
   downClueNumber.innerHTML = downCell.firstChild.innerHTML + "d.";
-  acrossClueText.innerHTML = xw.clues[[current.row, current.acrossStartIndex, ACROSS]];
-  downClueText.innerHTML = xw.clues[[current.downStartIndex, current.col, DOWN]];
+  acrossClueText.innerHTML =
+    xw.clues[[current.row, current.acrossStartIndex, ACROSS]];
+  downClueText.innerHTML =
+    xw.clues[[current.downStartIndex, current.col, DOWN]];
 }
 
 function updateInfoUI() {
@@ -504,30 +572,30 @@ function createGrid(rows, cols) {
   // table.setAttribute("tabindex", "0");
   document.getElementById("main").appendChild(table);
 
-	for (let i = 0; i < rows; i++) {
-    	let row = document.createElement("TR");
-    	row.setAttribute("data-row", i);
-    	document.getElementById("grid").appendChild(row);
+  for (let i = 0; i < rows; i++) {
+    let row = document.createElement("TR");
+    row.setAttribute("data-row", i);
+    document.getElementById("grid").appendChild(row);
 
-		for (let j = 0; j < cols; j++) {
-		    let col = document.createElement("TD");
-        col.setAttribute("data-col", j);
+    for (let j = 0; j < cols; j++) {
+      let col = document.createElement("TD");
+      col.setAttribute("data-col", j);
 
-        let label = document.createElement("DIV");
-        label.setAttribute("class", "label");
-        let labelContent = document.createTextNode("");
+      let label = document.createElement("DIV");
+      label.setAttribute("class", "label");
+      let labelContent = document.createTextNode("");
 
-        let fill = document.createElement("DIV");
-        fill.setAttribute("class", "fill");
-        let fillContent = document.createTextNode(xw.fill[i][j]);
+      let fill = document.createElement("DIV");
+      fill.setAttribute("class", "fill");
+      let fillContent = document.createTextNode(xw.fill[i][j]);
 
-    		// let t = document.createTextNode("[" + i + "," + j + "]");
-        label.appendChild(labelContent);
-        fill.appendChild(fillContent);
-        col.appendChild(label);
-        col.appendChild(fill);
-        row.appendChild(col);
-      }
+      // let t = document.createTextNode("[" + i + "," + j + "]");
+      label.appendChild(labelContent);
+      fill.appendChild(fillContent);
+      col.appendChild(label);
+      col.appendChild(fill);
+      row.appendChild(col);
+    }
   }
   updateLabelsAndClues();
 }
@@ -543,7 +611,9 @@ function updateLabelsAndClues() {
         isAcross = j == 0 || xw.fill[i][j - 1] == BLACK;
       }
       const grid = document.getElementById("grid");
-      let currentCell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      let currentCell = grid
+        .querySelector('[data-row="' + i + '"]')
+        .querySelector('[data-col="' + j + '"]');
       if (isAcross || isDown) {
         currentCell.firstChild.innerHTML = count; // Set square's label to the count
         count++;
@@ -567,8 +637,8 @@ function updateLabelsAndClues() {
 
 function updateActiveWords() {
   if (xw.fill[current.row][current.col] == BLACK) {
-    current.acrossWord = '';
-    current.downWord = '';
+    current.acrossWord = "";
+    current.downWord = "";
     current.acrossStartIndex = null;
     current.acrossEndIndex = null;
     current.downStartIndex = null;
@@ -594,7 +664,7 @@ function getWordAt(row, col, direction, setCurrentWordIndices) {
     }
   }
   text = text.split(BLANK).join(DASH);
-  [start, end] = getWordIndices(text, (direction == ACROSS) ? col : row);
+  [start, end] = getWordIndices(text, direction == ACROSS ? col : row);
   // Set global word indices if needed
   if (setCurrentWordIndices) {
     if (direction == ACROSS) {
@@ -608,9 +678,9 @@ function getWordAt(row, col, direction, setCurrentWordIndices) {
 
 function getWordIndices(text, position) {
   let start = text.slice(0, position).lastIndexOf(BLACK);
-  start = (start == -1) ? 0 : start + 1;
+  start = start == -1 ? 0 : start + 1;
   let end = text.slice(position, DEFAULT_SIZE).indexOf(BLACK);
-  end = (end == -1) ? DEFAULT_SIZE : Number(position) + end;
+  end = end == -1 ? DEFAULT_SIZE : Number(position) + end;
   return [start, end];
 }
 
@@ -618,22 +688,32 @@ function updateGridHighlights() {
   // Clear the grid of any highlights
   for (let i = 0; i < xw.rows; i++) {
     for (let j = 0; j < xw.cols; j++) {
-      const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
+      const square = grid
+        .querySelector('[data-row="' + i + '"]')
+        .querySelector('[data-col="' + j + '"]');
       square.classList.remove("highlight", "lowlight");
     }
   }
   // Highlight across squares
   for (let j = current.acrossStartIndex; j < current.acrossEndIndex; j++) {
-    const square = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + j + '"]');
+    const square = grid
+      .querySelector('[data-row="' + current.row + '"]')
+      .querySelector('[data-col="' + j + '"]');
     if (j != current.col) {
-      square.classList.add((current.direction == ACROSS) ? "highlight" : "lowlight");
+      square.classList.add(
+        current.direction == ACROSS ? "highlight" : "lowlight"
+      );
     }
   }
   // Highlight down squares
   for (let i = current.downStartIndex; i < current.downEndIndex; i++) {
-    const square = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + current.col + '"]');
+    const square = grid
+      .querySelector('[data-row="' + i + '"]')
+      .querySelector('[data-col="' + current.col + '"]');
     if (i != current.row) {
-      square.classList.add((current.direction == DOWN) ? "highlight" : "lowlight");
+      square.classList.add(
+        current.direction == DOWN ? "highlight" : "lowlight"
+      );
     }
   }
 }
@@ -641,7 +721,9 @@ function updateGridHighlights() {
 function updateSidebarHighlights() {
   let acrossHeading = document.getElementById("across-heading");
   let downHeading = document.getElementById("down-heading");
-  const currentCell = grid.querySelector('[data-row="' + current.row + '"]').querySelector('[data-col="' + current.col + '"]');
+  const currentCell = grid
+    .querySelector('[data-row="' + current.row + '"]')
+    .querySelector('[data-col="' + current.col + '"]');
 
   acrossHeading.classList.remove("highlight");
   downHeading.classList.remove("highlight");
@@ -656,10 +738,12 @@ function updateSidebarHighlights() {
 }
 
 function setClues() {
-    xw.clues[[current.row, current.acrossStartIndex, ACROSS]] = document.getElementById("across-clue-text").innerHTML;
-    xw.clues[[current.downStartIndex, current.col, DOWN]] = document.getElementById("down-clue-text").innerHTML;
-    // console.log("Stored clue:", xw.clues[[current.row, current.acrossStartIndex, ACROSS]], "at [" + current.row + "," + current.acrossStartIndex + "]");
-    // console.log("Stored clue:", xw.clues[[current.downStartIndex, current.col, DOWN]], "at [" + current.downStartIndex + "," + current.col + "]");
+  xw.clues[[current.row, current.acrossStartIndex, ACROSS]] =
+    document.getElementById("across-clue-text").innerHTML;
+  xw.clues[[current.downStartIndex, current.col, DOWN]] =
+    document.getElementById("down-clue-text").innerHTML;
+  // console.log("Stored clue:", xw.clues[[current.row, current.acrossStartIndex, ACROSS]], "at [" + current.row + "," + current.acrossStartIndex + "]");
+  // console.log("Stored clue:", xw.clues[[current.downStartIndex, current.col, DOWN]], "at [" + current.downStartIndex + "," + current.col + "]");
 }
 
 function setTitle() {
@@ -685,20 +769,25 @@ function generatePattern() {
   xw.author = author;
 
   const pattern = patterns[randomNumber(0, patterns.length)]; // select random pattern
-  if (!isSymmetrical) { // patterns are encoded as only one half of the grid...
-    toggleSymmetry();   // so symmetry needs to be on to populate correctly
+  if (!isSymmetrical) {
+    // patterns are encoded as only one half of the grid...
+    toggleSymmetry(); // so symmetry needs to be on to populate correctly
   }
   for (let i = 0; i < pattern.length; i++) {
     const row = pattern[i][0];
     const col = pattern[i][1];
     const symRow = xw.rows - 1 - row;
     const symCol = xw.cols - 1 - col;
-    xw.fill[row] = xw.fill[row].slice(0, col) + BLACK + xw.fill[row].slice(col + 1);
-    xw.fill[symRow] = xw.fill[symRow].slice(0, symCol) + BLACK + xw.fill[symRow].slice(symCol + 1);
+    xw.fill[row] =
+      xw.fill[row].slice(0, col) + BLACK + xw.fill[row].slice(col + 1);
+    xw.fill[symRow] =
+      xw.fill[symRow].slice(0, symCol) +
+      BLACK +
+      xw.fill[symRow].slice(symCol + 1);
   }
   isMutated = true;
   updateUI();
-  console.log("Generated layout.")
+  console.log("Generated layout.");
 }
 
 function toggleSymmetry() {
@@ -707,7 +796,7 @@ function toggleSymmetry() {
   let symButton = document.getElementById("toggle-symmetry");
   symButton.classList.toggle("button-on");
   buttonState = symButton.getAttribute("data-state");
-  symButton.setAttribute("data-state", (buttonState == "on") ? "off" : "on");
+  symButton.setAttribute("data-state", buttonState == "on" ? "off" : "on");
   symButton.setAttribute("data-tooltip", "Turn " + buttonState + " symmetry");
 }
 
@@ -717,7 +806,7 @@ function toggleSymmetry() {
 
 function clearFill() {
   for (let i = 0; i < xw.rows; i++) {
-    xw.fill[i] = xw.fill[i].replace(/\w/g, ' '); // replace letters with spaces
+    xw.fill[i] = xw.fill[i].replace(/\w/g, " "); // replace letters with spaces
   }
   isMutated = true;
   updateUI();
@@ -728,10 +817,10 @@ function autoFill(isQuick = false) {
   forced = null;
   grid.classList.remove("sat", "unsat");
   if (!solveWorker) {
-    solveWorker = new Worker('xw_worker.js');
-    solveWorkerState = 'ready';
+    solveWorker = new Worker("xw_worker.js");
+    solveWorkerState = "ready";
   }
-  if (solveWorkerState != 'ready') {
+  if (solveWorkerState != "ready") {
     cancelSolveWorker();
   }
   solvePending = [isQuick];
@@ -739,67 +828,70 @@ function autoFill(isQuick = false) {
 }
 
 function runSolvePending() {
-  if (solveWorkerState != 'ready' || solvePending.length == 0) return;
+  if (solveWorkerState != "ready" || solvePending.length == 0) return;
   let isQuick = solvePending[0];
   solvePending = [];
   solveTimeout = window.setTimeout(cancelSolveWorker, 30000);
   if (solveWordlist == null) {
-    console.log('Rebuilding wordlist...');
-    solveWordlist = '';
+    console.log("Rebuilding wordlist...");
+    solveWordlist = "";
     for (let i = 3; i < wordlist.length; i++) {
-      solveWordlist += wordlist[i].join('\n') + '\n';
+      solveWordlist += wordlist[i].join("\n") + "\n";
     }
   }
   //console.log(wordlist_str);
-  let puz = xw.fill.join('\n') + '\n';
-  solveWorker.postMessage(['run', solveWordlist, puz, isQuick]);
-  solveWorkerState = 'running';
-  solveWorker.onmessage = function(e) {
+  let puz = xw.fill.join("\n") + "\n";
+  solveWorker.postMessage(["run", solveWordlist, puz, isQuick]);
+  solveWorkerState = "running";
+  solveWorker.onmessage = function (e) {
     switch (e.data[0]) {
-      case 'sat':
-        if (solveWorkerState == 'running') {
+      case "sat":
+        if (solveWorkerState == "running") {
           if (isQuick) {
             console.log("Autofill: Solution found.");
             grid.classList.add("sat");
           } else {
-            xw.fill = e.data[1].split('\n');
-            xw.fill.pop();  // strip empty last line
+            xw.fill = e.data[1].split("\n");
+            xw.fill.pop(); // strip empty last line
             updateGridUI();
             grid.focus();
           }
         }
         break;
-      case 'unsat':
-        if (solveWorkerState == 'running') {
+      case "unsat":
+        if (solveWorkerState == "running") {
           if (isQuick) {
             console.log("Autofill: No quick solution found.");
             grid.classList.add("unsat");
           } else {
-            console.log('Autofill: No solution found.');
+            console.log("Autofill: No solution found.");
             // TODO: indicate on UI
           }
         }
         break;
-      case 'forced':
-        if (solveWorkerState == 'running') {
-          forced = e.data[1].split('\n');
-          forced.pop;  // strip empty last line
+      case "forced":
+        if (solveWorkerState == "running") {
+          forced = e.data[1].split("\n");
+          forced.pop; // strip empty last line
           updateGridUI();
         }
         break;
-      case 'done':
-        console.log('Autofill: returning to ready, state was ', solveWorkerState);
+      case "done":
+        console.log(
+          "Autofill: returning to ready, state was ",
+          solveWorkerState
+        );
         solveWorkerReady();
         break;
-      case 'ack_cancel':
-        console.log('Autofill: Cancel acknowledged.');
+      case "ack_cancel":
+        console.log("Autofill: Cancel acknowledged.");
         solveWorkerReady();
         break;
       default:
-        console.log('Autofill: Unexpected return,', e.data);
+        console.log("Autofill: Unexpected return,", e.data);
         break;
     }
-  }
+  };
 }
 
 function solveWorkerReady() {
@@ -807,15 +899,15 @@ function solveWorkerReady() {
     window.clearTimeout(solveTimeout);
     solveTimeout = null;
   }
-  solveWorkerState = 'ready';
+  solveWorkerState = "ready";
   runSolvePending();
 }
 
 function cancelSolveWorker() {
-  if (solveWorkerState == 'running') {
-    solveWorker.postMessage(['cancel']);
-    solveWorkerState = 'cancelwait';
-    console.log("Autofill: Cancel sent.");  // TODO: indicate on UI
+  if (solveWorkerState == "running") {
+    solveWorker.postMessage(["cancel"]);
+    solveWorkerState = "cancelwait";
+    console.log("Autofill: Cancel sent."); // TODO: indicate on UI
     window.clearTimeout(solveTimeout);
     solveTimeout = null;
   }
@@ -845,7 +937,9 @@ function setDefault(e) {
   let d = e.target.parentNode.querySelector(".default");
   d.classList.remove("default");
   e.target.classList.add("default");
-  menuButton = document.getElementById(e.target.parentNode.getAttribute("id").replace("-menu", ""));
+  menuButton = document.getElementById(
+    e.target.parentNode.getAttribute("id").replace("-menu", "")
+  );
   menuButton.innerHTML = e.target.innerHTML;
 }
 
@@ -863,6 +957,7 @@ function randomNumber(min, max) {
 }
 
 function randomLetter() {
-  let alphabet = "AAAAAAAAABBCCDDDDEEEEEEEEEEEEFFGGGHHIIIIIIIIIJKLLLLMMNNNNNNOOOOOOOOPPQRRRRRRSSSSSSTTTTTTUUUUVVWWXYYZ";
+  let alphabet =
+    "AAAAAAAAABBCCDDDDEEEEEEEEEEEEFFGGGHHIIIIIIIIIJKLLLLMMNNNNNNOOOOOOOOPPQRRRRRRSSSSSSTTTTTTUUUUVVWWXYYZ";
   return alphabet[randomNumber(0, alphabet.length)];
 }
