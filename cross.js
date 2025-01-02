@@ -268,6 +268,7 @@ class Interface {
 }
 
 new Notification(document.getElementById("shortcuts").innerHTML);
+new Notification(document.getElementById("squared-ad").innerHTML);
 // new Notification("Hello, world.", 5);
 
 let xw = new Crossword(); // model

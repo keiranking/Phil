@@ -7,6 +7,8 @@
   /*--wh-blue: #f2f9ff;*/
   --lt-blue: #def1ff;
   --lt-blue-mono: #ededed;
+  --lt-red: #ffdee1;
+  --lt-yellow: #fff8de;
   --med-blue: #55b8fe;
   --dk-blue: #0181dc;
   --dk-blue-mono: #656565;
@@ -51,16 +53,6 @@ h1 {
   display: flex;
   flex-direction: column;
   gap: 15px;
-}
-
-#footer a {
-  color: var(--med-grey);
-  font-weight: 500;
-  text-decoration: none;
-}
-
-#footer a:hover {
-  color: var(--dk-grey);
 }
 
 #grid {
@@ -176,6 +168,11 @@ kbd {
 .notification {
   font-size: 9.5pt;
   line-height: 11pt;
+}
+
+.notification--prominent {
+  padding: 10px;
+  background-color: var(--lt-yellow);
 }
 
 #puzzle-author {
