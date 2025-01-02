@@ -448,13 +448,12 @@ function generatePDFClues() {
     let [i, j, direction] = key.split(",");
     const cell = grid.querySelector('[data-row="' + i + '"]').querySelector('[data-col="' + j + '"]');
     let label = Number(cell.firstChild.innerHTML);
+    let clue = xw.clues[key].replace(/&amp;/g, '&');
     if (direction == ACROSS) {
-      // acrossClues.push([label, xw.clues[key], getWordAt(i, j, direction)]);
-      // acrossClues.sort(byLabel);
-      acrossClues.push({ "label": label, "clue": xw.clues[key], "answer": getWordAt(i, j, direction)});
+      acrossClues.push({ "label": label, "clue": clue, "answer": getWordAt(i, j, direction)});
       acrossClues.sort(byLabel);
     } else {
-      downClues.push({ "label": label, "clue": xw.clues[key], "answer": getWordAt(i, j, direction)});
+      downClues.push({ "label": label, "clue": clue, "answer": getWordAt(i, j, direction)});
       downClues.sort(byLabel);
     }
   }
