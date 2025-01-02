@@ -48,10 +48,9 @@ h1 {
   margin: 0;
   padding: 0;
   margin-left: 38px;
-  margin-top: 3px;
-  font-size: 9.5pt;
-  line-height: 11pt;
-  clear: both;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 #footer a {
@@ -162,7 +161,6 @@ kbd {
   font-family: inherit;
   font-size: 9pt;
   font-weight: 600;
-  color: var(--lt-grey);
   border: 1px solid var(--med-grey);
   border-radius: 2px;
   padding: 2px 8px;
@@ -170,68 +168,14 @@ kbd {
 }
 
 #main {
-  width: auto;
-  height: 550px;
   float: left;
+  height: 550px;
+  width: auto;
 }
 
 .notification {
   font-size: 9.5pt;
   line-height: 11pt;
-  margin-top: 3px;
-  margin-right: 12px;
-  padding: 12px;
-  border-radius: 6px;
-  background-color: var(--dk-grey);
-  color: var(--lt-grey);
-  float: left;
-}
-
-.notification h3 {
-  font-size: 9pt;
-  margin: 0;
-  padding: 0;
-  font-weight: 600;
-  color: var(--med-grey);
-  text-transform: uppercase;
-}
-
-.notification table {
-  border-collapse: collapse;
-}
-
-.notification tr {
-  padding: 0;
-  margin: 0;
-  color: var(--lt-grey);
-  font-size: 9.5pt;
-}
-
-.notification td {
-  /*border: 1px solid red;*/
-  padding: 8px 5px 8px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-
-/*.notification:after {
-  content: '\f00d';
-  margin-left: 10px;
-  font-family: FontAwesome;
-  font-weight: 600;
-  color: var(--med-grey);
-  cursor: pointer;
-}*/
-
-.notification:hover:after {
-  color: var(--lt-blue);
-  content: '\f00d';
-  float: right;
-  margin-left: 10px;
-  /*top: 10px;
-  right: 10px;*/
-  font-family: FontAwesome;
-  font-weight: 600;
-  cursor: pointer;
 }
 
 #puzzle-author {

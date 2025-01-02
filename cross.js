@@ -218,7 +218,7 @@ class Notification {
     div.setAttribute("id", this.id);
     div.setAttribute("class", "notification");
     div.innerHTML = this.message;
-    div.addEventListener('click', this.dismiss);
+    // div.addEventListener('click', this.dismiss);
     document.getElementById("footer").appendChild(div);
   }
 
@@ -267,9 +267,8 @@ class Interface {
   }
 }
 
-new Notification(document.getElementById("shortcuts").innerHTML, 300);
-// new Notification("Tip: <kbd>.</kbd> makes a black square.", 300);
-// new Notification("Tip: <kbd>Enter</kbd> toggles direction.", 300);
+new Notification(document.getElementById("shortcuts").innerHTML);
+// new Notification("Hello, world.", 5);
 
 let xw = new Crossword(); // model
 let current = new Interface(xw.rows, xw.cols); // view-controller
